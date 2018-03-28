@@ -5,6 +5,7 @@ using UnityEngine.Networking;
 [RequireComponent(typeof(Player))]
 public class PlayerSetup : NetworkBehaviour {
 
+    // A list of all game object componets to disable for all remote players
     [SerializeField]
     private Behaviour[] componentsToDisable;
 
@@ -15,13 +16,19 @@ public class PlayerSetup : NetworkBehaviour {
     {
         if (isLocalPlayer)
         {
+            // Stuff todo for the local player
             AttachCamera();
         } else {            
+            // Stuff to do for all remote players
             DisableComponents();
             AssignRemoteLayer();
-        }     
+        }
+
+        // Call setup on the player to setup all propeties for the player
+        GetComponent<Player>().Setup();
     }
 
+    // Called when a cliend connects. Registers the player with the game manager
     public override void OnStartClient() {
         base.OnStartClient();
 

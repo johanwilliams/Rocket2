@@ -4,6 +4,23 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour {
 
+    // Singelton(ish) pattern to make sure we only have one GameManager
+    public static GameManager instance;
+
+    public MatchSettings matchSettings;
+
+    private void Awake() {
+        if (instance != null) {
+            Debug.LogError("More than one GameManager in scene.");
+        }
+        else {
+            instance = this;
+        }
+        
+    }
+
+    #region Player tracking
+
     private const string PLAYER_ID_PREFIX = "Player ";
 
     private static Dictionary<string, Player> players = new Dictionary<string, Player>();
@@ -35,4 +52,6 @@ public class GameManager : MonoBehaviour {
         GUILayout.EndVertical();
         GUILayout.EndArea();
     }*/
+
+    #endregion
 }

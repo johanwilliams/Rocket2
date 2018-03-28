@@ -197,6 +197,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd269ff118d751a4499da2cf429f9b8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  matchSettings:
+    respawnTime: 3
 --- !u!114 &114446540403325090
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -220,6 +222,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
+  disableOnDeath:
+  - {fileID: 114446540403325090}
+  - {fileID: 114645987432509226}
 --- !u!114 &114605969257702056
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -254,12 +259,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weapon:
     name: Laser gun
-    damage: 10
+    damage: 40
     range: 100
   gun: {fileID: 1223564827739212}
   mask:
     serializedVersion: 2
-    m_Bits: 1536
+    m_Bits: 4294967039
 --- !u!114 &114694664488846948
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -40,11 +40,12 @@ public class RocketShoot : NetworkBehaviour {
         }
     }
 
+    // Command (server side method) which takes care of a player shooting another player
     [Command]
-    void CmdPlayerShot (string _playerID, int _damage) {
-        Debug.Log(_playerID + " has been shot.");
+    void CmdPlayerShot (string _playerID, int _damage) {        
 
+        // Get the player being shot from the game manager so we can damage him
         Player _player = GameManager.GetPlayer(_playerID);
-        _player.TakeDamage(_damage);
+        _player.RpcTakeDamage(_damage);
     }
 }
