@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class RocketSetup : NetworkBehaviour {
+[RequireComponent(typeof(Player))]
+public class PlayerSetup : NetworkBehaviour {
 
     [SerializeField]
     private Behaviour[] componentsToDisable;
@@ -18,14 +19,16 @@ public class RocketSetup : NetworkBehaviour {
         } else {            
             DisableComponents();
             AssignRemoteLayer();
-        }
-
-        RegisterPlayer();
+        }     
     }
 
-    // Sets the name of the player to the net id
-    void RegisterPlayer() {
-        transform.name = "Player " + GetComponent<NetworkIdentity>().netId;
+    public override void OnStartClient() {
+        base.OnStartClient();
+
+        string _netID = GetComponent<NetworkIdentity>().netId.ToString();
+        Player _player = GetComponent<Player>();
+
+        GameManager.RegisterPlayer(_netID, _player);
     }
 
     // Assign remote player to the remote player layer
@@ -42,5 +45,10 @@ public class RocketSetup : NetworkBehaviour {
     // Attaching the camera to follow the local player
     void AttachCamera() {
         Camera.main.GetComponent<CameraFollow>().target = transform;
+    }
+
+    // Called when we are ddestroyed
+    private void OnDisable() {
+        GameManager.UnregisterPlayer(transform.name);
     }
 }

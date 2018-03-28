@@ -55,9 +55,11 @@ GameObject:
   - component: {fileID: 114877578232260194}
   - component: {fileID: 60968832874710298}
   - component: {fileID: 114694664488846948}
-  - component: {fileID: 114151068445010514}
   - component: {fileID: 114605969257702056}
+  - component: {fileID: 114151068445010514}
   - component: {fileID: 114645987432509226}
+  - component: {fileID: 114514712791219300}
+  - component: {fileID: 114222561738288774}
   m_Layer: 8
   m_Name: Rocket
   m_TagString: Player
@@ -86,7 +88,7 @@ Transform:
   m_GameObject: {fileID: 1509988531142506}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 0.5, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4774772740822186}
   m_RootOrder: 0
@@ -99,7 +101,7 @@ Transform:
   m_GameObject: {fileID: 1954983318120366}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 2, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4488397291439790}
   - {fileID: 4130050800414314}
@@ -184,6 +186,17 @@ MonoBehaviour:
   - {fileID: 114877578232260194}
   - {fileID: 114645987432509226}
   remoteLayerName: PlayerRemote
+--- !u!114 &114222561738288774
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1954983318120366}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd269ff118d751a4499da2cf429f9b8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114446540403325090
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -195,6 +208,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2275b7578aa04900b74d1dc120de696, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114514712791219300
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1954983318120366}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a90660102e2e61d448286a0e1a875b0b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
 --- !u!114 &114605969257702056
 MonoBehaviour:
   m_ObjectHideFlags: 1
