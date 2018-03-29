@@ -1,41 +1,51 @@
 using UnityEngine;
 using UnityEngine.Networking;
 
+[RequireComponent(typeof(WeaponManager))]
 public class RocketShoot : NetworkBehaviour {
 
-    private const string PLAYER_TAG = "Player";
-    
-    public RocketWeapon weapon;
-
-    [SerializeField]
-    private GameObject gun;
+    private const string PLAYER_TAG = "Player";    
 
     [SerializeField]
     private LayerMask mask;
 
-    
+    private WeaponManager weaponManager;
+    private RocketWeapon currentWeapon;
+
+
     private void Start() {
-        // Use this for serialization
-        if (gun == null) {
-            Debug.LogError("RocketShoot: No reference to gun transform");
-            this.enabled = false;
-        }
+        weaponManager = GetComponent<WeaponManager>();
     }
 
     private void Update() {
-        if (Input.GetButtonDown("Fire1")) {
-            Shoot();
+        currentWeapon = weaponManager.GetCurrentWeapon();
+
+        if (currentWeapon.fireRate <= 0f) {
+            // Single fire
+            if (Input.GetButtonDown("Fire1")) {
+                Shoot();
+            }
+        } else {
+            // Autofire
+            if (Input.GetButtonDown("Fire1")) {
+                // Start autofire. Repeat value to calculate RPM --> seconds
+                InvokeRepeating("Shoot", 0f, 1f/currentWeapon.fireRate);    
+            } else if (Input.GetButtonUp("Fire1")) {
+                // Stop autofire
+                CancelInvoke("Shoot");
+            }
         }
     }
 
     [Client]
     void Shoot() {
-        RaycastHit2D _hit = Physics2D.Raycast(gun.transform.position, gun.transform.up, weapon.range, mask);
-        Debug.DrawLine(gun.transform.position, gun.transform.position + gun.transform.up * 100, Color.cyan);
+        Transform _weaponSlot = weaponManager.GetWeaponSlot();
+        RaycastHit2D _hit = Physics2D.Raycast(_weaponSlot.transform.position, _weaponSlot.transform.up, currentWeapon.range, mask);
+        Debug.DrawLine(_weaponSlot.transform.position, _weaponSlot.transform.position + _weaponSlot.transform.up * 100, Color.cyan);
 
         if (_hit.collider != null) {
             if (_hit.collider.tag == PLAYER_TAG) {
-                CmdPlayerShot(_hit.collider.name, weapon.damage);
+                CmdPlayerShot(_hit.collider.name, currentWeapon.damage);
             }
         }
     }
