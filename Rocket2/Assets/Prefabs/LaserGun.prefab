@@ -143,7 +143,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mussleFlash: {fileID: 198115962877338546}
-  hitEffectPrefab: {fileID: 0}
+  hitEffectPrefab: {fileID: 1702143271356562, guid: abb8f6dae94648d4ab5c3e139ea77686,
+    type: 2}
 --- !u!198 &198115962877338546
 ParticleSystem:
   m_ObjectHideFlags: 1

@@ -13,7 +13,11 @@ public class RocketEngine : MonoBehaviour {
     private float thruster = 0f;
 
     [SerializeField]
-    private Transform rocketFlame;
+    public Transform thrusterSlot;
+
+    [SerializeField]
+    private GameObject rocketFlamePrefab;
+    private GameObject rocketFlameIns;
     private bool rocketFlameEnabled = false;
 
     private Rigidbody2D rb;
@@ -21,7 +25,19 @@ public class RocketEngine : MonoBehaviour {
     // Use this for initialization
     void Start() {
         rb = GetComponent<Rigidbody2D>();
-        SetRocketFlame(false);
+        InitRocketFlame();
+    }
+
+    // Instantiates a rocket flame from selected prefab at the rocket engine position
+    private void InitRocketFlame() {        
+        if (rocketFlamePrefab == null) {
+            Debug.LogWarning("No rocket flame prefab configured");
+        }
+        else {
+            rocketFlameIns = Instantiate(rocketFlamePrefab, thrusterSlot.position, thrusterSlot.rotation);
+            rocketFlameIns.transform.SetParent(thrusterSlot);
+            SetRocketFlame(false);
+        }
     }
 
     // Sets the rocket engine rotation by taking a roation input (between -1 and 1) and adds the rotation speed.
@@ -35,7 +51,7 @@ public class RocketEngine : MonoBehaviour {
     }
 
     // Run every graphics update
-    private void Update() {
+    private void Update() {        
         UpdateRocketFlame();
     }
 
@@ -62,14 +78,15 @@ public class RocketEngine : MonoBehaviour {
 
     private void UpdateRocketFlame() {
         bool thrustersOn = (thruster > 0f);
-        if (thrustersOn != rocketFlameEnabled) {
+        if (rocketFlameIns != null && thrustersOn != rocketFlameEnabled) {            
             rocketFlameEnabled = thrustersOn;
+            Debug.Log("Setting rocket flame: " + rocketFlameEnabled);
             SetRocketFlame(rocketFlameEnabled);
         }
     }
 
     private void SetRocketFlame(bool _enabled) {
-        foreach (Transform child in rocketFlame) {
+        foreach (Transform child in rocketFlameIns.transform) {
             ParticleSystem.EmissionModule em = child.GetComponent<ParticleSystem>().emission;
             em.enabled = _enabled;
         }
