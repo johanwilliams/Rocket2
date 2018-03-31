@@ -37,8 +37,43 @@ public class RocketShoot : NetworkBehaviour {
         }
     }
 
+    // Called on the server when a player shoots
+    [Command]
+    void CmdOnShoot() {
+        RpcDoShootEffect();
+    }
+
+    // Called on all clients when we need to do a shoot effect
+    [ClientRpc]
+    void RpcDoShootEffect() {
+        weaponManager.GetCurrentWeaponGraphics().mussleFlash.Play();
+    }
+
+    // Called on the server when we hit something. Takes the hitpoint and the normal of the hit surface as parameters
+    [Command]
+    void CmdOnHit(Vector3 _pos, Vector3 _normal) {
+        RpcDoHitEffect(_pos, _normal);
+    }
+
+    // Called on all clienct to show hit effect
+    [ClientRpc]
+    void RpcDoHitEffect(Vector3 _pos, Vector3 _normal) {
+
+        //TODO: Object pooling could come in useful here if we do a lot of instantiating
+        GameObject _hitEffect = Instantiate(weaponManager.GetCurrentWeaponGraphics().hitEffectPrefab, _pos, Quaternion.LookRotation(_normal));
+        Destroy(_hitEffect, 2f);
+    }
+
     [Client]
     void Shoot() {
+
+        // Only do the raycast if we are the local player
+        if (!isLocalPlayer)
+            return;
+
+        // Call the OnShoot method on the server
+        CmdOnShoot();
+
         Transform _weaponSlot = weaponManager.GetWeaponSlot();
         RaycastHit2D _hit = Physics2D.Raycast(_weaponSlot.transform.position, _weaponSlot.transform.up, currentWeapon.range, mask);
         Debug.DrawLine(_weaponSlot.transform.position, _weaponSlot.transform.position + _weaponSlot.transform.up * 100, Color.cyan);
@@ -47,6 +82,9 @@ public class RocketShoot : NetworkBehaviour {
             if (_hit.collider.tag == PLAYER_TAG) {
                 CmdPlayerShot(_hit.collider.name, currentWeapon.damage);
             }
+
+            // Call the OnHit method on the server
+            CmdOnHit(_hit.point, _hit.normal);
         }
     }
 

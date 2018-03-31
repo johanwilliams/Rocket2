@@ -13,6 +13,7 @@ public class WeaponManager : NetworkBehaviour {
     private RocketWeapon primaryWeapon;
 
     private RocketWeapon currentWeapon;
+    private WeaponGraphics currentWeaponGraphics;
 
     private void Start() {
         // Use this for serialization
@@ -28,6 +29,10 @@ public class WeaponManager : NetworkBehaviour {
         return currentWeapon;
     }
 
+    public WeaponGraphics GetCurrentWeaponGraphics() {
+        return currentWeaponGraphics;
+    }
+
     public Transform GetWeaponSlot() {
         return weaponSlot;
     }
@@ -38,8 +43,14 @@ public class WeaponManager : NetworkBehaviour {
         if (_weapon.graphics != null) { 
             GameObject _weaponIns = Instantiate(_weapon.graphics, weaponSlot.position, weaponSlot.rotation);
             _weaponIns.transform.SetParent(weaponSlot);
+
+            currentWeaponGraphics = _weaponIns.GetComponent<WeaponGraphics>();
+            if (currentWeaponGraphics == null) {
+                Debug.LogError("No WeaponGraphics on the weapon " + _weaponIns.name);
+            }
+
             if (isLocalPlayer) {
-                _weaponIns.layer = LayerMask.NameToLayer(weaponLayerName);
+                Util.SetLayerRecursively(_weaponIns, LayerMask.NameToLayer(weaponLayerName));
             }
         }
     }
