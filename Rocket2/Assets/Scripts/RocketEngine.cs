@@ -52,6 +52,13 @@ public class RocketEngine : MonoBehaviour {
         }
     }
 
+    // Resets the engine (typically when respawning)
+    public void Reset() {
+        fuelAmout = 1f;
+        rb.velocity = Vector2.zero;
+        rb.angularVelocity = 0f;
+    }
+
     // Sets the rocket engine rotation by taking a roation input (between -1 and 1) and adds the rotation speed.
     public void ApplyRotation(float _rotation) {
         rotation = _rotation * rotationSpeed;
