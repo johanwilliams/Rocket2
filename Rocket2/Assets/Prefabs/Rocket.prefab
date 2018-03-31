@@ -212,6 +212,8 @@ MonoBehaviour:
   - {fileID: 114446540403325090}
   - {fileID: 114877578232260194}
   remoteLayerName: PlayerRemote
+  playerUIPrefab: {fileID: 1554893710277806, guid: 78365ff9a4bdb7841beaf6d426ba0dfb,
+    type: 2}
 --- !u!114 &114446540403325090
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -254,8 +256,8 @@ MonoBehaviour:
   m_SyncRotationAxis: 3
   m_RotationSyncCompression: 0
   m_SyncSpin: 0
-  m_MovementTheshold: 0.001
-  m_VelocityThreshold: 0.0001
+  m_MovementTheshold: 0.01
+  m_VelocityThreshold: 0.01
   m_SnapThreshold: 5
   m_InterpolateRotation: 1
   m_InterpolateMovement: 1
@@ -337,6 +339,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotationSpeed: 250
   thrusterForce: 2000
+  fuelBurnSpeed: 0.01
+  fuelRegenSpeed: 0.02
   thrusterSlot: {fileID: 4320595864340562}
   rocketFlamePrefab: {fileID: 1626603654462600, guid: abfd1320dd555a245bd4e446f4d4a0d4,
     type: 2}

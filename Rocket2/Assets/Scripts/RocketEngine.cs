@@ -11,6 +11,18 @@ public class RocketEngine : MonoBehaviour {
     [SerializeField]
     private float thrusterForce = 1000f;
     private float thruster = 0f;
+    private bool thrustersOn;
+
+    private float fuelAmout = 1f;
+    [SerializeField]
+    private float fuelBurnSpeed = 0.05f;
+    [SerializeField]
+    private float fuelRegenSpeed = 0.01f;
+
+    public float GetFuelAmount() {
+        return fuelAmout;
+    }
+    
 
     [SerializeField]
     public Transform thrusterSlot;
@@ -59,6 +71,7 @@ public class RocketEngine : MonoBehaviour {
     private void FixedUpdate() {
         PerformRotation();
         PerformMovement();
+        ReFuel();
     }
 
     // Rotats the rocket
@@ -68,16 +81,30 @@ public class RocketEngine : MonoBehaviour {
         }
     }
 
-    // Moves the rocket (applies thruster force)
+    // Moves the rocket (applies thruster force and burns/regens fuel)
     private void PerformMovement() {
         // Only apply thruster if positive (i.e. no reverse thruster)
-        if (thruster > 0f) {
-            rb.AddForce(rb.transform.up * thruster * Time.fixedDeltaTime);
+        if (thruster > 0f && fuelAmout > 0f) {            
+            // Burn fuel
+            fuelAmout -= fuelBurnSpeed * Time.fixedDeltaTime;
+
+            if (fuelAmout >= 0.01f) {
+                thrustersOn = true;
+                rb.AddForce(rb.transform.up * thruster * Time.fixedDeltaTime);
+            }            
+        } else {            
+            thrustersOn = false;
+        }
+        fuelAmout = Mathf.Clamp(fuelAmout, 0f, 1f);
+    }
+
+    private void ReFuel() {
+        if (rb.velocity == Vector2.zero) {
+            fuelAmout += fuelRegenSpeed * Time.fixedDeltaTime;
         }
     }
 
-    private void UpdateRocketFlame() {
-        bool thrustersOn = (thruster > 0f);
+        private void UpdateRocketFlame() {        
         if (rocketFlameIns != null && thrustersOn != rocketFlameEnabled) {            
             rocketFlameEnabled = thrustersOn;
             Debug.Log("Setting rocket flame: " + rocketFlameEnabled);
