@@ -145,6 +145,8 @@ MonoBehaviour:
   mussleFlash: {fileID: 198115962877338546}
   hitEffectPrefab: {fileID: 1702143271356562, guid: abb8f6dae94648d4ab5c3e139ea77686,
     type: 2}
+  trailEffectPrefab: {fileID: 1634255604561812, guid: 5d8175bdc2c00b747b9b70302e0068c6,
+    type: 2}
 --- !u!198 &198115962877338546
 ParticleSystem:
   m_ObjectHideFlags: 1

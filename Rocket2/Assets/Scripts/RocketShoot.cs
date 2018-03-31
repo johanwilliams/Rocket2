@@ -39,28 +39,45 @@ public class RocketShoot : NetworkBehaviour {
 
     // Called on the server when a player shoots
     [Command]
-    void CmdOnShoot() {
-        RpcDoShootEffect();
+    void CmdOnShoot(Vector3 _hitPos) {
+        RpcDoShootEffect(_hitPos);
     }
 
     // Called on all clients when we need to do a shoot effect
     [ClientRpc]
-    void RpcDoShootEffect() {
+    void RpcDoShootEffect(Vector3 _hitPos) {
         weaponManager.GetCurrentWeaponGraphics().mussleFlash.Play();
+        RenderTrail(_hitPos);
+    }
+
+    // Renders a weapon trail (if we have one configured)
+    private void RenderTrail(Vector3 _hitPos) {
+        Debug.Log("RENDER TRAIL");
+        GameObject trailEffectPrefab = weaponManager.GetCurrentWeaponGraphics().trailEffectPrefab;
+        if (trailEffectPrefab != null) {
+            Transform _weaponSlot = weaponManager.GetWeaponSlot();
+            GameObject trailClone = Instantiate(trailEffectPrefab, _weaponSlot.position, _weaponSlot.rotation);            
+            LineRenderer lr = trailClone.GetComponent<LineRenderer>();
+            if (lr != null) {
+                lr.SetPosition(0, _weaponSlot.transform.position);
+                lr.SetPosition(1, _hitPos);
+            }
+            Destroy(trailClone, 0.04f);
+        }
     }
 
     // Called on the server when we hit something. Takes the hitpoint and the normal of the hit surface as parameters
     [Command]
-    void CmdOnHit(Vector3 _pos, Vector3 _normal) {
-        RpcDoHitEffect(_pos, _normal);
+    void CmdOnHit(Vector3 _hitPos, Vector3 _normal) {
+        RpcDoHitEffect(_hitPos, _normal);
     }
 
     // Called on all clienct to show hit effect
     [ClientRpc]
-    void RpcDoHitEffect(Vector3 _pos, Vector3 _normal) {
+    void RpcDoHitEffect(Vector3 _hitPos, Vector3 _normal) {
 
         //TODO: Object pooling could come in useful here if we do a lot of instantiating
-        GameObject _hitEffect = Instantiate(weaponManager.GetCurrentWeaponGraphics().hitEffectPrefab, _pos, Quaternion.LookRotation(_normal));
+        GameObject _hitEffect = Instantiate(weaponManager.GetCurrentWeaponGraphics().hitEffectPrefab, _hitPos, Quaternion.LookRotation(_normal));
         Destroy(_hitEffect, 2f);
     }
 
@@ -71,21 +88,23 @@ public class RocketShoot : NetworkBehaviour {
         if (!isLocalPlayer)
             return;
 
-        // Call the OnShoot method on the server
-        CmdOnShoot();
-
         Transform _weaponSlot = weaponManager.GetWeaponSlot();
         RaycastHit2D _hit = Physics2D.Raycast(_weaponSlot.transform.position, _weaponSlot.transform.up, currentWeapon.range, mask);
-        Debug.DrawLine(_weaponSlot.transform.position, _weaponSlot.transform.position + _weaponSlot.transform.up * 100, Color.cyan);
+        Debug.DrawLine(_weaponSlot.transform.position, _weaponSlot.transform.position + _weaponSlot.transform.up * currentWeapon.range, Color.cyan);
 
+        Vector3 _hitPos = _weaponSlot.transform.position + _weaponSlot.transform.up * currentWeapon.range;
         if (_hit.collider != null) {
             if (_hit.collider.tag == PLAYER_TAG) {
                 CmdPlayerShot(_hit.collider.name, currentWeapon.damage);
             }
+            _hitPos = _hit.point;
 
             // Call the OnHit method on the server
-            CmdOnHit(_hit.point, _hit.normal);
+            CmdOnHit(_hitPos, _hit.normal);
         }
+
+        // Call the OnShoot method on the server
+        CmdOnShoot(_hitPos);
     }
 
     // Command (server side method) which takes care of a player shooting another player
