@@ -30,18 +30,19 @@ public class PlayerSetup : NetworkBehaviour {
 
             //Configure PlayerUI
             PlayerUI ui = playerUIInstance.GetComponent<PlayerUI>();
+            
             if (ui == null)
                 Debug.LogError("No PlayerUI component on PlayerUI component");
             else
                 ui.SetRocketEngine(GetComponent<RocketEngine>());
+
+            // Call setup on the player to setup all propeties for the player
+            GetComponent<Player>().SetupPlayer();
         } else {            
             // Stuff to do for all remote players
             DisableComponents();
             AssignRemoteLayer();                
         }
-
-        // Call setup on the player to setup all propeties for the player
-        GetComponent<Player>().Setup();
     }
 
     // Called when a cliend connects. Registers the player with the game manager

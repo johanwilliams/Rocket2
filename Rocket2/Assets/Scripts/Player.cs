@@ -34,16 +34,35 @@ public class Player : NetworkBehaviour {
     [SerializeField]
     private GameObject spawnEffect;
 
+    private bool firstSetup = true; 
+
     private void Start() {
         rocketEngine = GetComponent<RocketEngine>();
     }
 
     // The player setup method which initiate all variables, components etc at spawn
-    public void Setup() {        
-        wasEnabled = new bool[disableOnDeath.Length];
-        for (int i = 0; i < wasEnabled.Length; i++) {
-            wasEnabled[i] = disableOnDeath[i].enabled;
+    public void SetupPlayer() {
+        CmdBroadcastNewPlayerSetup();
+    }
+
+    // Server mwthod that calls all clients, notifying them of a new player being setup
+    [Command]
+    private void CmdBroadcastNewPlayerSetup() {
+        RpcSetupPlayerOnAllClients();
+    }
+
+    // Called on all clients to setup a new player
+    [ClientRpc]
+    private void RpcSetupPlayerOnAllClients() {
+        if (firstSetup) {
+            wasEnabled = new bool[disableOnDeath.Length];
+            for (int i = 0; i < wasEnabled.Length; i++) {
+                wasEnabled[i] = disableOnDeath[i].enabled;
+            }
+            firstSetup = false;
         }
+        
+
         SetDefaults();
     }
 
@@ -77,7 +96,7 @@ public class Player : NetworkBehaviour {
             _col.enabled = true;
         }
 
-        // Spawn a deatch effect
+        // Spawn a spawn effect
         GameObject _spawnEffectInst = Instantiate(spawnEffect, transform.position, Quaternion.identity);
         Destroy(_spawnEffectInst, 3f);
 
@@ -132,7 +151,10 @@ public class Player : NetworkBehaviour {
         transform.rotation = _spawnPoint.rotation;
         rocketEngine.Reset();
 
-        SetDefaults();
+        // Give some time for the tranform to be sent to all clients before reseting the player
+        yield return new WaitForSeconds(0.1f);
+
+        SetupPlayer();
 
         Debug.Log("Player " + transform.name + " respawned at spawnpoint " + _spawnPoint.transform.name);
     }
