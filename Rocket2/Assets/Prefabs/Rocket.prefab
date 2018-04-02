@@ -210,7 +210,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   componentsToDisable:
   - {fileID: 114446540403325090}
-  - {fileID: 114877578232260194}
   remoteLayerName: PlayerRemote
   playerUIPrefab: {fileID: 1554893710277806, guid: 78365ff9a4bdb7841beaf6d426ba0dfb,
     type: 2}
@@ -240,7 +239,6 @@ MonoBehaviour:
   disableOnDeath:
   - {fileID: 114446540403325090}
   - {fileID: 114645987432509226}
-  - {fileID: 114877578232260194}
   disableGameObjectsOnDeath:
   - {fileID: 1509988531142506}
   - {fileID: 1818611148009318}

@@ -1,8 +1,9 @@
 using System;
 using UnityEngine;
+using UnityEngine.Networking;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class RocketEngine : MonoBehaviour {
+public class RocketEngine : NetworkBehaviour {
 
     [SerializeField]
     private float rotationSpeed = 200f;
@@ -11,7 +12,13 @@ public class RocketEngine : MonoBehaviour {
     [SerializeField]
     private float thrusterForce = 1000f;
     private float thruster = 0f;
-    private bool thrustersOn;
+
+    [SyncVar]
+    private bool _isThrustersOn = false;
+    public bool isThrustersOn {
+        get { return _isThrustersOn; }
+        protected set { _isThrustersOn = value; }
+    }
 
     private float fuelAmout = 1f;
     [SerializeField]
@@ -30,7 +37,6 @@ public class RocketEngine : MonoBehaviour {
     [SerializeField]
     private GameObject rocketFlamePrefab;
     private GameObject rocketFlameIns;
-    private bool rocketFlameEnabled = false;
 
     private Rigidbody2D rb;
 
@@ -48,7 +54,6 @@ public class RocketEngine : MonoBehaviour {
         else {
             rocketFlameIns = Instantiate(rocketFlamePrefab, thrusterSlot.position, thrusterSlot.rotation);
             rocketFlameIns.transform.SetParent(thrusterSlot);
-            SetRocketFlame(false);
         }
     }
 
@@ -70,15 +75,20 @@ public class RocketEngine : MonoBehaviour {
     }
 
     // Run every graphics update
-    private void Update() {        
+    private void Update() { 
+        if (isLocalPlayer) {
+            UpdateFuel();
+        }
+        
         UpdateRocketFlame();
     }
 
     // Run every physics iteration
     private void FixedUpdate() {
-        PerformRotation();
-        PerformMovement();
-        ReFuel();
+        if (isLocalPlayer) {
+            PerformRotation();
+            PerformMovement();
+        }
     }
 
     // Rotats the rocket
@@ -91,38 +101,30 @@ public class RocketEngine : MonoBehaviour {
     // Moves the rocket (applies thruster force and burns/regens fuel)
     private void PerformMovement() {
         // Only apply thruster if positive (i.e. no reverse thruster)
-        if (thruster > 0f && fuelAmout > 0f) {            
-            // Burn fuel
-            fuelAmout -= fuelBurnSpeed * Time.fixedDeltaTime;
-
-            if (fuelAmout >= 0.01f) {
-                thrustersOn = true;
-                rb.AddForce(rb.transform.up * thruster * Time.fixedDeltaTime);
-            }            
+        if (thruster > 0f && fuelAmout > 0.01f) {                                    
+            isThrustersOn = true;
+            rb.AddForce(rb.transform.up * thruster * Time.fixedDeltaTime);                       
         } else {            
-            thrustersOn = false;
+            isThrustersOn = false;
+        }        
+    }
+
+    private void UpdateFuel() {
+        if (isThrustersOn && fuelAmout >= 0.01f) {
+            // Burn fuel
+            fuelAmout -= fuelBurnSpeed * Time.deltaTime;
+        } else if (rb.velocity == Vector2.zero){
+            fuelAmout += fuelRegenSpeed * Time.deltaTime;
         }
         fuelAmout = Mathf.Clamp(fuelAmout, 0f, 1f);
     }
 
-    private void ReFuel() {
-        if (rb.velocity == Vector2.zero) {
-            fuelAmout += fuelRegenSpeed * Time.fixedDeltaTime;
-        }
-    }
-
-        private void UpdateRocketFlame() {        
-        if (rocketFlameIns != null && thrustersOn != rocketFlameEnabled) {            
-            rocketFlameEnabled = thrustersOn;
-            Debug.Log("Setting rocket flame: " + rocketFlameEnabled);
-            SetRocketFlame(rocketFlameEnabled);
-        }
-    }
-
-    private void SetRocketFlame(bool _enabled) {
-        foreach (Transform child in rocketFlameIns.transform) {
-            ParticleSystem.EmissionModule em = child.GetComponent<ParticleSystem>().emission;
-            em.enabled = _enabled;
+    private void UpdateRocketFlame() {
+        if (rocketFlameIns != null) { 
+            foreach (Transform child in rocketFlameIns.transform) {
+                ParticleSystem.EmissionModule em = child.GetComponent<ParticleSystem>().emission;
+                em.enabled = isThrustersOn;
+            }
         }
     }
 }
