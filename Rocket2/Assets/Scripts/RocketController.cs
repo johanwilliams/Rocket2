@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 [RequireComponent(typeof(RocketEngine))]
 public class RocketController : MonoBehaviour {
@@ -14,6 +14,8 @@ public class RocketController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        if (PauseMenu.IsOn)
+            return;
 
         // Get the horizontal and vertical input
         float _inputHor = Input.GetAxis("Horizontal");

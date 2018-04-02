@@ -18,6 +18,9 @@ public class RocketShoot : NetworkBehaviour {
     }
 
     private void Update() {
+        if (PauseMenu.IsOn)
+            return;
+
         currentWeapon = weaponManager.GetCurrentWeapon();
 
         if (currentWeapon.fireRate <= 0f) {

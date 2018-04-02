@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class PlayerUI : MonoBehaviour {
@@ -7,12 +8,28 @@ public class PlayerUI : MonoBehaviour {
 
     private RocketEngine rocketEngine;
 
+    [SerializeField]
+    GameObject pauseMenu;
+
+    private void Start() {
+        PauseMenu.IsOn = false;
+    }
+
     public void SetRocketEngine(RocketEngine _rocketEngine) {
         rocketEngine = _rocketEngine;
     }
 
     private void Update() {
         SetFuelAmount(rocketEngine.GetFuelAmount());
+
+        if (Input.GetKeyDown(KeyCode.Escape)) {
+            TogglePauseMenu();
+        }
+    }
+
+    private void TogglePauseMenu() {
+        pauseMenu.SetActive(!pauseMenu.activeSelf);
+        PauseMenu.IsOn = pauseMenu.activeSelf;        
     }
 
     void SetFuelAmount(float _amount) {
