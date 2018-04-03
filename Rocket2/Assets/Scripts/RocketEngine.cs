@@ -76,10 +76,7 @@ public class RocketEngine : NetworkBehaviour {
     }
 
     // Run every graphics update
-    private void Update() {
-        if (!isLocalPlayer)
-            return;
-
+    private void Update() {        
         UpdateFuel();                
     }
 
