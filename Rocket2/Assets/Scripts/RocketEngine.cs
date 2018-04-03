@@ -13,12 +13,13 @@ public class RocketEngine : NetworkBehaviour {
     private float thrusterForce = 1000f;
     private float thruster = 0f;
 
-    [SyncVar]
-    private bool _isThrustersOn = false;
+    [SyncVar(hook = "OnThrusterChange")]
+    public bool isThrustersOn = false;
+    /*private bool _isThrustersOn = false;
     public bool isThrustersOn {
         get { return _isThrustersOn; }
         protected set { _isThrustersOn = value; }
-    }
+    }*/
 
     private float fuelAmout = 1f;
     [SerializeField]
@@ -75,20 +76,21 @@ public class RocketEngine : NetworkBehaviour {
     }
 
     // Run every graphics update
-    private void Update() { 
-        if (isLocalPlayer) {
-            UpdateFuel();
-        }
-        
-        UpdateRocketFlame();
+    private void Update() {
+        if (!isLocalPlayer)
+            return;
+
+        UpdateFuel();                
     }
 
     // Run every physics iteration
     private void FixedUpdate() {
-        if (isLocalPlayer) {
-            PerformRotation();
-            PerformMovement();
-        }
+        if (!isLocalPlayer)
+            return;
+
+        PerformRotation();
+        PerformMovement();
+        
     }
 
     // Rotats the rocket
@@ -101,12 +103,19 @@ public class RocketEngine : NetworkBehaviour {
     // Moves the rocket (applies thruster force and burns/regens fuel)
     private void PerformMovement() {
         // Only apply thruster if positive (i.e. no reverse thruster)
-        if (thruster > 0f && fuelAmout > 0.01f) {                                    
-            isThrustersOn = true;
+        //if (thruster > 0f && fuelAmout > 0.01f) {                                    
+        if (thruster > 0f) {
+            CmdSetThruster(true);
             rb.AddForce(rb.transform.up * thruster * Time.fixedDeltaTime);                       
-        } else {            
-            isThrustersOn = false;
+        } else {
+            CmdSetThruster(false);
         }        
+    }
+
+    [Command]
+    private void CmdSetThruster(bool _isThrustersOn) {
+        if (_isThrustersOn != isThrustersOn)
+            isThrustersOn = _isThrustersOn;
     }
 
     private void UpdateFuel() {
@@ -119,7 +128,7 @@ public class RocketEngine : NetworkBehaviour {
         fuelAmout = Mathf.Clamp(fuelAmout, 0f, 1f);
     }
 
-    private void UpdateRocketFlame() {
+    private void OnThrusterChange(bool isThrustersOn) {        
         if (rocketFlameIns != null) { 
             foreach (Transform child in rocketFlameIns.transform) {
                 ParticleSystem.EmissionModule em = child.GetComponent<ParticleSystem>().emission;

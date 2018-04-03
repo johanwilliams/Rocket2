@@ -17,6 +17,11 @@ public class RocketShoot : NetworkBehaviour {
         weaponManager = GetComponent<WeaponManager>();
     }
 
+    private void OnDisable() {
+        // Stop autofire
+        CancelInvoke("Shoot");
+    }
+
     private void Update() {
         if (PauseMenu.IsOn)
             return;
