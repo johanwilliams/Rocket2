@@ -103,8 +103,7 @@ public class RocketEngine : NetworkBehaviour {
     // Moves the rocket (applies thruster force and burns/regens fuel)
     private void PerformMovement() {
         // Only apply thruster if positive (i.e. no reverse thruster)
-        //if (thruster > 0f && fuelAmout > 0.01f) {                                    
-        if (thruster > 0f) {
+        if (thruster > 0f && fuelAmout > 0.01f) {                                            
             CmdSetThruster(true);
             rb.AddForce(rb.transform.up * thruster * Time.fixedDeltaTime);                       
         } else {
