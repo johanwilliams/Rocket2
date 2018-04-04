@@ -13,7 +13,7 @@ public class RocketEngine : NetworkBehaviour {
     private float thrusterForce = 1000f;
     private float thruster = 0f;
 
-    [SyncVar(hook = "OnThrusterChange")]
+    //[SyncVar(hook = "OnThrusterChange")]
     public bool isThrustersOn = false;
     /*private bool _isThrustersOn = false;
     public bool isThrustersOn {
@@ -100,25 +100,30 @@ public class RocketEngine : NetworkBehaviour {
     // Moves the rocket (applies thruster force and burns/regens fuel)
     private void PerformMovement() {
         // Only apply thruster if positive (i.e. no reverse thruster)
-        if (thruster > 0f && fuelAmout > 0.01f) {                                            
-            CmdSetThruster(true);
+        if (thruster > 0f && fuelAmout > 0.01f) {                                                        
             rb.AddForce(rb.transform.up * thruster * Time.fixedDeltaTime);                       
+            if (!isThrustersOn)
+                CmdSetThruster(true);
         } else {
-            CmdSetThruster(false);
+            if (isThrustersOn)
+                CmdSetThruster(false);
         }        
     }
 
+    // Notify the server that we have changed our thruster (so it can notify all clients which can render the rocket flame etc properly)
     [Command]
     private void CmdSetThruster(bool _isThrustersOn) {
         RpcSetThruster(_isThrustersOn);
     }
 
+    // Notfy all clients of the change in thruster so they can redner rocket flame etc properly
     [ClientRpc]
     private void RpcSetThruster(bool _isThrustersOn) {
-        if (_isThrustersOn != isThrustersOn)
-            isThrustersOn = _isThrustersOn;
+        isThrustersOn = _isThrustersOn;
+        SetRocketFlame();
     }
 
+    // Update our current fuel amount. Burn fuel if the thrusters are on (and we have fuel left). Refill fuel if we are standing on the ground.
     private void UpdateFuel() {
         if (isThrustersOn && fuelAmout >= 0.01f) {
             // Burn fuel
@@ -129,7 +134,8 @@ public class RocketEngine : NetworkBehaviour {
         fuelAmout = Mathf.Clamp(fuelAmout, 0f, 1f);
     }
 
-    private void OnThrusterChange(bool isThrustersOn) {        
+    // Update the rocket flame to match the state of our thruster. Thruster off disables emission, thrusters on enables the emission
+    private void SetRocketFlame() {        
         if (rocketFlameIns != null) { 
             foreach (Transform child in rocketFlameIns.transform) {
                 ParticleSystem.EmissionModule em = child.GetComponent<ParticleSystem>().emission;
