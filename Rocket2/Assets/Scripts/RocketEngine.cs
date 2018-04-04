@@ -110,6 +110,11 @@ public class RocketEngine : NetworkBehaviour {
 
     [Command]
     private void CmdSetThruster(bool _isThrustersOn) {
+        RpcSetThruster(_isThrustersOn);
+    }
+
+    [ClientRpc]
+    private void RpcSetThruster(bool _isThrustersOn) {
         if (_isThrustersOn != isThrustersOn)
             isThrustersOn = _isThrustersOn;
     }

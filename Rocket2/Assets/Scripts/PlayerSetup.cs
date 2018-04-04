@@ -32,9 +32,9 @@ public class PlayerSetup : NetworkBehaviour {
             PlayerUI ui = playerUIInstance.GetComponent<PlayerUI>();
             
             if (ui == null)
-                Debug.LogError("No PlayerUI component on PlayerUI component");
+                Debug.LogError("No PlayerUI component on PlayerUI game object");
             else
-                ui.SetRocketEngine(GetComponent<RocketEngine>());
+                ui.SetPlayer(GetComponent<Player>());
 
             // Call setup on the player to setup all propeties for the player
             GetComponent<Player>().SetupPlayer();

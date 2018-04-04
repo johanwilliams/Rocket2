@@ -6,6 +6,7 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField]
     private RectTransform fuelFill;
 
+    private Player player;
     private RocketEngine rocketEngine;
 
     [SerializeField]
@@ -15,8 +16,9 @@ public class PlayerUI : MonoBehaviour {
         PauseMenu.IsOn = false;
     }
 
-    public void SetRocketEngine(RocketEngine _rocketEngine) {
-        rocketEngine = _rocketEngine;
+    public void SetPlayer(Player _player) {
+        player = _player;
+        rocketEngine = player.GetComponent<RocketEngine>();
     }
 
     private void Update() {
