@@ -12,6 +12,7 @@ public class RocketShoot : NetworkBehaviour {
     private WeaponManager weaponManager;
     private RocketWeapon currentWeapon;
 
+    private float lastShotTime = 0f;
 
     private void Start() {
         weaponManager = GetComponent<WeaponManager>();
@@ -28,21 +29,22 @@ public class RocketShoot : NetworkBehaviour {
 
         currentWeapon = weaponManager.GetCurrentWeapon();
 
-        if (currentWeapon.fireRate <= 0f) {
-            // Single fire
-            if (Input.GetButtonDown("Fire1")) {
-                Shoot();
-            }
-        } else {
-            // Autofire
-            if (Input.GetButtonDown("Fire1")) {
-                // Start autofire. Repeat value to calculate RPM --> seconds
-                InvokeRepeating("Shoot", 0f, 1f/currentWeapon.fireRate);    
-            } else if (Input.GetButtonUp("Fire1")) {
-                // Stop autofire
-                CancelInvoke("Shoot");
-            }
+        if (Input.GetButtonDown("Fire1") && isShootingAllowed()) {
+            if (currentWeapon.fireRate <= 0f)
+                Shoot();    // Single fire
+            else
+                InvokeRepeating("Shoot", 0f, 1f/currentWeapon.fireRate);    // Autofire
+        } else if (Input.GetButtonUp("Fire1")) {
+            // Stop autofire
+            CancelInvoke("Shoot");
         }
+    }
+
+    // Check that we are not cheating the rapid fire but tapping fire
+    private bool isShootingAllowed() {
+        if ((Time.time - lastShotTime) < 1f / currentWeapon.fireRate)
+            return false;        
+        return true;
     }
 
     // Called on the server when a player shoots
@@ -60,7 +62,6 @@ public class RocketShoot : NetworkBehaviour {
 
     // Renders a weapon trail (if we have one configured)
     private void RenderTrail(Vector3 _hitPos) {
-        Debug.Log("RENDER TRAIL");
         GameObject trailEffectPrefab = weaponManager.GetCurrentWeaponGraphics().trailEffectPrefab;
         if (trailEffectPrefab != null) {
             Transform _weaponSlot = weaponManager.GetWeaponSlot();
@@ -91,7 +92,6 @@ public class RocketShoot : NetworkBehaviour {
 
     [Client]
     void Shoot() {
-
         // Only do the raycast if we are the local player
         if (!isLocalPlayer)
             return;
@@ -113,6 +113,8 @@ public class RocketShoot : NetworkBehaviour {
 
         // Call the OnShoot method on the server
         CmdOnShoot(_hitPos);
+
+        lastShotTime = Time.time;
     }
 
     // Command (server side method) which takes care of a player shooting another player
