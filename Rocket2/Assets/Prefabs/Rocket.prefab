@@ -345,8 +345,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotationSpeed: 250
   thrusterForce: 2000
-  fuelBurnSpeed: 0.015
-  fuelRegenSpeed: 0.02
+  isThrustersOn: 0
+  fuelBurnSpeed: 0.03
+  fuelRegenSpeed: 0.04
   thrusterSlot: {fileID: 4320595864340562}
   rocketFlamePrefab: {fileID: 1626603654462600, guid: abfd1320dd555a245bd4e446f4d4a0d4,
     type: 2}
