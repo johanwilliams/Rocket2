@@ -14,8 +14,17 @@ public class RocketController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (PauseMenu.IsOn)
+        if (PauseMenu.IsOn) {
+            if (Cursor.lockState != CursorLockMode.None)
+                Cursor.lockState = CursorLockMode.None;
+            rocketEngine.ApplyRotation(0f);
+            rocketEngine.ApplyThruster(0f);
+
             return;
+        }
+
+        if (Cursor.lockState != CursorLockMode.Locked)
+            Cursor.lockState = CursorLockMode.Locked;
 
         // Get the horizontal and vertical input
         float _inputHor = Input.GetAxis("Horizontal");

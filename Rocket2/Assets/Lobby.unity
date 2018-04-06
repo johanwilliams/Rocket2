@@ -209,7 +209,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1658419774}
+      - m_Target: {fileID: 843738711}
         m_MethodName: CreateRoom
         m_Mode: 1
         m_Arguments:
@@ -644,7 +644,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1658419774}
+      - m_Target: {fileID: 843738711}
         m_MethodName: SetRoomName
         m_Mode: 0
         m_Arguments:
@@ -1057,6 +1057,47 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 776393817}
+--- !u!1 &843738710
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 843738712}
+  - component: {fileID: 843738711}
+  m_Layer: 0
+  m_Name: HostGame
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &843738711
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 843738710}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31d7a4979323cff4e9b7642991daa5f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  roomSize: 6
+--- !u!4 &843738712
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 843738710}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &851983819
 GameObject:
   m_ObjectHideFlags: 0
@@ -1269,6 +1310,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   status: {fileID: 912625958}
+  joinTimeout: 10
   roomListItemPrefab: {fileID: 1270509066294122, guid: 0a9f37f099370d944b0ed14b7272bcd3,
     type: 2}
   roomListParent: {fileID: 405232549}
@@ -1500,7 +1542,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Loading...
+  m_Text: 
 --- !u!222 &975478398
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2369,15 +2411,10 @@ Prefab:
       propertyPath: m_RootOrder
       value: 3
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 114702234642438552, guid: b58f8387c81d1db4095397fbcfb01ffe, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: b58f8387c81d1db4095397fbcfb01ffe, type: 2}
   m_IsPrefabParent: 0
---- !u!114 &1658419774 stripped
-MonoBehaviour:
-  m_PrefabParentObject: {fileID: 114702234642438552, guid: b58f8387c81d1db4095397fbcfb01ffe,
-    type: 2}
-  m_PrefabInternal: {fileID: 1658419772}
-  m_Script: {fileID: 11500000, guid: 31d7a4979323cff4e9b7642991daa5f2, type: 3}
 --- !u!1 &1663808358
 GameObject:
   m_ObjectHideFlags: 0
