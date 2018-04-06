@@ -20,6 +20,10 @@ public class Player : NetworkBehaviour {
     [SyncVar]
     private int currentHealth;
 
+    public int kills;
+    public int deaths;
+
+
     // A list of all game object components to disable/enable when the player dies/respawns
     [SerializeField]
     private Behaviour[] disableOnDeath;
@@ -73,7 +77,7 @@ public class Player : NetworkBehaviour {
             return;
 
         if (Input.GetKeyDown(KeyCode.K)) {
-            RpcTakeDamage(99999);
+            RpcTakeDamage(99999, transform.name);
         }
     }
 
@@ -104,22 +108,28 @@ public class Player : NetworkBehaviour {
 
     // RPC call going out to all players to they can update which player took damage
     [ClientRpc]
-    internal void RpcTakeDamage(int damage) {
+    internal void RpcTakeDamage(int damage, string _sourcePlayerID) {
         if (isDead)
             return;
 
         currentHealth -= damage;
         Debug.Log(transform.name + " took " + damage + " HP damage and now has " + currentHealth + " HP in health");
 
-        if (currentHealth <= 0) {
-            Die();
+        if (currentHealth <= 0) {            
+            Die(_sourcePlayerID);
         }
     }
 
     // Called when a player dies (health <= 0)
-    private void Die() {
+    private void Die(string _sourcePlayerID) {
         Debug.Log(transform.name + " is dead");
         isDead = true;
+
+        Player sourcePlayer = GameManager.GetPlayer(_sourcePlayerID);
+        if (sourcePlayer != null) {
+            sourcePlayer.kills++;
+        }
+        deaths++;
 
         // Disable components
         foreach (Behaviour component in disableOnDeath)

@@ -75,6 +75,7 @@ GameObject:
   - component: {fileID: 114645987432509226}
   - component: {fileID: 114514712791219300}
   - component: {fileID: 114865117654100724}
+  - component: {fileID: 114043435000120436}
   m_Layer: 8
   m_Name: Rocket
   m_TagString: Player
@@ -197,6 +198,18 @@ PolygonCollider2D:
       - {x: 0.9929886, y: -0.8038759}
       - {x: 0.9906006, y: -0.4928379}
       - {x: 0.7963066, y: -0.15137196}
+--- !u!114 &114043435000120436
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1954983318120366}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35c6e20a375f8b4479b4ceb981a506c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDelay: 5
 --- !u!114 &114151068445010514
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -210,6 +223,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   componentsToDisable:
   - {fileID: 114446540403325090}
+  - {fileID: 114043435000120436}
   remoteLayerName: PlayerRemote
   playerUIPrefab: {fileID: 1554893710277806, guid: 78365ff9a4bdb7841beaf6d426ba0dfb,
     type: 2}
@@ -236,6 +250,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
+  kills: 0
+  deaths: 0
   disableOnDeath:
   - {fileID: 114446540403325090}
   - {fileID: 114645987432509226}

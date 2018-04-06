@@ -103,7 +103,7 @@ public class RocketShoot : NetworkBehaviour {
         Vector3 _hitPos = _weaponSlot.transform.position + _weaponSlot.transform.up * currentWeapon.range;
         if (_hit.collider != null) {
             if (_hit.collider.tag == PLAYER_TAG) {
-                CmdPlayerShot(_hit.collider.name, currentWeapon.damage);
+                CmdPlayerShot(_hit.collider.name, currentWeapon.damage, transform.name);
             }
             _hitPos = _hit.point;
 
@@ -119,10 +119,10 @@ public class RocketShoot : NetworkBehaviour {
 
     // Command (server side method) which takes care of a player shooting another player
     [Command]
-    void CmdPlayerShot (string _playerID, int _damage) {        
+    void CmdPlayerShot (string _playerID, int _damage, string _sourcePlayerID) {        
 
         // Get the player being shot from the game manager so we can damage him
         Player _player = GameManager.GetPlayer(_playerID);
-        _player.RpcTakeDamage(_damage);
+        _player.RpcTakeDamage(_damage, _sourcePlayerID);
     }
 }
