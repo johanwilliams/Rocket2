@@ -4,6 +4,9 @@ using UnityEngine;
 [RequireComponent(typeof(Player))]
 public class PlayerScore : MonoBehaviour {
 
+    private int lastKills = 0;
+    private int lastDeaths = 0;
+
     public float syncDelay = 5f;
     Player player;
 
@@ -37,17 +40,19 @@ public class PlayerScore : MonoBehaviour {
     // Called when we have recieved the user data from the server. Then adds the current kills/deaths and writes the data back
     void OnDataRecieved(string data) {
         // Don't sync the data if there is nothing new to sync
-        if (player.kills == 0 && player.deaths == 0)
+        if (player.kills <= lastKills && player.deaths <= lastDeaths)
             return;
 
-        int kills = player.kills + UserAccountDataParser.GetKills(data);
-        int deaths = player.deaths + UserAccountDataParser.GetDeaths(data);
-        Debug.Log("Syncing score (" + kills + "/" + deaths + ") for player " + player.name);
-        UserAccountManager.instance.SendData(UserAccountDataParser.ValuesToData(kills, deaths));
+        int killsSinceLastSync = player.kills - lastKills;
+        int deathsSinceLastSync = player.deaths - lastDeaths;
 
-        // Reset the kills/deaths on the player since we have written (saved) the data
-        player.kills = 0;
-        player.deaths = 0;
+        int totalKills = killsSinceLastSync + UserAccountDataParser.GetKills(data);
+        int totalDeaths = deathsSinceLastSync + UserAccountDataParser.GetDeaths(data);
+        Debug.Log("Syncing score (" + totalKills + "/" + totalDeaths + ") for player " + player.name);
+        UserAccountManager.instance.SendData(UserAccountDataParser.ValuesToData(totalKills, totalDeaths));
+
+        lastKills = player.kills;
+        lastDeaths = player.deaths;
     }
 
 }

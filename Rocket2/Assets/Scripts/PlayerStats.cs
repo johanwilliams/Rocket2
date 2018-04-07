@@ -14,6 +14,9 @@ public class PlayerStats : MonoBehaviour {
 	}
 	
     void OnReceivedData(string data) {
+        if (killCount == null || deatchCount == null)
+            return;
+
         killCount.text = UserAccountDataParser.GetKills(data) + " kills";
         deatchCount.text = UserAccountDataParser.GetDeaths(data) + " deaths";
     }

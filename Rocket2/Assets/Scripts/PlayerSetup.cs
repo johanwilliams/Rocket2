@@ -38,10 +38,27 @@ public class PlayerSetup : NetworkBehaviour {
 
             // Call setup on the player to setup all propeties for the player
             GetComponent<Player>().SetupPlayer();
+
+            // Set the username of the player (or the player id if not logged in)
+            string _username = transform.name;
+            if (UserAccountManager.isLoggedIn)
+                _username = UserAccountManager.playerUsername;
+            CmdSetUsername(transform.name, _username);
+
         } else {            
             // Stuff to do for all remote players
             DisableComponents();
             AssignRemoteLayer();                
+        }
+    }
+
+    // Set the username of the player on the server. Since the username is a syncvar variable all clients will be notified
+    [Command]
+    void CmdSetUsername(string playerID, string username) {
+        Player player = GameManager.GetPlayer(playerID);
+        if (player != null) {
+            Debug.Log(username + " has joined the game!");
+            player.username = username;
         }
     }
 
