@@ -9,6 +9,9 @@ public class GameManager : MonoBehaviour {
 
     public MatchSettings matchSettings;
 
+    public delegate void OnPlayerKilledCallback(string player, string source);
+    public OnPlayerKilledCallback onPlayerKilledCallback;
+
     private void Awake() {
         if (instance != null) {
             Debug.LogError("More than one GameManager in scene.");

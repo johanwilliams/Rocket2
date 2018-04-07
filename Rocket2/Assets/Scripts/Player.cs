@@ -128,9 +128,11 @@ public class Player : NetworkBehaviour {
         Debug.Log(transform.name + " is dead");
         isDead = true;
 
+        // Update kill/death stats
         Player sourcePlayer = GameManager.GetPlayer(_sourcePlayerID);
         if (sourcePlayer != null) {
             sourcePlayer.kills++;
+            GameManager.instance.onPlayerKilledCallback.Invoke(username, sourcePlayer.username);
         }
         deaths++;
 
