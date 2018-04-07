@@ -20,6 +20,10 @@ public class Player : NetworkBehaviour {
     [SyncVar]
     private int currentHealth;
 
+    public float GetHealthPct() {
+        return (float)currentHealth / maxHealth;
+    }
+
     [SyncVar]
     public string username = "Loading";
 

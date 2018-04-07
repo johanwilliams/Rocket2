@@ -33,7 +33,7 @@ public class PlayerScore : MonoBehaviour {
 
     // Synd the player score to the server if the player is logged in
     private void SyncScore() {
-        if (UserAccountManager.isLoggedIn)
+        if (UserAccountManager.isLoggedIn && UserAccountManager.instance != null)
             UserAccountManager.instance.GetData(OnDataRecieved);
     }
 

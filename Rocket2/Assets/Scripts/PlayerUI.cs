@@ -4,6 +4,9 @@ using UnityEngine;
 public class PlayerUI : MonoBehaviour {
 
     [SerializeField]
+    private RectTransform healthFill;
+
+    [SerializeField]
     private RectTransform fuelFill;
 
     private Player player;
@@ -25,7 +28,8 @@ public class PlayerUI : MonoBehaviour {
     }
 
     private void Update() {
-        SetFuelAmount(rocketEngine.GetFuelAmount());
+        SetHealthAmount(player.GetHealthPct());
+        SetFuelAmount(rocketEngine.GetFuelAmount());        
 
         if (Input.GetKeyDown(KeyCode.Escape)) {
             TogglePauseMenu();
@@ -46,6 +50,10 @@ public class PlayerUI : MonoBehaviour {
 
     void SetFuelAmount(float _amount) {
         fuelFill.localScale = new Vector3(_amount, 1f, 1f);
+    }
+
+    void SetHealthAmount(float _amount) {
+        healthFill.localScale = new Vector3(_amount, 1f, 1f);
     }
 
 }
