@@ -100,16 +100,17 @@ GameObject:
   m_Component:
   - component: {fileID: 4774772740822186}
   - component: {fileID: 50710931533900146}
-  - component: {fileID: 114446540403325090}
-  - component: {fileID: 114877578232260194}
   - component: {fileID: 60968832874710298}
   - component: {fileID: 114694664488846948}
   - component: {fileID: 114605969257702056}
+  - component: {fileID: 114446540403325090}
+  - component: {fileID: 114877578232260194}
   - component: {fileID: 114151068445010514}
   - component: {fileID: 114645987432509226}
   - component: {fileID: 114514712791219300}
   - component: {fileID: 114865117654100724}
   - component: {fileID: 114043435000120436}
+  - component: {fileID: 82996073487504774}
   m_Layer: 8
   m_Name: Rocket
   m_TagString: Player
@@ -269,6 +270,86 @@ PolygonCollider2D:
       - {x: 0.9929886, y: -0.8038759}
       - {x: 0.9906006, y: -0.4928379}
       - {x: 0.7963066, y: -0.15137196}
+--- !u!82 &82996073487504774
+AudioSource:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1954983318120366}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: b50b5d5facaea3c4e8e85a37153b14a9, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 0.1
+  m_Pitch: 1
+  Loop: 1
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
 --- !u!114 &114043435000120436
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -380,6 +461,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
+  energyRegenSpeed: 4
   username: Loading
   kills: 0
   deaths: 0
@@ -391,6 +473,7 @@ MonoBehaviour:
   - {fileID: 1818611148009318}
   deathEffect: {fileID: 1494831659350480, guid: f2297f1ebf53a5a4a8630ff1c4d8c551,
     type: 2}
+  deathSound: {fileID: 8300000, guid: 2a3a7212182b7bd459f360fbf58cdd93, type: 3}
   spawnEffect: {fileID: 1568713421377728, guid: 9731f3d5940922240bec13127dafd7fc,
     type: 2}
 --- !u!114 &114585473729303304
@@ -559,6 +642,8 @@ MonoBehaviour:
     damage: 10
     range: 100
     fireRate: 5
+    energyCost: 5
+    soundFire: {fileID: 8300000, guid: 6985457424cae0749b827d655b070310, type: 3}
     graphics: {fileID: 1676463104437078, guid: 121cfbda47a764349851268ffcefa6ed, type: 2}
 --- !u!114 &114877578232260194
 MonoBehaviour:

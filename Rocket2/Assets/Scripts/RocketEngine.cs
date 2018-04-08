@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 [RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(AudioSource))]
 public class RocketEngine : NetworkBehaviour {
 
     [SerializeField]
@@ -12,7 +13,7 @@ public class RocketEngine : NetworkBehaviour {
     [SerializeField]
     private float thrusterForce = 1000f;
     private float thruster = 0f;
-    public bool isThrustersOn = false;
+    public bool isThrustersOn = false;    
 
     private float fuelMaxAmout = 100f;
     private float fuelAmout;
@@ -31,14 +32,21 @@ public class RocketEngine : NetworkBehaviour {
     [SerializeField]
     private GameObject rocketFlamePrefab;
     private GameObject rocketFlameIns;
-
+    
     private Rigidbody2D rb;
+    private AudioSource thrusterSound;
 
     // Use this for initialization
     void Start() {
         rb = GetComponent<Rigidbody2D>();
+        thrusterSound = GetComponent<AudioSource>();
         InitRocketFlame();
         Reset();
+    }
+
+    public void Kill() {
+        ApplyRotation(0f);
+        ApplyThruster(0f);
     }
 
     // Instantiates a rocket flame from selected prefab at the rocket engine position
@@ -57,6 +65,7 @@ public class RocketEngine : NetworkBehaviour {
         fuelAmout = fuelMaxAmout;
         rb.velocity = Vector2.zero;
         rb.angularVelocity = 0f;
+        thrusterSound.Stop();
     }
 
     // Sets the rocket engine rotation by taking a roation input (between -1 and 1) and adds the rotation speed.
@@ -67,6 +76,7 @@ public class RocketEngine : NetworkBehaviour {
     // Sets the rocket engine thruster by taking a thruster input (between -1 and 1) and adds the thruster force.
     public void ApplyThruster(float _thruster) {
         thruster = _thruster * thrusterForce;
+        thrusterSound.pitch = 0.5f + 0.5f * _thruster;
     }
 
     // Run every graphics update
@@ -115,13 +125,18 @@ public class RocketEngine : NetworkBehaviour {
     private void RpcSetThruster(bool _isThrustersOn) {
         isThrustersOn = _isThrustersOn;
         SetRocketFlame();
+
+        if (isThrustersOn && !thrusterSound.isPlaying)
+            thrusterSound.Play();
+        else if (!isThrustersOn && thrusterSound.isPlaying)
+            thrusterSound.Stop();
     }
 
     // Update our current fuel amount. Burn fuel if the thrusters are on (and we have fuel left). Refill fuel if we are standing on the ground.
     private void UpdateFuel() {
         if (isThrustersOn && fuelAmout >= 0.01f) {
             // Burn fuel
-            fuelAmout -= fuelBurnSpeed * Time.deltaTime;
+            fuelAmout -= fuelBurnSpeed * (thruster / thrusterForce) * Time.deltaTime;
         } else if (rb.velocity == Vector2.zero){
             fuelAmout += fuelRegenSpeed * Time.deltaTime;
         }

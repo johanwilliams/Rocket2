@@ -12,5 +12,7 @@ public class RocketWeapon {
 
     public float energyCost = 10f;
 
+    public AudioClip soundFire;
+
     public GameObject graphics;
 }

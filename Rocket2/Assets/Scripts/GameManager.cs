@@ -19,7 +19,9 @@ public class GameManager : MonoBehaviour {
         else {
             instance = this;
         }
-        
+
+        // Kill the theme music
+        AudioManager.instance.Stop("Theme");
     }
 
     #region Player tracking

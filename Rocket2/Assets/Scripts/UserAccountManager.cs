@@ -16,6 +16,8 @@ public class UserAccountManager : MonoBehaviour {
 
         instance = this;
         DontDestroyOnLoad(this);
+
+        AudioManager.instance.Play("Theme");
     }
 
     public static string playerUsername { get; protected set; }

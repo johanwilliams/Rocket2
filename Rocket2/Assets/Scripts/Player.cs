@@ -64,6 +64,8 @@ public class Player : NetworkBehaviour {
 
     [SerializeField]
     private GameObject deathEffect;
+    [SerializeField]
+    private AudioClip deathSound;
 
     [SerializeField]
     private GameObject spawnEffect;
@@ -99,7 +101,6 @@ public class Player : NetworkBehaviour {
 
         SetDefaults();
     }
-
 
     // DEBUG method only to kill the local player instantly
     private void Update() {
@@ -180,8 +181,12 @@ public class Player : NetworkBehaviour {
             _col.enabled = false;
         }
 
+        // Kill the engine
+        rocketEngine.Kill();
+
         // Spawn a deatch effect
         GameObject _deatchEffectInst = Instantiate(deathEffect, transform.position, Quaternion.identity);
+        AudioManager.instance.Play("Explosion1");
         Destroy(_deatchEffectInst, 3f);
 
         StartCoroutine(Respawn());
