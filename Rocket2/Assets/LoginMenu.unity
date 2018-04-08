@@ -2051,6 +2051,11 @@ Prefab:
       propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114804050184877396, guid: c0a7d4b1d4d07444691fbf52b707508b,
+        type: 2}
+      propertyPath: sounds.Array.data[0].spatialBlend
+      value: 0.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: c0a7d4b1d4d07444691fbf52b707508b, type: 2}
   m_IsPrefabParent: 0

@@ -63,7 +63,7 @@ public class RocketShoot : NetworkBehaviour {
     void RpcDoShootEffect(Vector3 _hitPos) {
         weaponManager.GetCurrentWeaponGraphics().mussleFlash.Play();
         RenderTrail(_hitPos);
-        AudioManager.instance.Play("LaserShot");
+        AudioManager.instance.PlayClipAtPoint("LaserShot", transform.position);
     }
 
     // Renders a weapon trail (if we have one configured)

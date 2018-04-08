@@ -186,6 +186,7 @@ public class Player : NetworkBehaviour {
 
         // Spawn a deatch effect
         GameObject _deatchEffectInst = Instantiate(deathEffect, transform.position, Quaternion.identity);
+        //AudioManager.instance.PlayClipAtPoint("Explosion1", transform.position);
         AudioManager.instance.Play("Explosion1");
         Destroy(_deatchEffectInst, 3f);
 

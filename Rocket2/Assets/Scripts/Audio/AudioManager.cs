@@ -36,6 +36,12 @@ public class AudioManager : MonoBehaviour {
             s.source.Play();
     }
 
+    public void PlayClipAtPoint(string name, Vector3 position) {
+        Sound s = GetSoundByName(name);
+        if (s != null)
+            AudioSource.PlayClipAtPoint(s.source.clip, position);
+    }
+
     public void Stop(string name) {
         Sound s = GetSoundByName(name);
         if (s != null)
