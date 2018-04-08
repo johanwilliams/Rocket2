@@ -8,7 +8,11 @@ public class PlayerSetup : NetworkBehaviour {
 
     // A list of all game object componets to disable for all remote players
     [SerializeField]
-    private Behaviour[] componentsToDisable;
+    private Behaviour[] remoteComponentsToDisable;
+
+    [SerializeField]
+    private Behaviour[] localComponentsToDisable;
+
 
     [SerializeField]
     private string remoteLayerName = "PlayerRemote";
@@ -45,9 +49,10 @@ public class PlayerSetup : NetworkBehaviour {
                 _username = UserAccountManager.playerUsername;
             CmdSetUsername(transform.name, _username);
 
+            DisableComponents(localComponentsToDisable);
         } else {            
             // Stuff to do for all remote players
-            DisableComponents();
+            DisableComponents(remoteComponentsToDisable);
             AssignRemoteLayer();                
         }
     }
@@ -77,8 +82,8 @@ public class PlayerSetup : NetworkBehaviour {
         gameObject.layer = LayerMask.NameToLayer(remoteLayerName);
     }
 
-    // Disable all components for the non-local player (i.e. rocket control scripts etc)
-    void DisableComponents() {        
+    // Disable all components 
+    void DisableComponents(Behaviour[] componentsToDisable) {        
         foreach (Behaviour component in componentsToDisable)
             component.enabled = false;
     }
