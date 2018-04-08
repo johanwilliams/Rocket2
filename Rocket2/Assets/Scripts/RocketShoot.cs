@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 [RequireComponent(typeof(WeaponManager))]
+[RequireComponent(typeof(Player))]
 public class RocketShoot : NetworkBehaviour {
 
     private const string PLAYER_TAG = "Player";    
@@ -10,12 +11,14 @@ public class RocketShoot : NetworkBehaviour {
     private LayerMask mask;
 
     private WeaponManager weaponManager;
+    private Player player;
     private RocketWeapon currentWeapon;
 
     private float lastShotTime = 0f;
 
     private void Start() {
         weaponManager = GetComponent<WeaponManager>();
+        player = GetComponent<Player>();
     }
 
     private void OnDisable() {
@@ -42,8 +45,10 @@ public class RocketShoot : NetworkBehaviour {
 
     // Check that we are not cheating the rapid fire but tapping fire
     private bool isShootingAllowed() {
+        // Check the time since last shot
         if ((Time.time - lastShotTime) < 1f / currentWeapon.fireRate)
             return false;        
+
         return true;
     }
 
@@ -96,6 +101,10 @@ public class RocketShoot : NetworkBehaviour {
         if (!isLocalPlayer)
             return;
 
+        // Check that we have enough energy        
+        if (currentWeapon.energyCost > player.GetEnergy())
+            return;
+
         Transform _weaponSlot = weaponManager.GetWeaponSlot();
         RaycastHit2D _hit = Physics2D.Raycast(_weaponSlot.transform.position, _weaponSlot.transform.up, currentWeapon.range, mask);
         Debug.DrawLine(_weaponSlot.transform.position, _weaponSlot.transform.position + _weaponSlot.transform.up * currentWeapon.range, Color.cyan);
@@ -115,6 +124,8 @@ public class RocketShoot : NetworkBehaviour {
         CmdOnShoot(_hitPos);
 
         lastShotTime = Time.time;
+
+        player.ConsumeEnergy(currentWeapon.energyCost);
     }
 
     // Command (server side method) which takes care of a player shooting another player

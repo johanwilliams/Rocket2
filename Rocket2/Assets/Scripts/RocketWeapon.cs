@@ -10,5 +10,7 @@ public class RocketWeapon {
 
     public float fireRate = 0f;
 
+    public float energyCost = 10f;
+
     public GameObject graphics;
 }

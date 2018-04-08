@@ -24,6 +24,29 @@ public class Player : NetworkBehaviour {
         return (float)currentHealth / maxHealth;
     }
 
+    private float energyMaxAmount = 100f;
+    private float energyAmount;
+    [SerializeField]
+    private float energyRegenSpeed = 4f;
+
+    public float GetEnergyPct() {
+        return energyAmount / energyMaxAmount;
+    }
+
+    public float GetEnergy() {
+        return energyAmount;
+    }
+
+    public void ConsumeEnergy(float energy) {
+        energyAmount -= energy;
+        energyAmount = Mathf.Clamp(energyAmount, 0f, energyMaxAmount);
+    }
+
+    private void RegenEnergy() {
+        energyAmount += energyRegenSpeed * Time.deltaTime;
+        energyAmount = Mathf.Clamp(energyAmount, 0f, energyMaxAmount);
+    }
+
     [SyncVar]
     public string username = "Loading";
 
@@ -83,6 +106,8 @@ public class Player : NetworkBehaviour {
         if (!isLocalPlayer)
             return;
 
+        RegenEnergy();
+
         if (Input.GetKeyDown(KeyCode.K)) {
             RpcTakeDamage(20, transform.name);
         }
@@ -92,6 +117,7 @@ public class Player : NetworkBehaviour {
     public void SetDefaults() {
         isDead = false;
         currentHealth = maxHealth;
+        energyAmount = energyMaxAmount;
 
         // Reset all components
         for (int i = 0; i < disableOnDeath.Length; i++) 

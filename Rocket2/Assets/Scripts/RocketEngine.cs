@@ -12,25 +12,18 @@ public class RocketEngine : NetworkBehaviour {
     [SerializeField]
     private float thrusterForce = 1000f;
     private float thruster = 0f;
-
-    //[SyncVar(hook = "OnThrusterChange")]
     public bool isThrustersOn = false;
-    /*private bool _isThrustersOn = false;
-    public bool isThrustersOn {
-        get { return _isThrustersOn; }
-        protected set { _isThrustersOn = value; }
-    }*/
 
-    private float fuelAmout = 1f;
+    private float fuelMaxAmout = 100f;
+    private float fuelAmout;
     [SerializeField]
-    private float fuelBurnSpeed = 0.05f;
+    private float fuelBurnSpeed = 3f;
     [SerializeField]
-    private float fuelRegenSpeed = 0.01f;
+    private float fuelRegenSpeed = 4f;
 
-    public float GetFuelAmount() {
-        return fuelAmout;
-    }
-    
+    public float GetFuelPct() {
+        return fuelAmout / fuelMaxAmout;
+    }    
 
     [SerializeField]
     public Transform thrusterSlot;
@@ -45,6 +38,7 @@ public class RocketEngine : NetworkBehaviour {
     void Start() {
         rb = GetComponent<Rigidbody2D>();
         InitRocketFlame();
+        Reset();
     }
 
     // Instantiates a rocket flame from selected prefab at the rocket engine position
@@ -60,7 +54,7 @@ public class RocketEngine : NetworkBehaviour {
 
     // Resets the engine (typically when respawning)
     public void Reset() {
-        fuelAmout = 1f;
+        fuelAmout = fuelMaxAmout;
         rb.velocity = Vector2.zero;
         rb.angularVelocity = 0f;
     }
@@ -131,7 +125,7 @@ public class RocketEngine : NetworkBehaviour {
         } else if (rb.velocity == Vector2.zero){
             fuelAmout += fuelRegenSpeed * Time.deltaTime;
         }
-        fuelAmout = Mathf.Clamp(fuelAmout, 0f, 1f);
+        fuelAmout = Mathf.Clamp(fuelAmout, 0f, fuelMaxAmout);
     }
 
     // Update the rocket flame to match the state of our thruster. Thruster off disables emission, thrusters on enables the emission
