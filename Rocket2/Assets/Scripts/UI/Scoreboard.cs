@@ -12,9 +12,11 @@ public class Scoreboard : MonoBehaviour {
     private void OnEnable() {
         Player[] players = GameManager.GetPlayers();
 
-        // Sort the players array by most kills
-        Array.Sort(players, delegate (Player player1, Player player2) {
-            return player2.kills.CompareTo(player1.kills); // (player2.kills - player1.kills)
+        // Sort by number of kills. If equal sort by least number of deaths.
+        Array.Sort(players, delegate (Player player1, Player player2) {            
+            if (player1.kills == player2.kills)
+                return player1.deaths.CompareTo(player2.deaths);
+            return player2.kills.CompareTo(player1.kills);
         });
 
 
