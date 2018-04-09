@@ -641,6 +641,7 @@ MonoBehaviour:
     name: Laser gun
     damage: 10
     range: 100
+    recoil: 50
     fireRate: 5
     energyCost: 5
     soundFire: {fileID: 8300000, guid: 6985457424cae0749b827d655b070310, type: 3}

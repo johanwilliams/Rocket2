@@ -110,7 +110,7 @@ public class RocketShoot : NetworkBehaviour {
             return;
 
         // Add the recoil (todo: Maybe refactor to a separate AddForce method as we want to add forces in other situations)
-        rb.AddForce(-rb.transform.up * currentWeapon.recoil * Time.deltaTime);
+        rb.AddForce(-rb.transform.up * currentWeapon.recoil * Time.deltaTime, ForceMode2D.Impulse);
 
         // Raycast to detect if we hit something (should perhaps be refactored for the specific weapon?)
         Transform _weaponSlot = weaponManager.GetWeaponSlot();
