@@ -161,9 +161,12 @@ public class Player : NetworkBehaviour {
 
         // Update kill/death stats
         Player sourcePlayer = GameManager.GetPlayer(_sourcePlayerID);
-        if (sourcePlayer != null) {
-            sourcePlayer.kills++;
+        if (sourcePlayer != null) {            
             GameManager.instance.onPlayerKilledCallback.Invoke(username, sourcePlayer.username);
+
+            // Add a kill (if you don't kill yourself)
+            if (!username.Equals(sourcePlayer.username))
+                sourcePlayer.kills++;
         }
         deaths++;
 

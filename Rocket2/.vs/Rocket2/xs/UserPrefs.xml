@@ -1,8 +1,11 @@
 ﻿<Properties StartupConfiguration="{DDE1CB87-49FC-8CD5-8CD6-8DC4D93B54A5}|">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/UI/Scoreboard.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/UI/Killfeed.cs">
     <Files>
       <File FileName="Assets/Scripts/Account/PlayerScore.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/UI/Scoreboard.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/UI/Scoreboard.cs" Line="15" Column="77" />
+      <File FileName="Assets/Scripts/Player/Player.cs" Line="166" Column="18" />
+      <File FileName="Assets/Scripts/UI/GameManager.cs" Line="12" Column="26" />
+      <File FileName="Assets/Scripts/UI/Killfeed.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
