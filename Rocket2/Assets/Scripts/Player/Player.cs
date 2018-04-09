@@ -5,47 +5,7 @@ using System.Collections;
 [RequireComponent(typeof(RocketEngine))]
 public class Player : NetworkBehaviour {
 
-    [SyncVar]
-    private bool _isDead = false;
-    public bool isDead {
-        get { return _isDead; }
-        protected set { _isDead = value; }
-    }
-
     private RocketEngine rocketEngine;
-
-    [SerializeField]
-    private int maxHealth = 100;
-
-    [SyncVar]
-    private int currentHealth;
-
-    public float GetHealthPct() {
-        return (float)currentHealth / maxHealth;
-    }
-
-    private float energyMaxAmount = 100f;
-    private float energyAmount;
-    [SerializeField]
-    private float energyRegenSpeed = 4f;
-
-    public float GetEnergyPct() {
-        return energyAmount / energyMaxAmount;
-    }
-
-    public float GetEnergy() {
-        return energyAmount;
-    }
-
-    public void ConsumeEnergy(float energy) {
-        energyAmount -= energy;
-        energyAmount = Mathf.Clamp(energyAmount, 0f, energyMaxAmount);
-    }
-
-    private void RegenEnergy() {
-        energyAmount += energyRegenSpeed * Time.deltaTime;
-        energyAmount = Mathf.Clamp(energyAmount, 0f, energyMaxAmount);
-    }
 
     [SyncVar]
     public string username = "Loading";
@@ -70,11 +30,7 @@ public class Player : NetworkBehaviour {
     [SerializeField]
     private GameObject spawnEffect;
 
-    private bool firstSetup = true; 
-
-    private void Start() {
-        rocketEngine = GetComponent<RocketEngine>();
-    }
+    private bool firstSetup = true;     
 
     // The player setup method which initiate all variables, components etc at spawn
     public void SetupPlayer() {
@@ -102,6 +58,10 @@ public class Player : NetworkBehaviour {
         SetDefaults();
     }
 
+    private void Start() {
+        rocketEngine = GetComponent<RocketEngine>();
+    }
+
     // DEBUG method only to kill the local player instantly
     private void Update() {
         if (!isLocalPlayer)
@@ -109,6 +69,7 @@ public class Player : NetworkBehaviour {
 
         RegenEnergy();
 
+        //TODO: Remove. For debug only
         if (Input.GetKeyDown(KeyCode.K)) {
             RpcTakeDamage(20, transform.name);
         }
@@ -116,12 +77,11 @@ public class Player : NetworkBehaviour {
 
     // Sets the defaul values for the player at startup
     public void SetDefaults() {
-        isDead = false;
-        currentHealth = maxHealth;
-        energyAmount = energyMaxAmount;
+        SetHealthDefaults();
+        SetEnergyDefaults();
 
         // Reset all components
-        for (int i = 0; i < disableOnDeath.Length; i++) 
+        for (int i = 0; i < disableOnDeath.Length; i++)
             disableOnDeath[i].enabled = wasEnabled[i];
 
         // Enable GameObjects
@@ -134,15 +94,43 @@ public class Player : NetworkBehaviour {
             _col.enabled = true;
         }
 
-        // Spawn a spawn effect
+        // Instantiate a spawn effect
         GameObject _spawnEffectInst = Instantiate(spawnEffect, transform.position, Quaternion.identity);
         Destroy(_spawnEffectInst, 3f);
-
     }
 
+
+    #region "Health functionality"
+    [SerializeField]
+    private float maxHealth = 100;
+    [SyncVar]
+    private float currentHealth;
+
+    // Returns the current health in percentage (often used in UI for helthbars)
+    public float GetHealthPct() {
+        return currentHealth / maxHealth;
+    }
+
+    // Returns the current health in percentage (often used in UI for helthbars)
+    public float GetHealth() {
+        return currentHealth;
+    }
+
+    private void SetHealthDefaults() {
+        isDead = false;
+        currentHealth = maxHealth;
+    }
+
+    [SyncVar]
+    private bool _isDead = false;
+    public bool isDead {
+        get { return _isDead; }
+        protected set { _isDead = value; }
+    }
+    
     // RPC call going out to all players to they can update which player took damage
     [ClientRpc]
-    internal void RpcTakeDamage(int damage, string _sourcePlayerID) {
+    internal void RpcTakeDamage(float damage, string _sourcePlayerID) {
         if (isDead)
             return;
 
@@ -153,7 +141,39 @@ public class Player : NetworkBehaviour {
             Die(_sourcePlayerID);
         }
     }
+    #endregion
 
+    #region "Energy functionality"
+    [SerializeField]
+    private float maxEnergy = 100f;
+    private float currentEnergy;
+    [SerializeField]
+    private float energyRegenSpeed = 4f;
+
+    public float GetEnergyPct() {
+        return currentEnergy / maxEnergy;
+    }
+
+    public float GetEnergy() {
+        return currentEnergy;
+    }
+
+    private void SetEnergyDefaults() {
+        currentEnergy = maxEnergy;
+    }
+
+    public void ConsumeEnergy(float energy) {
+        currentEnergy -= energy;
+        currentEnergy = Mathf.Clamp(currentEnergy, 0f, maxEnergy);
+    }
+
+    private void RegenEnergy() {
+        currentEnergy += energyRegenSpeed * Time.deltaTime;
+        currentEnergy = Mathf.Clamp(currentEnergy, 0f, maxEnergy);
+    }
+    #endregion
+
+    #region "Die and respawn functionality"
     // Called when a player dies (health <= 0)
     private void Die(string _sourcePlayerID) {
         Debug.Log(transform.name + " is dead");
@@ -212,4 +232,5 @@ public class Player : NetworkBehaviour {
 
         Debug.Log("Player " + transform.name + " respawned at spawnpoint " + _spawnPoint.transform.name);
     }
+    #endregion
 }

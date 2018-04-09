@@ -14,7 +14,8 @@ public class RocketShoot : NetworkBehaviour {
     private WeaponManager weaponManager;
     private Player player;
     private Rigidbody2D rb;
-    private RocketWeapon currentWeapon;
+    private RocketWeapon primaryWeapon;
+    private RocketWeapon secondaryWeapon;
 
     private float lastShotTime = 0f;
 
@@ -33,13 +34,13 @@ public class RocketShoot : NetworkBehaviour {
         if (PauseMenu.IsOn)
             return;
 
-        currentWeapon = weaponManager.GetCurrentWeapon();
+        primaryWeapon = weaponManager.GetCurrentWeapon();
 
         if (Input.GetButtonDown("Fire1") && isShootingAllowed()) {
-            if (currentWeapon.fireRate <= 0f)
+            if (primaryWeapon.fireRate <= 0f)
                 Shoot();    // Single fire
             else
-                InvokeRepeating("Shoot", 0f, 1f/currentWeapon.fireRate);    // Autofire
+                InvokeRepeating("Shoot", 0f, 1f/primaryWeapon.fireRate);    // Autofire
         } else if (Input.GetButtonUp("Fire1")) {
             // Stop autofire
             CancelInvoke("Shoot");
@@ -49,7 +50,7 @@ public class RocketShoot : NetworkBehaviour {
     // Check that we are not cheating the rapid fire but tapping fire
     private bool isShootingAllowed() {
         // Check the time since last shot
-        if ((Time.time - lastShotTime) < 1f / currentWeapon.fireRate)
+        if ((Time.time - lastShotTime) < 1f / primaryWeapon.fireRate)
             return false;        
 
         return true;
@@ -106,21 +107,21 @@ public class RocketShoot : NetworkBehaviour {
             return;
 
         // Check that we have enough energy        
-        if (currentWeapon.energyCost > player.GetEnergy())
+        if (primaryWeapon.energyCost > player.GetEnergy())
             return;
 
         // Add the recoil (todo: Maybe refactor to a separate AddForce method as we want to add forces in other situations)
-        rb.AddForce(-rb.transform.up * currentWeapon.recoil * Time.deltaTime, ForceMode2D.Impulse);
+        rb.AddForce(-rb.transform.up * primaryWeapon.recoil * Time.deltaTime, ForceMode2D.Impulse);
 
         // Raycast to detect if we hit something (should perhaps be refactored for the specific weapon?)
         Transform _weaponSlot = weaponManager.GetWeaponSlot();
-        RaycastHit2D _hit = Physics2D.Raycast(_weaponSlot.transform.position, _weaponSlot.transform.up, currentWeapon.range, mask);
-        Debug.DrawLine(_weaponSlot.transform.position, _weaponSlot.transform.position + _weaponSlot.transform.up * currentWeapon.range, Color.cyan);
+        RaycastHit2D _hit = Physics2D.Raycast(_weaponSlot.transform.position, _weaponSlot.transform.up, primaryWeapon.range, mask);
+        Debug.DrawLine(_weaponSlot.transform.position, _weaponSlot.transform.position + _weaponSlot.transform.up * primaryWeapon.range, Color.cyan);
 
-        Vector3 _hitPos = _weaponSlot.transform.position + _weaponSlot.transform.up * currentWeapon.range;
+        Vector3 _hitPos = _weaponSlot.transform.position + _weaponSlot.transform.up * primaryWeapon.range;
         if (_hit.collider != null) {
             if (_hit.collider.tag == PLAYER_TAG) {
-                CmdPlayerShot(_hit.collider.name, currentWeapon.damage, transform.name);
+                CmdPlayerShot(_hit.collider.name, primaryWeapon.damage, transform.name);
             }
             _hitPos = _hit.point;
 
@@ -133,7 +134,7 @@ public class RocketShoot : NetworkBehaviour {
 
         lastShotTime = Time.time;
 
-        player.ConsumeEnergy(currentWeapon.energyCost);
+        player.ConsumeEnergy(primaryWeapon.energyCost);
     }
 
     // Command (server side method) which takes care of a player shooting another player
