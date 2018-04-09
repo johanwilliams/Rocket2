@@ -3,11 +3,11 @@
     <Files>
       <File FileName="Assets/Scripts/Account/PlayerScore.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/UI/LoginMenu.cs" Line="154" Column="50" />
-      <File FileName="Assets/Scripts/UI/PauseMenu.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/UI/PauseMenu.cs" Line="16" Column="50" />
       <File FileName="Assets/Scripts/Networking/HostGame.cs" Line="24" Column="9" />
       <File FileName="Assets/Scripts/Networking/JoinGame.cs" Line="40" Column="27" />
       <File FileName="Assets/Scripts/Account/UserAccountLobby.cs" Line="14" Column="50" />
-      <File FileName="Assets/Scripts/UI/PlayerUI.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/UI/PlayerUI.cs" Line="52" Column="13" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
