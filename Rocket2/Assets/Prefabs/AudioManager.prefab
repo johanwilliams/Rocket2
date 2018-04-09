@@ -76,3 +76,11 @@ MonoBehaviour:
     loop: 0
     playOnAwake: 0
     source: {fileID: 0}
+  - name: ButtonDown
+    clip: {fileID: 8300000, guid: 3c0e5287b261f45099287f12886f9c30, type: 3}
+    volume: 1
+    pitch: 1
+    spatialBlend: 1
+    loop: 0
+    playOnAwake: 0
+    source: {fileID: 0}

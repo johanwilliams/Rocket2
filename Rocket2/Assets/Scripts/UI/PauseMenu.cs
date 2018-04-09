@@ -13,6 +13,7 @@ public class PauseMenu : MonoBehaviour {
     }
 
     public void LeaveRoom() {
+        AudioManager.instance.Play("ButtonDown");
         MatchInfo matchInfo = networkManager.matchInfo;
         networkManager.matchMaker.DropConnection(matchInfo.networkId, matchInfo.nodeId, 0, networkManager.OnDropConnection);
         networkManager.StopHost();

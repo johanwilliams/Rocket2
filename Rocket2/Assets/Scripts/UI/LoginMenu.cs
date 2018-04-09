@@ -123,6 +123,7 @@ public class LoginMenu : MonoBehaviour {
     //UI Button Pressed Methods
     public void Login_LoginButtonPressed ()
     {
+        AudioManager.instance.Play("ButtonDown");
         //Called when player presses button to Login
 
         //Get the username and password the player entered
@@ -150,6 +151,7 @@ public class LoginMenu : MonoBehaviour {
 
 	public void Login_RegisterButtonPressed () //QUAND LE MEC APPUIE SUR LE BOUTON REGISTER(qui n'estpas actif de base, pour ouvrir les elements)
     {
+        AudioManager.instance.Play("ButtonDown");
         //Called when the player hits register on the Login UI, so switches to the Register UI
         ResetAllUIElements();
         loginParent.gameObject.SetActive(false);
@@ -158,6 +160,7 @@ public class LoginMenu : MonoBehaviour {
   
 	public void Register_RegisterButtonPressed () //APRES AVOIR REMPLIT LES 3 champs USER PASS CONFIRM ...
     {
+        AudioManager.instance.Play("ButtonDown");
         //Called when the player presses the button to register
 
         //Get the username and password and repeated password the player entered
@@ -199,6 +202,7 @@ public class LoginMenu : MonoBehaviour {
     
 	public void Register_BackButtonPressed () //PAS ENVIE DE MENREGISTRER LOL, DONC REVIENS EN ARRIERE
     {
+        AudioManager.instance.Play("ButtonDown");
         //Called when the player presses the 'Back' button on the register UI. Switches back to the Login UI
         ResetAllUIElements();
         loginParent.gameObject.SetActive(true);
@@ -207,6 +211,7 @@ public class LoginMenu : MonoBehaviour {
 
 	public void LoggedIn_LogoutButtonPressed () // A METTRE UN BOUTON LOGOUT SUR LE MENU PRINCIPALE
     {
+        AudioManager.instance.Play("ButtonDown");
         //Called when the player hits the 'Logout' button. Switches back to Login UI and forgets the player's username and password.
         //Note: Database Control doesn't use sessions, so no request to the server is needed here to end a session.
         ResetAllUIElements();

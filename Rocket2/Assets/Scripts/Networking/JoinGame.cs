@@ -35,7 +35,13 @@ public class JoinGame : MonoBehaviour {
         }
     }
 
+    public void RefreshRoomListClick() {
+        AudioManager.instance.Play("ButtonDown");
+        RefreshRoomList();
+    }
+
     public void RefreshRoomList() {
+        
         ClearRoomList();
         StartMatchMaker();
         networkManager.matchMaker.ListMatches(0, 20, "", false, 0, 0, OnMatchList);
@@ -74,6 +80,7 @@ public class JoinGame : MonoBehaviour {
     }
 
     public void JoinRoom(MatchInfoSnapshot _match) {
+        AudioManager.instance.Play("ButtonDown");
         networkManager.matchMaker.JoinMatch(_match.networkId, "", "", "", 0, 0, networkManager.OnMatchJoined);
         StartCoroutine(WaitForJoin());
     }

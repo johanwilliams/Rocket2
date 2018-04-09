@@ -11,6 +11,7 @@ public class UserAccountLobby : MonoBehaviour {
     }
 
     public void LogOut() {
+        AudioManager.instance.Play("ButtonDown");
         if (UserAccountManager.isLoggedIn)
             UserAccountManager.instance.LogOut();
     }

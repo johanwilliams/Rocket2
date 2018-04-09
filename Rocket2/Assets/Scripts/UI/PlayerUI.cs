@@ -48,6 +48,8 @@ public class PlayerUI : MonoBehaviour {
     }
 
     public void TogglePauseMenu() {
+        if (PauseMenu.IsOn)
+            AudioManager.instance.Play("ButtonDown");
         pauseMenu.SetActive(!pauseMenu.activeSelf);
         PauseMenu.IsOn = pauseMenu.activeSelf;        
     }

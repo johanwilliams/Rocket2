@@ -21,6 +21,7 @@ public class HostGame : MonoBehaviour {
     }
 
     public void CreateRoom() {
+        AudioManager.instance.Play("ButtonDown");
         if (roomName != null && roomName != "") {
             Debug.Log("Creating room '" + roomName + "' with size " + roomSize);
             networkManager.matchMaker.CreateMatch(roomName, roomSize, true, "", "", "", 0, 0, networkManager.OnMatchCreate);
