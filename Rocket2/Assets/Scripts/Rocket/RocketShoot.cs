@@ -3,6 +3,7 @@ using UnityEngine.Networking;
 
 [RequireComponent(typeof(WeaponManager))]
 [RequireComponent(typeof(Player))]
+[RequireComponent(typeof(Rigidbody2D))]
 public class RocketShoot : NetworkBehaviour {
 
     private const string PLAYER_TAG = "Player";    
@@ -12,6 +13,7 @@ public class RocketShoot : NetworkBehaviour {
 
     private WeaponManager weaponManager;
     private Player player;
+    private Rigidbody2D rb;
     private RocketWeapon currentWeapon;
 
     private float lastShotTime = 0f;
@@ -19,6 +21,7 @@ public class RocketShoot : NetworkBehaviour {
     private void Start() {
         weaponManager = GetComponent<WeaponManager>();
         player = GetComponent<Player>();
+        rb = GetComponent<Rigidbody2D>();
     }
 
     private void OnDisable() {
@@ -106,6 +109,10 @@ public class RocketShoot : NetworkBehaviour {
         if (currentWeapon.energyCost > player.GetEnergy())
             return;
 
+        // Add the recoil (todo: Maybe refactor to a separate AddForce method as we want to add forces in other situations)
+        rb.AddForce(-rb.transform.up * currentWeapon.recoil * Time.deltaTime);
+
+        // Raycast to detect if we hit something (should perhaps be refactored for the specific weapon?)
         Transform _weaponSlot = weaponManager.GetWeaponSlot();
         RaycastHit2D _hit = Physics2D.Raycast(_weaponSlot.transform.position, _weaponSlot.transform.up, currentWeapon.range, mask);
         Debug.DrawLine(_weaponSlot.transform.position, _weaponSlot.transform.position + _weaponSlot.transform.up * currentWeapon.range, Color.cyan);

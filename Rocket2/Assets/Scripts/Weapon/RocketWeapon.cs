@@ -7,6 +7,7 @@ public class RocketWeapon {
 
     public int damage = 10;
     public float range = 100f;
+    public float recoil = 1000f;
 
     public float fireRate = 0f;
 
