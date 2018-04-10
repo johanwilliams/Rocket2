@@ -6,6 +6,8 @@ public class WeaponManager : NetworkBehaviour {
     [SerializeField]
     private string weaponLayerName = "Weapon";
 
+    public GameObject bulletPrefab;
+
     [SerializeField]
     private Transform weaponSlot;
 
@@ -30,7 +32,21 @@ public class WeaponManager : NetworkBehaviour {
     }
 
     public void FireSecondaryWeapon(Player player) {
-        secondaryWeapon.Shoot(player, weaponSlot.transform.position, weaponSlot.transform.up);
+        //secondaryWeapon.Shoot(player, weaponSlot.transform.position, weaponSlot.transform.up);
+        CmdFireBullet();
+
+    }
+
+    [Command]
+    void CmdFireBullet() {
+        GameObject bullet = Instantiate(bulletPrefab, weaponSlot.transform.position, weaponSlot.transform.rotation);
+        Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
+        rb.velocity = gameObject.GetComponent<Rigidbody2D>().velocity;
+        rb.AddForce(weaponSlot.transform.up * 6, ForceMode2D.Impulse);       
+
+        NetworkServer.Spawn(bullet);
+
+        Destroy(bullet, 2.0f);
     }
 
     public RocketWeapon GetCurrentWeapon() {
