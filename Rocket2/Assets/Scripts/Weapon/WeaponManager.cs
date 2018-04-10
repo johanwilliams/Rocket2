@@ -12,6 +12,8 @@ public class WeaponManager : NetworkBehaviour {
     [SerializeField]
     private RocketWeapon primaryWeapon;
 
+    private IWeapon secondaryWeapon;
+
     private RocketWeapon currentWeapon;
     private WeaponGraphics currentWeaponGraphics;
 
@@ -22,7 +24,13 @@ public class WeaponManager : NetworkBehaviour {
             this.enabled = false;
         }
 
-        EquipWeapon(primaryWeapon);    
+        EquipWeapon(primaryWeapon);
+
+        secondaryWeapon = new LaserGun();
+    }
+
+    public void FireSecondaryWeapon(Player player) {
+        secondaryWeapon.Shoot(player, weaponSlot.transform.position, weaponSlot.transform.up);
     }
 
     public RocketWeapon GetCurrentWeapon() {

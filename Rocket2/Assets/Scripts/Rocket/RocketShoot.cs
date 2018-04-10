@@ -45,6 +45,10 @@ public class RocketShoot : NetworkBehaviour {
             // Stop autofire
             CancelInvoke("Shoot");
         }
+
+        if (Input.GetButtonDown("Fire2")) {
+            weaponManager.FireSecondaryWeapon(player);
+        }
     }
 
     // Check that we are not cheating the rapid fire but tapping fire

@@ -1,8 +1,9 @@
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class GameManager : MonoBehaviour {
+public class GameManager : NetworkBehaviour {
 
     // Singelton(ish) pattern to make sure we only have one GameManager
     public static GameManager instance;
@@ -67,4 +68,15 @@ public class GameManager : MonoBehaviour {
     }*/
 
     #endregion
+
+    // Command (server side method) which takes care of a player taking damage from another player
+    [Command]
+    public void CmdDamagePlayer(string _playerID, string _sourcePlayerID, float _damage) {
+
+        // Get the player takning damage
+        Player _player = GetPlayer(_playerID);
+        _player.RpcTakeDamage(_damage, _sourcePlayerID);
+    }
+
+
 }
