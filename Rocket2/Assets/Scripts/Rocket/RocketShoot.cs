@@ -47,7 +47,7 @@ public class RocketShoot : NetworkBehaviour {
         }
 
         if (Input.GetButtonDown("Fire2")) {
-            weaponManager.FireSecondaryWeapon(player);
+            //weaponManager.FireSecondaryWeapon(player);
         }
     }
 

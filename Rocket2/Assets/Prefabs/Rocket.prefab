@@ -188,7 +188,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1438197646278806}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.26, z: 0}
+  m_LocalPosition: {x: 0, y: 1.66, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4774772740822186}
@@ -460,8 +460,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a90660102e2e61d448286a0e1a875b0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
-  energyRegenSpeed: 4
   username: Loading
   kills: 0
   deaths: 0
@@ -476,6 +474,9 @@ MonoBehaviour:
   deathSound: {fileID: 8300000, guid: 2a3a7212182b7bd459f360fbf58cdd93, type: 3}
   spawnEffect: {fileID: 1568713421377728, guid: 9731f3d5940922240bec13127dafd7fc,
     type: 2}
+  maxHealth: 100
+  maxEnergy: 100
+  energyRegenSpeed: 4
 --- !u!114 &114585473729303304
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -509,7 +510,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_TransformSyncMode: 2
-  m_SendInterval: 0.1
+  m_SendInterval: 0.11111111
   m_SyncRotationAxis: 3
   m_RotationSyncCompression: 0
   m_SyncSpin: 0
@@ -636,6 +637,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponLayerName: Weapon
+  bulletPrefab: {fileID: 1062095377250998, guid: 1c58e27d2571f1e48b4adbc64a13f886,
+    type: 2}
   weaponSlot: {fileID: 4590360212557206}
   primaryWeapon:
     name: Laser gun

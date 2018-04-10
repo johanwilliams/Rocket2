@@ -31,7 +31,7 @@ public class WeaponManager : NetworkBehaviour {
         secondaryWeapon = new LaserGun();
     }
 
-    public void FireSecondaryWeapon(Player player) {
+    public void FireSecondaryWeapon() {
         //secondaryWeapon.Shoot(player, weaponSlot.transform.position, weaponSlot.transform.up);
         CmdFireBullet();
 
@@ -39,10 +39,11 @@ public class WeaponManager : NetworkBehaviour {
 
     [Command]
     void CmdFireBullet() {
-        GameObject bullet = Instantiate(bulletPrefab, weaponSlot.transform.position, weaponSlot.transform.rotation);
+        var bullet = Instantiate(bulletPrefab, weaponSlot.transform.position, weaponSlot.transform.rotation);
         Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
-        rb.velocity = gameObject.GetComponent<Rigidbody2D>().velocity;
-        rb.AddForce(weaponSlot.transform.up * 6, ForceMode2D.Impulse);       
+        rb.velocity = weaponSlot.transform.up * 50f;
+        //rb.velocity = gameObject.GetComponent<Rigidbody2D>().velocity;
+        //rb.AddForce(weaponSlot.transform.up * 6, ForceMode2D.Impulse);       
 
         NetworkServer.Spawn(bullet);
 

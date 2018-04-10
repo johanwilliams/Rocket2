@@ -1,19 +1,24 @@
 using UnityEngine;
+using UnityEngine.Networking;
 
 [RequireComponent(typeof(RocketEngine))]
-public class RocketController : MonoBehaviour {
+public class RocketController : NetworkBehaviour {
 
     // Component caching
     private RocketEngine rocketEngine;
+    private WeaponManager weaponManager;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
         rocketEngine = GetComponent<RocketEngine>();
-		
-	}
+        weaponManager = GetComponent<WeaponManager>();
+    }
 	
 	// Update is called once per frame
 	void Update () {
+        if (!isLocalPlayer)
+            return;
+
         if (PauseMenu.IsOn) {
             if (Cursor.lockState != CursorLockMode.None)
                 Cursor.lockState = CursorLockMode.None;
@@ -35,5 +40,9 @@ public class RocketController : MonoBehaviour {
 
         // Send the vertical/thruster input to the rocket engine
         rocketEngine.ApplyThruster(_inputVer);
-	}
+
+        if (Input.GetButtonDown("Fire2")) {
+            weaponManager.FireSecondaryWeapon();
+        }
+    }
 }
