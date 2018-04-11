@@ -41,9 +41,9 @@ public class WeaponManager : NetworkBehaviour {
     void CmdFireBullet() {
         var bullet = Instantiate(bulletPrefab, weaponSlot.transform.position, weaponSlot.transform.rotation);
         Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
-        rb.velocity = weaponSlot.transform.up * 50f;
+        //rb.velocity = weaponSlot.transform.up * 50f;
         //rb.velocity = gameObject.GetComponent<Rigidbody2D>().velocity;
-        //rb.AddForce(weaponSlot.transform.up * 6, ForceMode2D.Impulse);       
+        rb.AddForce(weaponSlot.transform.up * 6, ForceMode2D.Impulse);       
 
         NetworkServer.Spawn(bullet);
 
