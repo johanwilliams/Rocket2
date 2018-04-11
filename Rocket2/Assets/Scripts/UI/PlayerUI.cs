@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerUI : MonoBehaviour {
 
@@ -20,6 +21,9 @@ public class PlayerUI : MonoBehaviour {
 
     [SerializeField]
     GameObject scoreboard;
+
+    [SerializeField]
+    Text latencyText;    
 
     private void Start() {
         PauseMenu.IsOn = false;
@@ -45,6 +49,12 @@ public class PlayerUI : MonoBehaviour {
         else if (Input.GetKeyUp(KeyCode.Tab)) {
             scoreboard.SetActive(false);
         }
+
+        UpdateLatency();
+    }
+
+    private void UpdateLatency() {
+        latencyText.text = "RTT: " + GameManager.instance.getLatency() + " ms";
     }
 
     public void TogglePauseMenu() {

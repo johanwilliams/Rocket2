@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
 
+[NetworkSettings(channel =0, sendInterval =0.033f)]
 public class NetworkTransform : NetworkBehaviour {
 
     [SerializeField] Transform _transform;
@@ -16,8 +17,7 @@ public class NetworkTransform : NetworkBehaviour {
     private Quaternion syncRotation;    // Server will sync the rotation to all clients        
     private Quaternion lastRotation;
     [SerializeField] bool includeRotation = false;
-    [SerializeField] float rotationThreshold = 5f;            
-
+    [SerializeField] float rotationThreshold = 5f;
 
     private void FixedUpdate () {
         TransmitPosition();        

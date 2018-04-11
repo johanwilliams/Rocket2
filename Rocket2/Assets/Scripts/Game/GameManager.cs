@@ -78,5 +78,9 @@ public class GameManager : NetworkBehaviour {
         _player.RpcTakeDamage(_damage, _sourcePlayerID);
     }
 
+    public int getLatency() {
+        return NetworkManager.singleton.client.GetRTT();
+    } 
+
 
 }

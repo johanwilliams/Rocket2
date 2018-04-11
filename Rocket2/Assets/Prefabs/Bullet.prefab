@@ -166,10 +166,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 946abb4d542869f4fa857625e891beb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementThreshold: 0.5
-  includeRotation: 0
-  rotationThreshold: 5
+  _transform: {fileID: 4805363444904568}
   lerpRate: 15
+  movementThreshold: 0.5
+  includeRotation: 1
+  rotationThreshold: 5
 --- !u!114 &114868313751350926
 MonoBehaviour:
   m_ObjectHideFlags: 1
