@@ -87,7 +87,7 @@ public class NetworkTransform : NetworkBehaviour {
     [Client]
     private void SyncPositionValues(Vector3 _syncPosition) {
         syncPosition = _syncPosition;
-        if (useHistoricLerping)
+        if (useHistoricLerping && !isLocalPlayer)
             syncPositionList.Add(syncPosition);
     }
 
