@@ -7,28 +7,30 @@ using UnityEngine.Networking;
 public class NetworkTransform : NetworkBehaviour {
 
     [SerializeField] private Transform _transform;
-    private float lerpRate;
-    private float lerpRateNormal = 15;
-    private float lerpRateFast = 25;
-    private int lerpRateFastSize = 10;
+    [SerializeField] private float defaultLerpRate = 15;
 
-    [SerializeField] private bool useHistoricLerping = false;
-    private float lerpNextValueDistance = 0.2f;
+    // Used for historic lerping
+    [SerializeField] private bool useHistoricLerping = true;
+    [SerializeField] private float lerpNextPositionDistance = 0.2f;
+    [SerializeField] private float lerpNextRotationAngle = 0.5f;
 
     [SyncVar(hook ="SyncPositionValues")]
     private Vector3 syncPosition;    // Server will sync the position to all clients        
     private Vector3 lastPosition;
     private List<Vector3> syncPositionList = new List<Vector3>();
+    private float lerpRatePosition;
     [SerializeField] private float movementThreshold = 0.5f;
 
     [SyncVar]
     private Quaternion syncRotation;    // Server will sync the rotation to all clients        
     private Quaternion lastRotation;
+    private float lerpRateRotation;
     [SerializeField] private bool includeRotation = false;
     [SerializeField] private float rotationThreshold = 5f;
 
     private void Start() {
-        lerpRate = lerpRateNormal;
+        lerpRatePosition = defaultLerpRate;
+        lerpRateRotation = defaultLerpRate;
     }
 
     private void FixedUpdate() {
@@ -39,16 +41,6 @@ public class NetworkTransform : NetworkBehaviour {
     private void Update() {
         LerpPosition();
         LerpRotation();
-    }
-
-    private void UpdateLerpSpeed(float _lerpSpeed, int lerpListSize) {
-        //TODO: Maybe this can be smoothed out even more to have the lerprate adjust linear to the size?
-        // lerpSpeed = lerpSpeedNormal + (syncPosList.Count * y);
-        // A recommendation is also to tie the lerp value to the speed of the transform
-        if (lerpListSize > lerpRateFastSize)
-            _lerpSpeed = lerpRateFast;
-        else
-            _lerpSpeed = lerpRateNormal;
     }
 
     #region "Movement"
@@ -64,20 +56,21 @@ public class NetworkTransform : NetworkBehaviour {
 
     // Use normal lerping. Takes no poition history into consideration
     private void LerpPositionNormal() {
-        _transform.position = Vector3.Lerp(_transform.position, syncPosition, Time.deltaTime * lerpRate);
+        _transform.position = Vector3.Lerp(_transform.position, syncPosition, Time.deltaTime * lerpRatePosition);
     }
 
     // Use historical lerping. Takes position history into consideration
     private void LerpPositionHistorical() {
         if (syncPositionList.Count > 0) {
-            _transform.position = Vector3.Lerp(_transform.position, syncPositionList[0], Time.deltaTime * lerpRate);
+            _transform.position = Vector3.Lerp(_transform.position, syncPositionList[0], Time.deltaTime * lerpRatePosition);
 
             // Check if we are close enough to the next waypoint (and there is a next waypoint) so we should start lerping towards that instead
-            if (Vector3.Distance(_transform.position, syncPositionList[0]) < lerpNextValueDistance && syncPositionList.Count > 1) {
+            if (Vector3.Distance(_transform.position, syncPositionList[0]) < lerpNextPositionDistance && syncPositionList.Count > 1) {
                 syncPositionList.RemoveAt(0);
             }
 
-            UpdateLerpSpeed(lerpRate, syncPositionList.Count);
+            // Update the lerp rate depending on the size of the list
+            lerpRatePosition = defaultLerpRate + syncPositionList.Count;
         }
     }
 
@@ -90,10 +83,12 @@ public class NetworkTransform : NetworkBehaviour {
         }
     }
 
+    // Update the last known position we got from the server.
     [Client]
     private void SyncPositionValues(Vector3 _syncPosition) {
         syncPosition = _syncPosition;
-        syncPositionList.Add(syncPosition);
+        if (useHistoricLerping)
+            syncPositionList.Add(syncPosition);
     }
 
     // Only run on server. Updates the syncPosition for the clients
@@ -107,7 +102,7 @@ public class NetworkTransform : NetworkBehaviour {
     // Lerp the rotation for all remote transforms
     private void LerpRotation() {
         if (!isLocalPlayer && includeRotation)
-            _transform.rotation = Quaternion.Lerp(_transform.rotation, syncRotation, Time.deltaTime * lerpRate);
+            _transform.rotation = Quaternion.Lerp(_transform.rotation, syncRotation, Time.deltaTime * lerpRateRotation);
     }
 
 
