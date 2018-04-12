@@ -18,6 +18,7 @@ public class NetworkTransform : NetworkBehaviour {
     private Vector3 syncPosition;    // Server will sync the position to all clients        
     private Vector3 lastPosition;
     private List<Vector3> syncPositionList = new List<Vector3>();
+    public int positionListSize;    //For debugging
     private float lerpRatePosition;
     [SerializeField] private float movementThreshold = 0.5f;
 
@@ -41,6 +42,7 @@ public class NetworkTransform : NetworkBehaviour {
     private void Update() {
         LerpPosition();
         LerpRotation();
+        positionListSize = syncPositionList.Count;
     }
 
     #region "Movement"
