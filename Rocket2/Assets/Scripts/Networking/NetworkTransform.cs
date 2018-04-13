@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-[NetworkSettings(channel = 0, sendInterval = 0.1f)]
+//[NetworkSettings(channel = 0, sendInterval = 0.1f)]
 public class NetworkTransform : NetworkBehaviour {
 
     [SerializeField] private Transform _transform;
@@ -14,7 +14,7 @@ public class NetworkTransform : NetworkBehaviour {
     [SerializeField] private float lerpNextPositionDistance = 0.2f;
     [SerializeField] private float lerpNextRotationAngle = 0.5f;
 
-    [SyncVar(hook ="SyncPositionValues")]
+    [SyncVar(hook ="SyncPositionValues")]    
     private Vector3 syncPosition;    // Server will sync the position to all clients        
     private Vector3 lastPosition;
     private List<Vector3> syncPositionList = new List<Vector3>();

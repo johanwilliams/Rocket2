@@ -112,6 +112,7 @@ GameObject:
   - component: {fileID: 114043435000120436}
   - component: {fileID: 82996073487504774}
   - component: {fileID: 114303030621948612}
+  - component: {fileID: 114407807036445644}
   m_Layer: 8
   m_Name: Rocket
   m_TagString: Player
@@ -227,7 +228,7 @@ Rigidbody2D:
   m_AngularDrag: 0.7
   m_GravityScale: 0.5
   m_Material: {fileID: 0}
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
@@ -388,13 +389,17 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1954983318120366}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 946abb4d542869f4fa857625e891beb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _transform: {fileID: 4774772740822186}
-  lerpRate: 15
+  defaultLerpRate: 15
+  useHistoricLerping: 1
+  lerpNextPositionDistance: 0.2
+  lerpNextRotationAngle: 0.5
+  positionListSize: 0
   movementThreshold: 0.5
   includeRotation: 1
   rotationThreshold: 5
@@ -441,6 +446,47 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &114407807036445644
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1954983318120366}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9de747ec6d608d4b984ba2628a309b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interpolationBackTime: 0.1
+  extrapolationTimeLimit: 0.3
+  extrapolationDistanceLimit: 0.3
+  sendPositionThreshold: 0.001
+  sendRotationThreshold: 0.001
+  sendScaleThreshold: 0.001
+  sendVelocityThreshold: 0.001
+  sendAngularVelocityThreshold: 0.001
+  receivedPositionThreshold: 0
+  receivedRotationThreshold: 0
+  positionSnapThreshold: 8
+  rotationSnapThreshold: 60
+  scaleSnapThreshold: 3
+  positionLerpSpeed: 0.2
+  rotationLerpSpeed: 0.2
+  scaleLerpSpeed: 0.2
+  syncPosition: 0
+  syncRotation: 0
+  syncScale: 0
+  syncVelocity: 0
+  syncAngularVelocity: 0
+  isPositionCompressed: 1
+  isRotationCompressed: 1
+  isScaleCompressed: 1
+  isVelocityCompressed: 1
+  isAngularVelocityCompressed: 1
+  whereToUpdateTransform: 1
+  sendRate: 30
+  networkChannel: 1
+  childObjectToSync: {fileID: 0}
 --- !u!114 &114446540403325090
 MonoBehaviour:
   m_ObjectHideFlags: 1
