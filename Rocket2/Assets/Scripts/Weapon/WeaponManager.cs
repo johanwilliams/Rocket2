@@ -27,8 +27,6 @@ public class WeaponManager : NetworkBehaviour {
         }
 
         EquipWeapon(primaryWeapon);
-
-        secondaryWeapon = new LaserGun();
     }
 
     public void FireSecondaryWeapon() {

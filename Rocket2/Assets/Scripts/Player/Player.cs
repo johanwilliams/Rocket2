@@ -102,17 +102,17 @@ public class Player : NetworkBehaviour {
 
     #region "Health functionality"
     [SerializeField]
-    private float maxHealth = 100;
+    private int maxHealth = 100;
     [SyncVar]
-    private float currentHealth;
+    private int currentHealth;
 
     // Returns the current health in percentage (often used in UI for helthbars)
     public float GetHealthPct() {
-        return currentHealth / maxHealth;
+        return (float)currentHealth / (float)maxHealth;
     }
 
     // Returns the current health in percentage (often used in UI for helthbars)
-    public float GetHealth() {
+    public int GetHealth() {
         return currentHealth;
     }
 
@@ -130,7 +130,7 @@ public class Player : NetworkBehaviour {
     
     // RPC call going out to all players to they can update which player took damage
     [ClientRpc]
-    internal void RpcTakeDamage(float damage, string _sourcePlayerID) {
+    internal void RpcTakeDamage(int damage, string _sourcePlayerID) {
         if (isDead)
             return;
 

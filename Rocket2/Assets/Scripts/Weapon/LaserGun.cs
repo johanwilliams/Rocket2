@@ -6,7 +6,7 @@ public class LaserGun : MonoBehaviour, IWeapon {
 
     public new string name = "Laser gun";
     public float range = 100f;
-    public float damage = 5f;
+    public int damage = 5;
     private const string PLAYER_TAG = "Player";    
 
     [SerializeField]

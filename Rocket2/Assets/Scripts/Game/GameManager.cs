@@ -20,7 +20,9 @@ public class GameManager : NetworkBehaviour {
         else {
             instance = this;
         }
+    }
 
+    private void Start() {
         // Kill the theme music
         AudioManager.instance.Stop("Theme");
     }
@@ -71,7 +73,7 @@ public class GameManager : NetworkBehaviour {
 
     // Command (server side method) which takes care of a player taking damage from another player
     [Command]
-    public void CmdDamagePlayer(string _playerID, string _sourcePlayerID, float _damage) {
+    public void CmdDamagePlayer(string _playerID, string _sourcePlayerID, int _damage) {
 
         // Get the player takning damage
         Player _player = GetPlayer(_playerID);
