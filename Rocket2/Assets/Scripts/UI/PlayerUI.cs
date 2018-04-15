@@ -14,7 +14,6 @@ public class PlayerUI : MonoBehaviour {
     private RectTransform energyFill;
 
     private Player player;
-    private RocketEngine rocketEngine;
 
     [SerializeField]
     GameObject pauseMenu;
@@ -31,13 +30,12 @@ public class PlayerUI : MonoBehaviour {
 
     public void SetPlayer(Player _player) {
         player = _player;
-        rocketEngine = player.GetComponent<RocketEngine>();
     }
 
     private void Update() {
-        SetHealthAmount(player.GetHealthPct());
-        SetFuelAmount(rocketEngine.GetFuelPct());
-        SetEnergyAmount(player.GetEnergyPct());
+        UpdateHealth();
+        UpdateFuel();
+        UpdateEnergy();
 
         if (Input.GetKeyDown(KeyCode.Escape)) {
             TogglePauseMenu();
@@ -64,16 +62,20 @@ public class PlayerUI : MonoBehaviour {
         PauseMenu.IsOn = pauseMenu.activeSelf;        
     }
 
-    void SetFuelAmount(float _amount) {
-        fuelFill.localScale = new Vector3(_amount, 1f, 1f);
+    private void UpdateFuel() {
+        FillRect(fuelFill, player.rocketEngine.GetFuelPct());
     }
 
-    void SetEnergyAmount(float _amount) {
-        energyFill.localScale = new Vector3(_amount, 1f, 1f);
+    private void UpdateEnergy() {
+        FillRect(energyFill, player.energy.GetEnergyPct());
     }
 
-    void SetHealthAmount(float _amount) {
-        healthFill.localScale = new Vector3(_amount, 1f, 1f);
+    private void UpdateHealth() {
+        FillRect(healthFill, player.health.GetHealthPct());
+    }
+
+    void FillRect(RectTransform rect, float _amount) {
+        rect.localScale = new Vector3(_amount, 1f, 1f);
     }
 
 }

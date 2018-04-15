@@ -77,7 +77,8 @@ public class GameManager : NetworkBehaviour {
 
         // Get the player takning damage
         Player _player = GetPlayer(_playerID);
-        _player.RpcTakeDamage(_damage, _sourcePlayerID);
+        //_player.RpcTakeDamage(_damage, _sourcePlayerID);
+        _player.health.TakeDamage(_damage, _sourcePlayerID);
     }
 
     public int getLatency() {

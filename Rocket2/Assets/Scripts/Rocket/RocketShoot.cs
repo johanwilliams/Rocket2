@@ -111,7 +111,7 @@ public class RocketShoot : NetworkBehaviour {
             return;
 
         // Check that we have enough energy        
-        if (primaryWeapon.energyCost > player.GetEnergy())
+        if (primaryWeapon.energyCost > player.energy.GetEnergy())
             return;
 
         // Add the recoil (todo: Maybe refactor to a separate AddForce method as we want to add forces in other situations)
@@ -138,7 +138,7 @@ public class RocketShoot : NetworkBehaviour {
 
         lastShotTime = Time.time;
 
-        player.ConsumeEnergy(primaryWeapon.energyCost);
+        player.energy.ConsumeEnergy(primaryWeapon.energyCost);
     }
 
     // Command (server side method) which takes care of a player shooting another player
@@ -147,6 +147,7 @@ public class RocketShoot : NetworkBehaviour {
 
         // Get the player being shot from the game manager so we can damage him
         Player _player = GameManager.GetPlayer(_playerID);
-        _player.RpcTakeDamage(_damage, _sourcePlayerID);
+        //_player.RpcTakeDamage(_damage, _sourcePlayerID);
+        _player.health.TakeDamage(_damage, _sourcePlayerID);
     }
 }

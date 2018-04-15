@@ -21,7 +21,7 @@ public class PlayerNameplate : MonoBehaviour {
     // Update is called once per frame
     void Update () {
         usernameText.text = player.username;
-        healthBarFill.localScale = new Vector3(player.GetHealthPct(), 1f, 1f);
+        healthBarFill.localScale = new Vector3(player.health.GetHealthPct(), 1f, 1f);
 
         // Keep the nameplate on the same place (facing up) relative to the rocket
         transform.position = player.transform.position + nameplateOffset;

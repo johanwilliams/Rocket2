@@ -3,9 +3,13 @@ using UnityEngine.Networking;
 using System.Collections;
 
 [RequireComponent(typeof(RocketEngine))]
+[RequireComponent(typeof(Health))]
+[RequireComponent(typeof(Energy))]
 public class Player : NetworkBehaviour {
 
-    private RocketEngine rocketEngine;
+    [HideInInspector] public RocketEngine rocketEngine;
+    [HideInInspector] public Health health;
+    [HideInInspector] public Energy energy;
 
     [SyncVar]
     public string username = "Loading";
@@ -60,47 +64,65 @@ public class Player : NetworkBehaviour {
 
     private void Start() {
         rocketEngine = GetComponent<RocketEngine>();
+        health = GetComponent<Health>();
+        Health.OnDeath += Die;
+        energy = GetComponent<Energy>();
     }
 
     // DEBUG method only to kill the local player instantly
     private void Update() {
         if (!isLocalPlayer)
             return;
-
-        RegenEnergy();
-
-        //TODO: Remove. For debug only
-        if (Input.GetKeyDown(KeyCode.K)) {
-            RpcTakeDamage(20, transform.name);
-        }
     }
 
     // Sets the defaul values for the player at startup
     public void SetDefaults() {
-        SetHealthDefaults();
-        SetEnergyDefaults();
+        health.Reset();
+        energy.Reset();
 
         // Reset all components
-        for (int i = 0; i < disableOnDeath.Length; i++)
+        /*for (int i = 0; i < disableOnDeath.Length; i++)
             disableOnDeath[i].enabled = wasEnabled[i];
 
         // Enable GameObjects
-        foreach (GameObject gameObject in disableGameObjectsOnDeath)
-            gameObject.SetActive(true);
+        foreach (GameObject go in disableGameObjectsOnDeath)
+            go.SetActive(true);
 
         // Special case since a collider is not deriving from Behaviour
         Collider _col = GetComponent<Collider>();
         if (_col != null) {
             _col.enabled = true;
-        }
+        }*/
+        ToggleComponents(true);
 
         // Instantiate a spawn effect
         GameObject _spawnEffectInst = Instantiate(spawnEffect, transform.position, Quaternion.identity);
         Destroy(_spawnEffectInst, 3f);
     }
 
+    // Enables and disables components and gameobjects on player death and respawn
+    private void ToggleComponents(bool enable) {
+        // Components
+        for (int i = 0; i < disableOnDeath.Length; i++) {
+            if (enable)
+                disableOnDeath[i].enabled = wasEnabled[i];
+            else
+                disableOnDeath[i].enabled = false;
+        }
+            
+        // GameObjects
+        foreach (GameObject go in disableGameObjectsOnDeath)
+            go.SetActive(enable);
 
-    #region "Health functionality"
+        // Special case since a collider is not deriving from Behavioud
+        Collider _col = GetComponent<Collider>();
+        if (_col != null) {
+            _col.enabled = enable;
+        }
+    }
+
+
+    /*#region "Health functionality"
     [SerializeField]
     private int maxHealth = 100;
     [SyncVar]
@@ -141,46 +163,18 @@ public class Player : NetworkBehaviour {
             Die(_sourcePlayerID);
         }
     }
-    #endregion
-
-    #region "Energy functionality"
-    [SerializeField]
-    private float maxEnergy = 100f;
-    private float currentEnergy;
-    [SerializeField]
-    private float energyRegenSpeed = 4f;
-
-    public float GetEnergyPct() {
-        return currentEnergy / maxEnergy;
-    }
-
-    public float GetEnergy() {
-        return currentEnergy;
-    }
-
-    private void SetEnergyDefaults() {
-        currentEnergy = maxEnergy;
-    }
-
-    public void ConsumeEnergy(float energy) {
-        currentEnergy -= energy;
-        currentEnergy = Mathf.Clamp(currentEnergy, 0f, maxEnergy);
-    }
-
-    private void RegenEnergy() {
-        currentEnergy += energyRegenSpeed * Time.deltaTime;
-        currentEnergy = Mathf.Clamp(currentEnergy, 0f, maxEnergy);
-    }
-    #endregion
+    #endregion*/
 
     #region "Die and respawn functionality"
     // Called when a player dies (health <= 0)
     private void Die(string _sourcePlayerID) {
         Debug.Log(transform.name + " is dead");
-        isDead = true;
+        //isDead = true;
+
+        UpdateScore(_sourcePlayerID);
 
         // Update kill/death stats
-        Player sourcePlayer = GameManager.GetPlayer(_sourcePlayerID);
+        /*Player sourcePlayer = GameManager.GetPlayer(_sourcePlayerID);
         if (sourcePlayer != null) {            
             GameManager.instance.onPlayerKilledCallback.Invoke(username, sourcePlayer.username);
 
@@ -188,32 +182,50 @@ public class Player : NetworkBehaviour {
             if (!username.Equals(sourcePlayer.username))
                 sourcePlayer.kills++;
         }
-        deaths++;
+        deaths++;*/
+
+        ToggleComponents(false);
 
         // Disable components
-        foreach (Behaviour component in disableOnDeath)
+        /*foreach (Behaviour component in disableOnDeath)
             component.enabled = false;
 
         // Disable GameObjects
-        foreach (GameObject gameObject in disableGameObjectsOnDeath)
-            gameObject.SetActive(false);
+        foreach (GameObject go in disableGameObjectsOnDeath)
+            go.SetActive(false);
 
         // Special case since a collider is not deriving from Behavioud
         Collider _col = GetComponent<Collider>();
         if (_col != null) {
             _col.enabled = false;
-        }
+        }*/
 
         // Kill the engine
         rocketEngine.Kill();
 
-        // Spawn a deatch effect
-        GameObject _deatchEffectInst = Instantiate(deathEffect, transform.position, Quaternion.identity);
-        //AudioManager.instance.PlayClipAtPoint("Explosion1", transform.position);
-        AudioManager.instance.Play("Explosion1");
-        Destroy(_deatchEffectInst, 3f);
+        SpawnDeathEffect();
 
         StartCoroutine(Respawn());
+    }
+
+    private void UpdateScore(string _sourcePlayerID) {
+        // Update kill/death stats
+        Player sourcePlayer = GameManager.GetPlayer(_sourcePlayerID);
+        if (sourcePlayer != null) {
+            GameManager.instance.onPlayerKilledCallback.Invoke(username, sourcePlayer.username);
+
+            // Add a kill (if you don't kill yourself)
+            if (!username.Equals(sourcePlayer.username))
+                sourcePlayer.kills++;
+        }
+        deaths++;
+    }
+
+    private void SpawnDeathEffect() {
+        // Spawn a deatch effect
+        GameObject _deatchEffectInst = Instantiate(deathEffect, transform.position, Quaternion.identity);
+        AudioManager.instance.Play("Explosion1");
+        Destroy(_deatchEffectInst, 3f);
     }
 
     // Respawns a player
