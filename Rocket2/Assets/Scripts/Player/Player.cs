@@ -69,8 +69,6 @@ public class Player : NetworkBehaviour {
 
     private void Start() {
         rocketEngine = GetComponent<RocketEngine>();
-        //health = GetComponent<Health>();
-        //Health.OnDeath += Die;
         energy = GetComponent<Energy>();
     }
 
@@ -85,19 +83,6 @@ public class Player : NetworkBehaviour {
         health.Reset();
         energy.Reset();
 
-        // Reset all components
-        /*for (int i = 0; i < disableOnDeath.Length; i++)
-            disableOnDeath[i].enabled = wasEnabled[i];
-
-        // Enable GameObjects
-        foreach (GameObject go in disableGameObjectsOnDeath)
-            go.SetActive(true);
-
-        // Special case since a collider is not deriving from Behaviour
-        Collider _col = GetComponent<Collider>();
-        if (_col != null) {
-            _col.enabled = true;
-        }*/
         ToggleComponents(true);
 
         // Instantiate a spawn effect
@@ -126,88 +111,14 @@ public class Player : NetworkBehaviour {
         }
     }
 
-
-    /*#region "Health functionality"
-    [SerializeField]
-    private int maxHealth = 100;
-    [SyncVar]
-    private int currentHealth;
-
-    // Returns the current health in percentage (often used in UI for helthbars)
-    public float GetHealthPct() {
-        return (float)currentHealth / (float)maxHealth;
-    }
-
-    // Returns the current health in percentage (often used in UI for helthbars)
-    public int GetHealth() {
-        return currentHealth;
-    }
-
-    private void SetHealthDefaults() {
-        isDead = false;
-        currentHealth = maxHealth;
-    }
-
-    [SyncVar]
-    private bool _isDead = false;
-    public bool isDead {
-        get { return _isDead; }
-        protected set { _isDead = value; }
-    }
-    
-    // RPC call going out to all players to they can update which player took damage
-    [ClientRpc]
-    internal void RpcTakeDamage(int damage, string _sourcePlayerID) {
-        if (isDead)
-            return;
-
-        currentHealth -= damage;
-        Debug.Log(transform.name + " took " + damage + " HP damage and now has " + currentHealth + " HP in health");
-
-        if (currentHealth <= 0) {            
-            Die(_sourcePlayerID);
-        }
-    }
-    #endregion*/
-
     #region "Die and respawn functionality"
     // Called when a player dies (health <= 0)
     private void Die(string _sourcePlayerID) {
-        Debug.Log(transform.name + " is dead");
-        //isDead = true;
+        Debug.Log(transform.name + " is dead");        
 
         UpdateScore(_sourcePlayerID);
-
-        // Update kill/death stats
-        /*Player sourcePlayer = GameManager.GetPlayer(_sourcePlayerID);
-        if (sourcePlayer != null) {            
-            GameManager.instance.onPlayerKilledCallback.Invoke(username, sourcePlayer.username);
-
-            // Add a kill (if you don't kill yourself)
-            if (!username.Equals(sourcePlayer.username))
-                sourcePlayer.kills++;
-        }
-        deaths++;*/
-
         ToggleComponents(false);
-
-        // Disable components
-        /*foreach (Behaviour component in disableOnDeath)
-            component.enabled = false;
-
-        // Disable GameObjects
-        foreach (GameObject go in disableGameObjectsOnDeath)
-            go.SetActive(false);
-
-        // Special case since a collider is not deriving from Behavioud
-        Collider _col = GetComponent<Collider>();
-        if (_col != null) {
-            _col.enabled = false;
-        }*/
-
-        // Kill the engine
         rocketEngine.Kill();
-
         SpawnDeathEffect();
 
         StartCoroutine(Respawn());

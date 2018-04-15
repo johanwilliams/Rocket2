@@ -49,6 +49,8 @@ public class GameManager : NetworkBehaviour {
 
     // Returns the player with the specified player id
     public static Player GetPlayer(string _playerID) {
+        if (_playerID == null)
+            return null;
         return players[_playerID];
     }
 
