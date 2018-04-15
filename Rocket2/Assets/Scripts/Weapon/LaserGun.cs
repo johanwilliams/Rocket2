@@ -1,8 +1,8 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LaserGun : MonoBehaviour, IWeapon {
+public class LaserGun : MonoBehaviour {
 
     public new string name = "Laser gun";
     public float range = 100f;

@@ -6,7 +6,7 @@ public class WeaponManager : NetworkBehaviour {
     [SerializeField]
     private string weaponLayerName = "Weapon";
 
-    public GameObject bulletPrefab;
+//    public GameObject bulletPrefab;
 
     [SerializeField]
     private Transform weaponSlot;
@@ -14,7 +14,8 @@ public class WeaponManager : NetworkBehaviour {
     [SerializeField]
     private RocketWeapon primaryWeapon;
 
-    private IWeapon secondaryWeapon;
+    [SerializeField]
+    private Weapon secondaryWeapon;
 
     private RocketWeapon currentWeapon;
     private WeaponGraphics currentWeaponGraphics;
@@ -29,24 +30,26 @@ public class WeaponManager : NetworkBehaviour {
         EquipWeapon(primaryWeapon);
     }
 
-    public void FireSecondaryWeapon() {
+    [Command]
+    public void CmdFireSecondaryWeapon() {
         //secondaryWeapon.Shoot(player, weaponSlot.transform.position, weaponSlot.transform.up);
-        CmdFireBullet();
+        //CmdFireBullet();
+        secondaryWeapon.Shoot(weaponSlot.transform.position, weaponSlot.transform.rotation, weaponSlot.transform.up);
 
     }
 
-    [Command]
+    /*[Command]
     void CmdFireBullet() {
         var bullet = Instantiate(bulletPrefab, weaponSlot.transform.position, weaponSlot.transform.rotation);
         Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
-        //rb.velocity = weaponSlot.transform.up * 50f;
-        //rb.velocity = gameObject.GetComponent<Rigidbody2D>().velocity;
-        rb.AddForce(weaponSlot.transform.up * 6, ForceMode2D.Impulse);       
+        rb.velocity = weaponSlot.transform.up * 50f;
+        rb.velocity = gameObject.GetComponent<Rigidbody2D>().velocity;
+        //rb.AddForce(weaponSlot.transform.up * 6, ForceMode2D.Impulse);       
 
         NetworkServer.Spawn(bullet);
 
         Destroy(bullet, 2.0f);
-    }
+    }*/
 
     public RocketWeapon GetCurrentWeapon() {
         return currentWeapon;

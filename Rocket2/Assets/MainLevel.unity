@@ -491,12 +491,12 @@ Prefab:
     - target: {fileID: 114256336116190024, guid: b58f8387c81d1db4095397fbcfb01ffe,
         type: 2}
       propertyPath: m_UseSimulator
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114256336116190024, guid: b58f8387c81d1db4095397fbcfb01ffe,
         type: 2}
       propertyPath: m_SimulatedLatency
-      value: 15
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 114256336116190024, guid: b58f8387c81d1db4095397fbcfb01ffe,
         type: 2}

@@ -31,7 +31,7 @@ public class RocketShoot : NetworkBehaviour {
     }
 
     private void Update() {
-        if (PauseMenu.IsOn)
+        if (PauseMenu.IsOn || !isLocalPlayer)
             return;
 
         primaryWeapon = weaponManager.GetCurrentWeapon();
@@ -47,7 +47,7 @@ public class RocketShoot : NetworkBehaviour {
         }
 
         if (Input.GetButtonDown("Fire2")) {
-            //weaponManager.FireSecondaryWeapon(player);
+            weaponManager.CmdFireSecondaryWeapon();
         }
     }
 

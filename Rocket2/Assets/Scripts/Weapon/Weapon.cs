@@ -1,9 +1,13 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public interface IWeapon {
+public abstract class Weapon : NetworkBehaviour {
 
-    void Shoot(Player shooter, Vector2 position, Vector2 direction);
+    public int range;
+    public int speed;
+
+    public abstract void Shoot(Vector3 position, Quaternion rotation, Vector3 direction);
 
 }

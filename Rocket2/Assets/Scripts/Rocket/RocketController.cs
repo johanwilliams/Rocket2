@@ -6,12 +6,10 @@ public class RocketController : NetworkBehaviour {
 
     // Component caching
     private RocketEngine rocketEngine;
-    private WeaponManager weaponManager;
 
     // Use this for initialization
     void Start () {
         rocketEngine = GetComponent<RocketEngine>();
-        weaponManager = GetComponent<WeaponManager>();
     }
 	
 	// Update is called once per frame
@@ -40,9 +38,5 @@ public class RocketController : NetworkBehaviour {
 
         // Send the vertical/thruster input to the rocket engine
         rocketEngine.ApplyThruster(_inputVer);
-
-        if (Input.GetButtonDown("Fire2")) {
-            weaponManager.FireSecondaryWeapon();
-        }
     }
 }
