@@ -62,10 +62,15 @@ public class Player : NetworkBehaviour {
         SetDefaults();
     }
 
+    public override void PreStartClient() {
+        health = GetComponent<Health>();
+        health.OnDeath += Die;
+    }
+
     private void Start() {
         rocketEngine = GetComponent<RocketEngine>();
-        health = GetComponent<Health>();
-        Health.OnDeath += Die;
+        //health = GetComponent<Health>();
+        //Health.OnDeath += Die;
         energy = GetComponent<Energy>();
     }
 
@@ -171,7 +176,7 @@ public class Player : NetworkBehaviour {
         Debug.Log(transform.name + " is dead");
         //isDead = true;
 
-        UpdateScore(_sourcePlayerID);
+        //UpdateScore(_sourcePlayerID);
 
         // Update kill/death stats
         /*Player sourcePlayer = GameManager.GetPlayer(_sourcePlayerID);

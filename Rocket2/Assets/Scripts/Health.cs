@@ -9,7 +9,8 @@ public class Health : NetworkBehaviour {
     [SerializeField] [SyncVar(hook = "OnHealthChanged")] private int health;
 
     public delegate void DiedAction(string source);
-    public static event DiedAction OnDeath;
+    public event DiedAction OnDeath;
+    private string source;
 
     private bool eventTriggered;
 
@@ -21,9 +22,9 @@ public class Health : NetworkBehaviour {
         if (health <= 0) {
             if (eventTriggered)
                 return;
-            if (OnDeath != null)
-                OnDeath("Test");
             eventTriggered = true;
+            if (OnDeath != null)
+                OnDeath(source);            
         }
     }
 
@@ -39,13 +40,17 @@ public class Health : NetworkBehaviour {
 
     public void Reset() {
         health = maxHealth;
+        eventTriggered = false;
     }
 
-    internal void TakeDamage(int damage, string source) {
+    internal void TakeDamage(int damage, string _source) {
         if (health <= 0)
             return;
         
         health = Mathf.Clamp(health - damage, 0, maxHealth);
+        source = _source;
+        //if (health <= 0 && OnDeath != null)
+        //    OnDeath(source);
         Debug.Log(transform.name + " took " + damage + " from " + source + " and now has " + health + " HP in health");
     }
 
