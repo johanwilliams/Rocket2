@@ -176,7 +176,7 @@ public class Player : NetworkBehaviour {
         Debug.Log(transform.name + " is dead");
         //isDead = true;
 
-        //UpdateScore(_sourcePlayerID);
+        UpdateScore(_sourcePlayerID);
 
         // Update kill/death stats
         /*Player sourcePlayer = GameManager.GetPlayer(_sourcePlayerID);
