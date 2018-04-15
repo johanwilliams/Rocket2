@@ -148,6 +148,6 @@ public class RocketShoot : NetworkBehaviour {
         // Get the player being shot from the game manager so we can damage him
         Player _player = GameManager.GetPlayer(_playerID);
         //_player.RpcTakeDamage(_damage, _sourcePlayerID);
-        _player.health.TakeDamage(_damage, _sourcePlayerID);
+        _player.health.RpcTakeDamage(_damage, _sourcePlayerID);
     }
 }

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -12,17 +12,15 @@ public class Health : NetworkBehaviour {
     public event DiedAction OnDeath;
     private string source;
 
-    private bool eventTriggered;
+    private bool isDead;
 
     private void Start() {
         Reset();
     }
 
     private void Update() {
-        if (health <= 0) {
-            if (eventTriggered)
-                return;
-            eventTriggered = true;
+        if (health <= 0 && !isDead) {
+            isDead = true;
             if (OnDeath != null)
                 OnDeath(source);            
         }
@@ -40,10 +38,11 @@ public class Health : NetworkBehaviour {
 
     public void Reset() {
         health = maxHealth;
-        eventTriggered = false;
+        isDead = false;
     }
 
-    internal void TakeDamage(int damage, string _source) {
+    [ClientRpc]
+    public void RpcTakeDamage(int damage, string _source) {
         if (health <= 0)
             return;
         

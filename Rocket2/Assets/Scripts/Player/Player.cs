@@ -114,7 +114,7 @@ public class Player : NetworkBehaviour {
     #region "Die and respawn functionality"
     // Called when a player dies (health <= 0)
     private void Die(string _sourcePlayerID) {
-        Debug.Log(transform.name + " is dead");        
+        Debug.Log(transform.name + " got killed by " + _sourcePlayerID);        
 
         UpdateScore(_sourcePlayerID);
         ToggleComponents(false);
