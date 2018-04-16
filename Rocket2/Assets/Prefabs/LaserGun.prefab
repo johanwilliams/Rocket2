@@ -143,7 +143,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 277fdd00259774e8aa4602d8365836a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  name: Lasergun
+  slot: 0
   damage: 5
   range: 0
   speed: 0

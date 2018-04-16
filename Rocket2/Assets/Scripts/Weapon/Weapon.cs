@@ -6,7 +6,9 @@ using UnityEngine.Networking;
 [RequireComponent(typeof(NetworkIdentity))]
 public abstract class Weapon : NetworkBehaviour {
 
-    public new string name;
+    public enum Slot { Primary, Seconday };
+
+    public Slot slot;
     public int damage;
     public int range;
     public int speed;

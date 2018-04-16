@@ -169,7 +169,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d6bda2a76af2b04aa42a8b5658fb4e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  name: Gun
+  slot: 1
   damage: 10
   range: 200
   speed: 50
@@ -177,3 +177,4 @@ MonoBehaviour:
   mussleFlash: {fileID: 0}
   bulletPrefab: {fileID: 1062095377250998, guid: 1c58e27d2571f1e48b4adbc64a13f886,
     type: 2}
+  firePoint: {fileID: 4509633181159712}

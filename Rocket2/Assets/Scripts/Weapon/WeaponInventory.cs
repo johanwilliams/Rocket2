@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class WeaponInventory : MonoBehaviour {
 
-    public enum Name { Gun, Lasergun, HomingMissile, Gravityhole, Shotgun };
+    public enum Name { Gun, Lasergun, HomingMissile, Gravityhole, Shotgun };    
 
     public WeaponInventoryItem[] inventory;
 

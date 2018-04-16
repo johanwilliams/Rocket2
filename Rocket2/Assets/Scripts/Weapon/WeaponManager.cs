@@ -30,6 +30,7 @@ public class WeaponManager : NetworkBehaviour {
             this.enabled = false;
         }
         //EquipWeapon(primaryWeapon);
+        EquipWeapon(WeaponInventory.Name.Gun);
     }
 
     [Command]
@@ -68,7 +69,24 @@ public class WeaponManager : NetworkBehaviour {
         return weaponSlot;
     }
 
-    private void EquipWeapon(RocketWeapon _weapon) {
+    private void EquipWeapon(WeaponInventory.Name name) {
+        Weapon weapon = WeaponInventory.instance.getWeapon(name);
+        if (weapon == null) {
+            Debug.LogWarning("Could not equip weapon " + name.ToString() + " as it was not found in the weapon inventory");
+            return;
+        }
+
+        Weapon _weaponIns = Instantiate(weapon, weaponSlot.position, weaponSlot.rotation);
+        _weaponIns.transform.SetParent(weaponSlot);
+
+        // Equip the weapon to the correct weapon slot
+        if (weapon.slot == Weapon.Slot.Primary)
+            primaryWeapon = _weaponIns;
+        else if (weapon.slot == Weapon.Slot.Seconday)
+            secondaryWeapon = _weaponIns;
+    }
+
+        private void EquipWeapon(RocketWeapon _weapon) {
         currentWeapon = _weapon;
 
         if (_weapon.graphics != null) { 
