@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
+[RequireComponent(typeof(NetworkIdentity))]
 public abstract class Weapon : NetworkBehaviour {
 
     public new string name;

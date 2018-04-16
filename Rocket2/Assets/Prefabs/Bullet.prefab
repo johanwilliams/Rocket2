@@ -24,7 +24,6 @@ GameObject:
   - component: {fileID: 33395709548948686}
   - component: {fileID: 23368975535667322}
   - component: {fileID: 114203266231587628}
-  - component: {fileID: 114868313751350926}
   - component: {fileID: 114134935481005196}
   m_Layer: 0
   m_Name: Bullet
@@ -41,7 +40,7 @@ Transform:
   m_GameObject: {fileID: 1062095377250998}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -195,20 +194,3 @@ MonoBehaviour:
     i15: 134
   m_ServerOnly: 0
   m_LocalPlayerAuthority: 0
---- !u!114 &114868313751350926
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1062095377250998}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c91a0810d4ff5c34fb4cbe9a032d17d6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  name: Bullet
-  damage: 10
-  range: 0
-  speed: 50
-  fireRate: 2
-  bulletPrefab: {fileID: 1062095377250998}
