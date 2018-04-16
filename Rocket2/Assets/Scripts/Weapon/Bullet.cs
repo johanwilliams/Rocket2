@@ -15,7 +15,7 @@ public class Bullet : Weapon {
         }
     }
     
-    public override void Shoot(Vector3 position, Quaternion rotation, Vector3 direction) {
+    public override void Shoot(Player shooter, Vector3 position, Quaternion rotation, Vector3 direction) {
         var bullet = Instantiate(bulletPrefab, position, rotation);
         bullet.GetComponent<Rigidbody2D>().velocity = direction * speed;
         

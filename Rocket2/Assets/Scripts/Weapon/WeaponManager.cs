@@ -1,18 +1,20 @@
 using UnityEngine;
 using UnityEngine.Networking;
 
+[RequireComponent(typeof(Player))]
 public class WeaponManager : NetworkBehaviour {
 
     [SerializeField]
     private string weaponLayerName = "Weapon";
 
-//    public GameObject bulletPrefab;
+    //    public GameObject bulletPrefab;
+    private Player player;
 
     [SerializeField]
     private Transform weaponSlot;
 
     [SerializeField]
-    private RocketWeapon primaryWeapon;
+    private Weapon primaryWeapon;
 
     [SerializeField]
     private Weapon secondaryWeapon;
@@ -21,22 +23,25 @@ public class WeaponManager : NetworkBehaviour {
     private WeaponGraphics currentWeaponGraphics;
 
     private void Start() {
+        player = GetComponent<Player>();
         // Use this for serialization
         if (weaponSlot == null) {
             Debug.LogError("WeaponManager: No reference to weaponSlot transform");
             this.enabled = false;
         }
+        //EquipWeapon(primaryWeapon);
+    }
 
-        EquipWeapon(primaryWeapon);
+    [Command]
+    public void CmdFirePrimaryWeapon() {
+        primaryWeapon.Shoot(player, weaponSlot.transform.position, weaponSlot.transform.rotation, weaponSlot.transform.up);
     }
 
     [Command]
     public void CmdFireSecondaryWeapon() {
-        //secondaryWeapon.Shoot(player, weaponSlot.transform.position, weaponSlot.transform.up);
-        //CmdFireBullet();
-        secondaryWeapon.Shoot(weaponSlot.transform.position, weaponSlot.transform.rotation, weaponSlot.transform.up);
-
+        secondaryWeapon.Shoot(player, weaponSlot.transform.position, weaponSlot.transform.rotation, weaponSlot.transform.up);
     }
+
 
     /*[Command]
     void CmdFireBullet() {

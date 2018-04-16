@@ -36,6 +36,11 @@ public class RocketShoot : NetworkBehaviour {
 
         primaryWeapon = weaponManager.GetCurrentWeapon();
 
+        //TODO: Debug
+        if (Input.GetKeyDown(KeyCode.P)) {
+            weaponManager.CmdFirePrimaryWeapon();
+        }
+
         if (Input.GetButtonDown("Fire1") && isShootingAllowed()) {
             if (primaryWeapon.fireRate <= 0f)
                 Shoot();    // Single fire

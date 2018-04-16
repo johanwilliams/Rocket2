@@ -143,7 +143,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 277fdd00259774e8aa4602d8365836a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  name: Laser gun
+  name: Lasergun
+  damage: 5
+  range: 0
+  speed: 0
+  fireRate: 5
+  mussleFlash: {fileID: 198115962877338546}
+  mask:
+    serializedVersion: 2
+    m_Bits: 1536
 --- !u!114 &114545487421313570
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -220,7 +228,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 2
-  randomSeed: 856468545
+  randomSeed: 510430805
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -3578,7 +3586,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 2
-  randomSeed: 1185617026
+  randomSeed: 107989211
   InitialModule:
     serializedVersion: 3
     enabled: 1

@@ -686,15 +686,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponLayerName: Weapon
   weaponSlot: {fileID: 4590360212557206}
-  primaryWeapon:
-    name: Laser gun
-    damage: 10
-    range: 100
-    recoil: 50
-    fireRate: 5
-    energyCost: 5
-    soundFire: {fileID: 8300000, guid: 6985457424cae0749b827d655b070310, type: 3}
-    graphics: {fileID: 1676463104437078, guid: 121cfbda47a764349851268ffcefa6ed, type: 2}
+  primaryWeapon: {fileID: 114124564207251020, guid: 121cfbda47a764349851268ffcefa6ed,
+    type: 2}
   secondaryWeapon: {fileID: 114868313751350926, guid: 1c58e27d2571f1e48b4adbc64a13f886,
     type: 2}
 --- !u!114 &114877578232260194

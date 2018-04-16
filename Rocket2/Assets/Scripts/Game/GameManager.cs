@@ -83,6 +83,12 @@ public class GameManager : NetworkBehaviour {
         _player.health.RpcTakeDamage(_damage, _sourcePlayerID);
     }
 
+    [Command]
+    public void CmdInflictDamage(Health health, string sourcePlayerID, int damage) {
+
+        health.RpcTakeDamage(damage, sourcePlayerID);
+    }
+
     public int getLatency() {
         return NetworkManager.singleton.client.GetRTT();
     } 
