@@ -30,19 +30,20 @@ public class WeaponManager : NetworkBehaviour {
             this.enabled = false;
         }
         //EquipWeapon(primaryWeapon);
-        EquipWeapon(WeaponInventory.Name.Gun);
+        //EquipWeapon(WeaponInventory.Name.Gun);
+        EquipWeapon(WeaponInventory.Name.Lasergun);
     }
 
-    [Command]
-    public void CmdFirePrimaryWeapon() {
-        primaryWeapon.Shoot(player, weaponSlot.transform.position, weaponSlot.transform.rotation, weaponSlot.transform.up);
-    }
+    public void CmdFire(Weapon.Slot slot) {
+        //TODO: Check that we can fire (energy and possibly fireRate or should this check be on the weapon itself?)
 
-    [Command]
-    public void CmdFireSecondaryWeapon() {
-        secondaryWeapon.Shoot(player, weaponSlot.transform.position, weaponSlot.transform.rotation, weaponSlot.transform.up);
-    }
+        //TODO: Add recoil or should this be on the weapon?
 
+        if (slot == Weapon.Slot.Primary)
+            primaryWeapon.Shoot(player);
+        else if (slot == Weapon.Slot.Seconday)
+            secondaryWeapon.Shoot(player);
+    }
 
     /*[Command]
     void CmdFireBullet() {
@@ -86,6 +87,7 @@ public class WeaponManager : NetworkBehaviour {
             secondaryWeapon = _weaponIns;
     }
 
+    //TODO: Remove when the other equipweapon is working
         private void EquipWeapon(RocketWeapon _weapon) {
         currentWeapon = _weapon;
 
@@ -101,6 +103,44 @@ public class WeaponManager : NetworkBehaviour {
             if (isLocalPlayer) {
                 Util.SetLayerRecursively(_weaponIns, LayerMask.NameToLayer(weaponLayerName));
             }
+        }
+    }
+
+    private Weapon getWeapon(Weapon.Slot slot) {
+        if (slot == Weapon.Slot.Primary)
+            return primaryWeapon;
+        else if (slot == Weapon.Slot.Seconday)
+            return secondaryWeapon;
+        return null;
+    }
+
+    // Called on the server when a weapon is beiing shot
+    [Command]
+    public void CmdOnWeaponShot(Weapon.Slot slot) {
+        RpcOnWeaponShot(slot);
+    }
+
+    // Called on all clients when we weapon is being shot
+    [ClientRpc]
+    private void RpcOnWeaponShot(Weapon.Slot slot) {
+        Weapon weapon = getWeapon(slot);
+        if (weapon != null) {
+            weapon.OnShoot();
+        }
+    }
+
+    // Called on the server when a weapon is beiing shot
+    [Command]
+    public void CmdOnWeaponShotAndHit(Weapon.Slot slot, Vector3 hitPosition, Vector3 hitNormal) {
+        RpcOnWeaponShotAndHit(slot, hitPosition, hitNormal);
+    }
+
+    // Called on all clients when we weapon is being shot
+    [ClientRpc]
+    private void RpcOnWeaponShotAndHit(Weapon.Slot slot, Vector3 hitPosition, Vector3 hitNormal) {
+        Weapon weapon = getWeapon(slot);
+        if (weapon != null) {
+            weapon.OnShootAndHit(hitPosition, hitNormal);
         }
     }
 

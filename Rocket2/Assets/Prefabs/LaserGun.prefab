@@ -145,13 +145,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   slot: 0
   damage: 5
-  range: 0
+  range: 20
   speed: 0
   fireRate: 5
+  firePoint: {fileID: 4451515638584466}
   mussleFlash: {fileID: 198115962877338546}
+  fireSound: {fileID: 0}
   mask:
     serializedVersion: 2
     m_Bits: 1536
+  laserTrailEffectPrefab: {fileID: 1634255604561812, guid: 5d8175bdc2c00b747b9b70302e0068c6,
+    type: 2}
 --- !u!114 &114545487421313570
 MonoBehaviour:
   m_ObjectHideFlags: 1

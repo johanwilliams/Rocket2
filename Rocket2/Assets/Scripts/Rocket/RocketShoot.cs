@@ -37,8 +37,13 @@ public class RocketShoot : NetworkBehaviour {
         primaryWeapon = weaponManager.GetCurrentWeapon();
 
         //TODO: Debug
+        if (Input.GetKeyDown(KeyCode.O)) {
+            weaponManager.CmdFire(Weapon.Slot.Primary);
+        }
+
+        //TODO: Debug
         if (Input.GetKeyDown(KeyCode.P)) {
-            weaponManager.CmdFirePrimaryWeapon();
+            weaponManager.CmdFire(Weapon.Slot.Seconday);
         }
 
         if (Input.GetButtonDown("Fire1") && isShootingAllowed()) {
@@ -49,10 +54,6 @@ public class RocketShoot : NetworkBehaviour {
         } else if (Input.GetButtonUp("Fire1")) {
             // Stop autofire
             CancelInvoke("Shoot");
-        }
-
-        if (Input.GetButtonDown("Fire2")) {
-            weaponManager.CmdFireSecondaryWeapon();
         }
     }
 

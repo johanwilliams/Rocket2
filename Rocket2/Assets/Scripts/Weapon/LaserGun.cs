@@ -7,54 +7,45 @@ public class LaserGun : Weapon {
     //public new string name = "Laser gun";
     //public float range = 100f;
     //public int damage = 5;
-    private const string PLAYER_TAG = "Player";    
+    //private const string PLAYER_TAG = "Player";    
 
     [SerializeField]
     private LayerMask mask;
 
-    /*public void Shoot(Player shooter, Vector2 position, Vector2 direction) {
-        Debug.Log(shooter.username + " shot " + name);
+    public GameObject laserTrailEffectPrefab;
 
+    public override void Shoot(Player shooter) {                
         // Raycast to detect if we hit something 
-        RaycastHit2D _hit = Physics2D.Raycast(position, direction, range, mask);
-        Vector3 _hitPos = position + direction * range;
+        RaycastHit2D hit = Physics2D.Raycast(firePoint.position, firePoint.up, range, mask);
+        Vector3 hitPosition = firePoint.position + firePoint.up * range;
+        Debug.DrawLine(firePoint.position, firePoint.position + firePoint.up * range, Color.red);
 
-        Debug.DrawLine(position, position + direction * range, Color.red);
-
-
-        if (_hit.collider != null) {
-            if (_hit.collider.tag == PLAYER_TAG) {
-                GameManager.instance.CmdDamagePlayer(_hit.collider.name, shooter.name, damage);
-            }
-            _hitPos = _hit.point;
-
-            // Call the OnHit method on the server to render a hit effect
-            //CmdOnHit(_hitPos, _hit.normal);
-        }
-    }*/
-
-    public override void Shoot(Player shooter, Vector3 position, Quaternion rotation, Vector3 direction) {        
-        Debug.Log(shooter.username + " shot " + name);
-
-        RpcShotEffect();
-
-        // Raycast to detect if we hit something 
-        RaycastHit2D _hit = Physics2D.Raycast(position, direction, range, mask);
-        Vector3 _hitPos = position + direction * range;
-
-        Debug.DrawLine(position, position + direction * range, Color.red);
-
-
-        if (_hit.collider != null) {
-            Health health = _hit.collider.GetComponent<Health>();
+        // Did we hit something?
+        if (hit.collider != null) {
+            Health health = hit.collider.GetComponent<Health>();
             if (health != null) {
-                GameManager.instance.CmdDamagePlayer(_hit.collider.name, shooter.name, damage);
+                GameManager.instance.CmdDamagePlayer(hit.collider.name, shooter.name, damage);
             }
-            _hitPos = _hit.point;
-
-            // Call the OnHit method on the server to render a hit effect
-            //CmdOnHit(_hitPos, _hit.normal);
+            hitPosition = hit.point;            
         }
+        shooter.weaponManager.CmdOnWeaponShotAndHit(slot, hitPosition, hit.normal);
+    }
 
+    public override void OnShootAndHit(Vector3 hitPosition, Vector3 hitNormal) {
+        base.OnShootAndHit(hitPosition, hitNormal);
+        RenderTrail(hitPosition);
+    }
+
+    // Renders the laser wepon trail
+    private void RenderTrail(Vector3 hitPosition) {
+        if (laserTrailEffectPrefab != null) {
+            GameObject trailClone = Instantiate(laserTrailEffectPrefab, firePoint.position, firePoint.rotation);
+            LineRenderer lr = trailClone.GetComponent<LineRenderer>();
+            if (lr != null) {
+                lr.SetPosition(0, firePoint.position);
+                lr.SetPosition(1, hitPosition);
+            }
+            Destroy(trailClone, 0.04f);
+        }
     }
 }

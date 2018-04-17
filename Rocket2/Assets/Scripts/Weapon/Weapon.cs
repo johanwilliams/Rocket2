@@ -1,9 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.Networking;
 
-[RequireComponent(typeof(NetworkIdentity))]
 public abstract class Weapon : NetworkBehaviour {
 
     public enum Slot { Primary, Seconday };
@@ -14,15 +12,34 @@ public abstract class Weapon : NetworkBehaviour {
     public int speed;
     public int fireRate;
 
+    public Transform firePoint;
+
     public ParticleSystem mussleFlash;
+    public AudioSource fireSound;
 
-    public abstract void Shoot(Player shooter, Vector3 position, Quaternion rotation, Vector3 direction);
-
-    // Called on all clients when we need to do a shoot effect
-    [ClientRpc]
-    internal void RpcShotEffect() {
-        mussleFlash.Play();
-        //AudioManager.instance.PlayClipAtPoint("LaserShot", transform.position);
+    public virtual void Shoot(Player shooter) {
+        //TODO: Check energy. If not enough through exception
+        //TODO: Check firerate. If not enough through exception
+        shooter.weaponManager.CmdOnWeaponShot(slot);
     }
 
+    private void Start() {
+        fireSound = GetComponent<AudioSource>();
+        if (fireSound == null)
+            Debug.LogWarning("No AudioSource component added as a fire sound for weapon " + this.GetType().Name);
+    }
+
+    // Called on all clients when we need to do a shoot effect
+    public virtual void OnShoot() {
+        if (mussleFlash != null)
+            mussleFlash.Play();
+
+        if (fireSound != null)
+            fireSound.Play();
+    }
+
+    public virtual void OnShootAndHit(Vector3 hitPosition, Vector3 hitNormal) {
+        OnShoot();
+        //TODO: Implement the hit effect
+    }
 }

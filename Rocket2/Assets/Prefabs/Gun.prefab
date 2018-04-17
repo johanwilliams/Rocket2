@@ -157,7 +157,7 @@ MonoBehaviour:
     i14: 217
     i15: 147
   m_ServerOnly: 0
-  m_LocalPlayerAuthority: 0
+  m_LocalPlayerAuthority: 1
 --- !u!114 &114934737925043446
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -174,7 +174,8 @@ MonoBehaviour:
   range: 200
   speed: 50
   fireRate: 2
+  firePoint: {fileID: 4509633181159712}
   mussleFlash: {fileID: 0}
+  fireSound: {fileID: 0}
   bulletPrefab: {fileID: 1062095377250998, guid: 1c58e27d2571f1e48b4adbc64a13f886,
     type: 2}
-  firePoint: {fileID: 4509633181159712}

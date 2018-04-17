@@ -5,8 +5,7 @@ using UnityEngine.Networking;
 
 public class Gun : Weapon {
 
-    public GameObject bulletPrefab;
-    public Transform firePoint;
+    public GameObject bulletPrefab;    
 
     // Use this for initialization
     void Start () {
@@ -18,7 +17,7 @@ public class Gun : Weapon {
 		
 	}
 
-    public override void Shoot(Player shooter, Vector3 position, Quaternion rotation, Vector3 direction) {
+    public override void Shoot(Player shooter) {
         var bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
         bullet.GetComponent<Rigidbody2D>().velocity = firePoint.up * speed;
 
