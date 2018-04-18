@@ -36,7 +36,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4500228420752344}
-  - component: {fileID: 114545487421313570}
   - component: {fileID: 114124564207251020}
   - component: {fileID: 82149003150091788}
   m_Layer: 8
@@ -219,7 +218,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1676463104437078}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 277fdd00259774e8aa4602d8365836a3, type: 3}
   m_Name: 
@@ -238,22 +237,6 @@ MonoBehaviour:
   laserTrailEffectPrefab: {fileID: 1634255604561812, guid: 5d8175bdc2c00b747b9b70302e0068c6,
     type: 2}
   hitEffectPrefab: {fileID: 1702143271356562, guid: abb8f6dae94648d4ab5c3e139ea77686,
-    type: 2}
---- !u!114 &114545487421313570
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1676463104437078}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 51ac1fc277eefe049935476e7941f5c1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mussleFlash: {fileID: 198115962877338546}
-  hitEffectPrefab: {fileID: 1702143271356562, guid: abb8f6dae94648d4ab5c3e139ea77686,
-    type: 2}
-  trailEffectPrefab: {fileID: 1634255604561812, guid: 5d8175bdc2c00b747b9b70302e0068c6,
     type: 2}
 --- !u!198 &198115962877338546
 ParticleSystem:

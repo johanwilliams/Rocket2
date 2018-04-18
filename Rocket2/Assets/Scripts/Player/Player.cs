@@ -5,13 +5,13 @@ using System.Collections;
 [RequireComponent(typeof(RocketEngine))]
 [RequireComponent(typeof(Health))]
 [RequireComponent(typeof(Energy))]
-[RequireComponent(typeof(WeaponManager))]
+[RequireComponent(typeof(RocketWeapons))]
 public class Player : NetworkBehaviour {
 
     [HideInInspector] public RocketEngine rocketEngine;
     [HideInInspector] public Health health;
     [HideInInspector] public Energy energy;
-    [HideInInspector] public WeaponManager weaponManager;
+    [HideInInspector] public RocketWeapons rocketWeapons;
 
     [SyncVar]
     public string username = "Loading";
@@ -72,7 +72,7 @@ public class Player : NetworkBehaviour {
     private void Start() {
         rocketEngine = GetComponent<RocketEngine>();
         energy = GetComponent<Energy>();
-        weaponManager = GetComponent<WeaponManager>();
+        rocketWeapons = GetComponent<RocketWeapons>();
     }
 
     // DEBUG method only to kill the local player instantly

@@ -2,13 +2,13 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 [RequireComponent(typeof(RocketEngine))]
-[RequireComponent(typeof(WeaponManager))]
+[RequireComponent(typeof(RocketWeapons))]
 [RequireComponent(typeof(Player))]
 public class RocketController : NetworkBehaviour {
 
     // Component caching
     private RocketEngine rocketEngine;
-    private WeaponManager weaponManager;
+    private RocketWeapons rocketWeapons;
     private Player player;
 
     public bool lockCursor;
@@ -16,7 +16,7 @@ public class RocketController : NetworkBehaviour {
     // Use this for initialization
     void Start () {
         rocketEngine = GetComponent<RocketEngine>();
-        weaponManager = GetComponent<WeaponManager>();
+        rocketWeapons = GetComponent<RocketWeapons>();
         player = GetComponent<Player>();
     }
 	
@@ -49,16 +49,16 @@ public class RocketController : NetworkBehaviour {
 
         //TODO: For debug only
         if (Input.GetKeyDown(KeyCode.K))
-            weaponManager.CmdDamageGameObject(player.gameObject, player.name, 50);
+            rocketWeapons.CmdDamageGameObject(player.gameObject, player.name, 50);
 
         if (Input.GetButtonDown("Fire1"))
-            weaponManager.Fire(Weapon.Slot.Primary);
+            rocketWeapons.Fire(Weapon.Slot.Primary);
         else if (Input.GetButtonUp("Fire1"))
-            weaponManager.Ceasefire(Weapon.Slot.Primary);
+            rocketWeapons.Ceasefire(Weapon.Slot.Primary);
 
         if (Input.GetButtonDown("Fire2"))
-            weaponManager.Fire(Weapon.Slot.Seconday);
+            rocketWeapons.Fire(Weapon.Slot.Seconday);
         else if (Input.GetButtonUp("Fire2"))
-            weaponManager.Ceasefire(Weapon.Slot.Seconday);
+            rocketWeapons.Ceasefire(Weapon.Slot.Seconday);
     }
 }

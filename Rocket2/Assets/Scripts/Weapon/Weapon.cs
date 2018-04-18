@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.Serialization;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -38,7 +39,7 @@ public abstract class Weapon : NetworkBehaviour {
 
     // Calls the shooter game manager (so it can update the server of the shot)
     protected virtual void OnWeaponShot(Player shooter) {
-        shooter.weaponManager.CmdOnWeaponShot(slot);
+        shooter.rocketWeapons.CmdOnWeaponShot(slot);
     }
 
     // Play the muzzle flash and play the fire sound
@@ -68,8 +69,27 @@ public abstract class Weapon : NetworkBehaviour {
     }
 
     private bool checkEnergy(Player shooter) {
-        Debug.Log("Player energy: " + shooter.energy.GetEnergy());
-        Debug.Log("Energy cost: " + energyCost);
+        Debug.Log(shooter.energy.GetEnergy() + ":" + energyCost);
         return shooter.energy.GetEnergy() >= energyCost;
+    }
+
+    private void cSSheckEnergy(Player shooter) {
+        if (shooter.energy.GetEnergy() < energyCost)
+            throw new ShootException("Not enough energy to shoot");
+    }
+}
+
+[Serializable]
+internal class ShootException : Exception {
+    public ShootException() {
+    }
+
+    public ShootException(string message) : base(message) {
+    }
+
+    public ShootException(string message, Exception innerException) : base(message, innerException) {
+    }
+
+    protected ShootException(SerializationInfo info, StreamingContext context) : base(info, context) {
     }
 }

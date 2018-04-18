@@ -2,37 +2,33 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 [RequireComponent(typeof(Player))]
-public class WeaponManager : NetworkBehaviour {
+public class RocketWeapons : NetworkBehaviour {
 
     [SerializeField]
     private string weaponLayerName = "Weapon";
 
-    //    public GameObject bulletPrefab;
     private Player player;
 
     [SerializeField]
     private Transform weaponSlot;
 
     [SerializeField]
+    private WeaponInventory.Name defaultWeapon;
+
     private Weapon primaryWeapon;
-
-    [SerializeField]
     private Weapon secondaryWeapon;
-
-    private RocketWeapon currentWeapon;
-    private WeaponGraphics currentWeaponGraphics;
 
     private void Start() {
         player = GetComponent<Player>();
         // Use this for serialization
         if (weaponSlot == null) {
-            Debug.LogError("WeaponManager: No reference to weaponSlot transform");
+            Debug.LogError("RocketWeapons: No reference to weaponSlot transform");
             this.enabled = false;
         }
-        EquipWeapon(WeaponInventory.Name.Gun);
-        EquipWeapon(WeaponInventory.Name.Lasergun);
+        EquipWeapon(defaultWeapon);
     }
 
+    // Enable the weapons when we are enabled (respawns)
     private void OnEnable() {        
         if (primaryWeapon != null) 
             primaryWeapon.gameObject.SetActive(true);
@@ -40,6 +36,7 @@ public class WeaponManager : NetworkBehaviour {
             secondaryWeapon.gameObject.SetActive(true);
     }
 
+    // Disable the weapons and stop shooting if we are disabled (killed)
     private void OnDisable() {        
         if (primaryWeapon != null) {
             CancelInvoke("FirePrimary");
@@ -53,7 +50,6 @@ public class WeaponManager : NetworkBehaviour {
 
     // Stops any invoke repeating (autofire) of a weapon
     public void Ceasefire(Weapon.Slot slot) {
-        Debug.Log("Ceasefire " + slot);
         if (slot == Weapon.Slot.Primary)
             CancelInvoke("FirePrimary");
         else if (slot == Weapon.Slot.Seconday)
@@ -76,64 +72,60 @@ public class WeaponManager : NetworkBehaviour {
         }
     }
 
+    // Fire primary weapon
     private void FirePrimary() {
         primaryWeapon.Shoot(player);
     }
 
+    // Fire secondary weapon
     private void FireSecondary() {
         secondaryWeapon.Shoot(player);
     }
 
-    public RocketWeapon GetCurrentWeapon() {
-        return currentWeapon;
-    }
-
-    public WeaponGraphics GetCurrentWeaponGraphics() {
-        return currentWeaponGraphics;
-    }
-
+    // Returns the transform where weapons are put
     public Transform GetWeaponSlot() {
         return weaponSlot;
     }
 
+    // Equips a weapon and removes any weapon currently in that slot
     private void EquipWeapon(WeaponInventory.Name name) {
         Weapon weapon = WeaponInventory.instance.getWeapon(name);
         if (weapon == null) {
-            Debug.LogWarning("Could not equip weapon " + name.ToString() + " as it was not found in the weapon inventory");
+            Debug.LogWarning(player.name + " could not equip weapon " + name.ToString() + " as it was not found in the weapon inventory");
             return;
         }
 
         Weapon _weaponIns = Instantiate(weapon, weaponSlot.position, weaponSlot.rotation);
         _weaponIns.transform.SetParent(weaponSlot);
 
+        if (isLocalPlayer)
+            Util.SetLayerRecursively(_weaponIns.gameObject, LayerMask.NameToLayer(weaponLayerName));
+
         // Equip the weapon to the correct weapon slot
-        if (weapon.slot == Weapon.Slot.Primary)
+        if (weapon.slot == Weapon.Slot.Primary) {
+            if (primaryWeapon != null)
+                Destroy(primaryWeapon);
             primaryWeapon = _weaponIns;
-        else if (weapon.slot == Weapon.Slot.Seconday)
-            secondaryWeapon = _weaponIns;
-
-        Debug.Log("Equipped wepon " + name + " in " + weapon.slot + " weapon slot");
-    }
-
-    //TODO: Remove when the other equipweapon is working
-        private void EquipWeapon(RocketWeapon _weapon) {
-        currentWeapon = _weapon;
-
-        if (_weapon.graphics != null) { 
-            GameObject _weaponIns = Instantiate(_weapon.graphics, weaponSlot.position, weaponSlot.rotation);
-            _weaponIns.transform.SetParent(weaponSlot);
-
-            currentWeaponGraphics = _weaponIns.GetComponent<WeaponGraphics>();
-            if (currentWeaponGraphics == null) {
-                Debug.LogError("No WeaponGraphics on the weapon " + _weaponIns.name);
-            }
-
-            if (isLocalPlayer) {
-                Util.SetLayerRecursively(_weaponIns, LayerMask.NameToLayer(weaponLayerName));
-            }
         }
+        else if (weapon.slot == Weapon.Slot.Seconday) {
+            if (secondaryWeapon != null)
+                Destroy(secondaryWeapon);
+            secondaryWeapon = _weaponIns;
+        }
+
+        Debug.Log(player.name + " equipped weapon " + name + " in " + weapon.slot + " weapon slot");
     }
 
+    // Unequips a weapon and equips our default weapon (if the unequipped weapon had that slot)
+    private void UnequipWeapon(Weapon.Slot slot) {
+        Weapon current = getWeapon(slot);
+        if (current.slot == WeaponInventory.instance.getWeapon(defaultWeapon).slot)
+            EquipWeapon(defaultWeapon);
+        else
+            Destroy(current);
+    }
+   
+    // returns the weapon in the specified weapon slot
     private Weapon getWeapon(Weapon.Slot slot) {
         if (slot == Weapon.Slot.Primary)
             return primaryWeapon;
@@ -142,13 +134,13 @@ public class WeaponManager : NetworkBehaviour {
         return null;
     }
 
-    // Called on the server when a weapon is beiing shot
+    // Call the server to notify it that a shot has been fired
     [Command]
     public void CmdOnWeaponShot(Weapon.Slot slot) {
         RpcOnWeaponShot(slot);
     }
 
-    // Called on all clients when we weapon is being shot
+    // Calls all client to notify them that a shot has been fired
     [ClientRpc]
     private void RpcOnWeaponShot(Weapon.Slot slot) {
         Weapon weapon = getWeapon(slot);
@@ -157,13 +149,13 @@ public class WeaponManager : NetworkBehaviour {
         }
     }
 
-    // Called on the server when a weapon is beiing shot
+    // Call the server to notify it that a shot has been fired and a hit has been detected
     [Command]
     public void CmdOnWeaponShotAndHit(Weapon.Slot slot, Vector3 hitPosition, Vector3 hitNormal) {
         RpcOnWeaponShotAndHit(slot, hitPosition, hitNormal);
     }
 
-    // Called on all clients when we weapon is being shot
+    // Call all clients to notify it that a shot has been fired and a hit has been detected
     [ClientRpc]
     private void RpcOnWeaponShotAndHit(Weapon.Slot slot, Vector3 hitPosition, Vector3 hitNormal) {
         Weapon weapon = getWeapon(slot);
@@ -172,6 +164,7 @@ public class WeaponManager : NetworkBehaviour {
         }
     }
 
+    // Call the server to notify it a gameobject taken damage (if it has the health component)
     [Command]
     public void CmdDamageGameObject(GameObject _gameObject, string _sourcePlayerID, int _damage) {
         Health health = _gameObject.GetComponent<Health>();

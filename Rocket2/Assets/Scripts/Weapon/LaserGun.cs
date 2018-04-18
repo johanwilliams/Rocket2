@@ -35,11 +35,11 @@ public class LaserGun : Weapon {
         if (hit.collider != null) {
             // Can we damage what we hit?
             if (hit.collider.gameObject.GetComponent<Health>() != null) {
-                shooter.weaponManager.CmdDamageGameObject(hit.collider.gameObject, shooter.name, damage);
+                shooter.rocketWeapons.CmdDamageGameObject(hit.collider.gameObject, shooter.name, damage);
             }
             hitPosition = hit.point;            
         }
-        shooter.weaponManager.CmdOnWeaponShotAndHit(slot, hitPosition, hit.normal);
+        shooter.rocketWeapons.CmdOnWeaponShotAndHit(slot, hitPosition, hit.normal);
     }
 
     // Override and do nothing as we want to take control of when we show our shot effects to show them all at one (muzzleflash sound, trail & hit)
