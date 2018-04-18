@@ -1,11 +1,13 @@
 ﻿<Properties StartupConfiguration="{DDE1CB87-49FC-8CD5-8CD6-8DC4D93B54A5}|">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Weapon/WeaponInventory.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Weapon/Weapon.cs">
     <Files>
-      <File FileName="Assets/Scripts/Weapon/Weapon.cs" Line="29" Column="80" />
+      <File FileName="Assets/Scripts/Weapon/Weapon.cs" Line="31" Column="5" />
       <File FileName="Assets/Scripts/Weapon/LaserGun.cs" Line="64" Column="93" />
       <File FileName="Assets/Scripts/Rocket/RocketShoot.cs" Line="111" Column="1" />
       <File FileName="Assets/Scripts/Weapon/WeaponGraphics.cs" Line="6" Column="5" />
       <File FileName="Assets/Scripts/Weapon/WeaponInventory.cs" Line="28" Column="25" />
+      <File FileName="Assets/Scripts/Weapon/WeaponManager.cs" Line="33" Column="9" />
+      <File FileName="Assets/Scripts/Weapon/Gun.cs" Line="12" Column="9" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />

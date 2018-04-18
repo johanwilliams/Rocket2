@@ -30,7 +30,7 @@ public class WeaponManager : NetworkBehaviour {
             this.enabled = false;
         }
         //EquipWeapon(primaryWeapon);
-        //EquipWeapon(WeaponInventory.Name.Gun);
+        EquipWeapon(WeaponInventory.Name.Gun);
         EquipWeapon(WeaponInventory.Name.Lasergun);
     }
 
