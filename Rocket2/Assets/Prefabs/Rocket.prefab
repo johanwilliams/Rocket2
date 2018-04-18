@@ -478,6 +478,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2275b7578aa04900b74d1dc120de696, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lockCursor: 0
 --- !u!114 &114466705819132700
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -506,12 +507,14 @@ MonoBehaviour:
   rocketEngine: {fileID: 0}
   health: {fileID: 0}
   energy: {fileID: 0}
+  weaponManager: {fileID: 0}
   username: Loading
   kills: 0
   deaths: 0
   disableOnDeath:
   - {fileID: 114446540403325090}
   - {fileID: 114645987432509226}
+  - {fileID: 114865117654100724}
   disableGameObjectsOnDeath:
   - {fileID: 1509988531142506}
   - {fileID: 1818611148009318}
@@ -672,7 +675,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
-  health: 0
+  destroyOnDeath: 0
 --- !u!114 &114865117654100724
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -688,8 +691,7 @@ MonoBehaviour:
   weaponSlot: {fileID: 4590360212557206}
   primaryWeapon: {fileID: 114124564207251020, guid: 121cfbda47a764349851268ffcefa6ed,
     type: 2}
-  secondaryWeapon: {fileID: 114868313751350926, guid: 1c58e27d2571f1e48b4adbc64a13f886,
-    type: 2}
+  secondaryWeapon: {fileID: 0}
 --- !u!114 &114877578232260194
 MonoBehaviour:
   m_ObjectHideFlags: 1
