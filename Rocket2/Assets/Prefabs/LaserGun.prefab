@@ -226,7 +226,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   slot: 0
   damage: 5
-  range: 20
+  range: 100
   speed: 0
   fireRate: 5
   firePoint: {fileID: 4451515638584466}

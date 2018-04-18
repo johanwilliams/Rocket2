@@ -31,9 +31,10 @@ public class LaserGun : Weapon {
 
         // Did we hit something?
         if (hit.collider != null) {
-            Health health = hit.collider.GetComponent<Health>();
-            if (health != null) {
-                GameManager.instance.CmdDamagePlayer(hit.collider.name, shooter.name, damage);
+            // Can we damage what we hit?
+            if (hit.collider.gameObject.GetComponent<Health>() != null) {
+                shooter.weaponManager.CmdDamageGameObject(hit.collider.gameObject, shooter.name, damage);
+                //GameManager.instance.CmdDamagePlayer(hit.collider.name, shooter.name, damage);
             }
             hitPosition = hit.point;            
         }

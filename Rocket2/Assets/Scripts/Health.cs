@@ -6,16 +6,20 @@ using UnityEngine.Networking;
 public class Health : NetworkBehaviour {
 
     [SerializeField] private int maxHealth = 100;
-    [SerializeField] [SyncVar(hook = "OnHealthChanged")] private int health;
+    [SyncVar(hook = "OnHealthChanged")] private int health;
+    [SerializeField] private bool destroyOnDeath = false;
 
     public delegate void DiedAction(string source);
     public event DiedAction OnDeath;
-    private string source;
 
+
+    private string source;
     private bool isDead;
 
     private void Start() {
         Reset();
+        if (destroyOnDeath)
+            OnDeath += Die;
     }
 
     private void Update() {
@@ -55,5 +59,11 @@ public class Health : NetworkBehaviour {
 
     public void OnHealthChanged(int _health) {
         health = _health;
+    }
+
+    // Called if we die and if we should destoy on death
+    private void Die(string source) {
+        Debug.Log(gameObject.name + " was killed by " + source);
+        Destroy(gameObject);
     }
 }
