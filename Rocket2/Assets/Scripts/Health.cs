@@ -9,19 +9,22 @@ public class Health : NetworkBehaviour {
     [SyncVar(hook = "OnHealthChanged")] private int health;
     [SerializeField] private bool destroyOnDeath = false;
 
+    // Delegate and Action called when health reaches 0 and we die
     public delegate void DiedAction(string source);
     public event DiedAction OnDeath;
-
 
     private string source;
     private bool isDead;
 
     private void Start() {
         Reset();
+
+        // Subscibe to our own action if we are to destroy this gameobject on death
         if (destroyOnDeath)
             OnDeath += Die;
     }
 
+    // Calles the OnDeath action if health reacehs 0 (and we are not already dead)
     private void Update() {
         if (health <= 0 && !isDead) {
             isDead = true;
@@ -45,6 +48,7 @@ public class Health : NetworkBehaviour {
         isDead = false;
     }
 
+    // Update the current health on all clients
     [ClientRpc]
     public void RpcTakeDamage(int damage, string _source) {
         if (health <= 0)
@@ -52,11 +56,10 @@ public class Health : NetworkBehaviour {
         
         health = Mathf.Clamp(health - damage, 0, maxHealth);
         source = _source;
-        //if (health <= 0 && OnDeath != null)
-        //    OnDeath(source);
         Debug.Log(transform.name + " took " + damage + " from " + source + " and now has " + health + " HP in health");
     }
 
+    // Update the health if the syncvar health variable gets updated
     public void OnHealthChanged(int _health) {
         health = _health;
     }

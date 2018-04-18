@@ -23,7 +23,9 @@ public class LaserGun : Weapon {
             Debug.LogWarning("No hit effect prefab found on weapon " + this.GetType().Name);
     }
 
-    public override void Shoot(Player shooter) {                
+    public override void Shoot(Player shooter) {
+        base.Shoot(shooter);
+
         // Raycast to detect if we hit something 
         RaycastHit2D hit = Physics2D.Raycast(firePoint.position, firePoint.up, range, mask);
         Vector3 hitPosition = firePoint.position + firePoint.up * range;
@@ -34,11 +36,15 @@ public class LaserGun : Weapon {
             // Can we damage what we hit?
             if (hit.collider.gameObject.GetComponent<Health>() != null) {
                 shooter.weaponManager.CmdDamageGameObject(hit.collider.gameObject, shooter.name, damage);
-                //GameManager.instance.CmdDamagePlayer(hit.collider.name, shooter.name, damage);
             }
             hitPosition = hit.point;            
         }
         shooter.weaponManager.CmdOnWeaponShotAndHit(slot, hitPosition, hit.normal);
+    }
+
+    // Override and do nothing as we want to take control of when we show our shot effects to show them all at one (muzzleflash sound, trail & hit)
+    protected override void OnWeaponShot(Player shooter) {
+        return;
     }
 
     public override void OnShootAndHit(Vector3 hitPosition, Vector3 hitNormal) {

@@ -39,24 +39,11 @@ public class WeaponManager : NetworkBehaviour {
 
         //TODO: Add recoil or should this be on the weapon?
 
-        if (slot == Weapon.Slot.Primary)
+        if (slot == Weapon.Slot.Primary && primaryWeapon != null && primaryWeapon.isShootingAllowed(player))
             primaryWeapon.Shoot(player);
-        else if (slot == Weapon.Slot.Seconday)
+        else if (slot == Weapon.Slot.Seconday && secondaryWeapon != null && secondaryWeapon.isShootingAllowed(player))
             secondaryWeapon.Shoot(player);
     }
-
-    /*[Command]
-    void CmdFireBullet() {
-        var bullet = Instantiate(bulletPrefab, weaponSlot.transform.position, weaponSlot.transform.rotation);
-        Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
-        rb.velocity = weaponSlot.transform.up * 50f;
-        rb.velocity = gameObject.GetComponent<Rigidbody2D>().velocity;
-        //rb.AddForce(weaponSlot.transform.up * 6, ForceMode2D.Impulse);       
-
-        NetworkServer.Spawn(bullet);
-
-        Destroy(bullet, 2.0f);
-    }*/
 
     public RocketWeapon GetCurrentWeapon() {
         return currentWeapon;
@@ -125,7 +112,7 @@ public class WeaponManager : NetworkBehaviour {
     private void RpcOnWeaponShot(Weapon.Slot slot) {
         Weapon weapon = getWeapon(slot);
         if (weapon != null) {
-            weapon.OnShoot();
+            weapon.DoShotEffects();
         }
     }
 
