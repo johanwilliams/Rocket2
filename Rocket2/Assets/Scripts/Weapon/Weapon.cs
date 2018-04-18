@@ -61,10 +61,15 @@ public abstract class Weapon : NetworkBehaviour {
     }
 
     private bool checkTime() {
-        return (Time.time - lastShotTime) >= (1f / fireRate);
+        if (fireRate == 0f)
+            return true;
+        else 
+            return (Time.time - lastShotTime) >= (1f / fireRate);
     }
 
     private bool checkEnergy(Player shooter) {
+        Debug.Log("Player energy: " + shooter.energy.GetEnergy());
+        Debug.Log("Energy cost: " + energyCost);
         return shooter.energy.GetEnergy() >= energyCost;
     }
 }

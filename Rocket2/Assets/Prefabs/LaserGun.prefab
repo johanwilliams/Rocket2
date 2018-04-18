@@ -225,10 +225,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slot: 0
-  damage: 5
+  damage: 10
   range: 100
   speed: 0
   fireRate: 5
+  energyCost: 5
   firePoint: {fileID: 4451515638584466}
   mussleFlash: {fileID: 198115962877338546}
   mask:

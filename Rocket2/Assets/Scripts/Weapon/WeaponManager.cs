@@ -29,20 +29,59 @@ public class WeaponManager : NetworkBehaviour {
             Debug.LogError("WeaponManager: No reference to weaponSlot transform");
             this.enabled = false;
         }
-        //EquipWeapon(primaryWeapon);
         EquipWeapon(WeaponInventory.Name.Gun);
         EquipWeapon(WeaponInventory.Name.Lasergun);
     }
 
-    public void CmdFire(Weapon.Slot slot) {
-        //TODO: Check that we can fire (energy and possibly fireRate or should this check be on the weapon itself?)
+    private void OnEnable() {        
+        if (primaryWeapon != null) 
+            primaryWeapon.gameObject.SetActive(true);
+        if (secondaryWeapon != null) 
+            secondaryWeapon.gameObject.SetActive(true);
+    }
 
-        //TODO: Add recoil or should this be on the weapon?
+    private void OnDisable() {        
+        if (primaryWeapon != null) {
+            CancelInvoke("FirePrimary");
+            primaryWeapon.gameObject.SetActive(false);
+        }            
+        if (secondaryWeapon != null) {
+            CancelInvoke("FireSecondary");
+            secondaryWeapon.gameObject.SetActive(false);
+        }            
+    }
 
-        if (slot == Weapon.Slot.Primary && primaryWeapon != null && primaryWeapon.isShootingAllowed(player))
-            primaryWeapon.Shoot(player);
-        else if (slot == Weapon.Slot.Seconday && secondaryWeapon != null && secondaryWeapon.isShootingAllowed(player))
-            secondaryWeapon.Shoot(player);
+    // Stops any invoke repeating (autofire) of a weapon
+    public void Ceasefire(Weapon.Slot slot) {
+        Debug.Log("Ceasefire " + slot);
+        if (slot == Weapon.Slot.Primary)
+            CancelInvoke("FirePrimary");
+        else if (slot == Weapon.Slot.Seconday)
+            CancelInvoke("FireSecondary");
+    }
+
+    // Fires a weapon if pre-conditions are met. Initiates a repeting invoce call if the gun has autofire
+    public void Fire(Weapon.Slot slot) {
+        if (slot == Weapon.Slot.Primary && primaryWeapon != null && primaryWeapon.isShootingAllowed(player)) {
+            if (primaryWeapon.fireRate <= 0f)
+                FirePrimary();    // Single fire
+            else
+                InvokeRepeating("FirePrimary", 0f, 1f / primaryWeapon.fireRate);    // Autofire
+        }
+        else if (slot == Weapon.Slot.Seconday && secondaryWeapon != null && secondaryWeapon.isShootingAllowed(player)) {
+            if (secondaryWeapon.fireRate <= 0f)
+                FireSecondary();    // Single fire
+            else
+                InvokeRepeating("FireSecondary", 0f, 1f / secondaryWeapon.fireRate);    // Autofire
+        }
+    }
+
+    private void FirePrimary() {
+        primaryWeapon.Shoot(player);
+    }
+
+    private void FireSecondary() {
+        secondaryWeapon.Shoot(player);
     }
 
     public RocketWeapon GetCurrentWeapon() {
@@ -72,6 +111,8 @@ public class WeaponManager : NetworkBehaviour {
             primaryWeapon = _weaponIns;
         else if (weapon.slot == Weapon.Slot.Seconday)
             secondaryWeapon = _weaponIns;
+
+        Debug.Log("Equipped wepon " + name + " in " + weapon.slot + " weapon slot");
     }
 
     //TODO: Remove when the other equipweapon is working

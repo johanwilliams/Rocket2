@@ -34,27 +34,18 @@ public class RocketShoot : NetworkBehaviour {
         if (PauseMenu.IsOn || !isLocalPlayer)
             return;
 
-        primaryWeapon = weaponManager.GetCurrentWeapon();
+        if (Input.GetKeyDown(KeyCode.K))
+            weaponManager.CmdDamageGameObject(player.gameObject, player.name, 50);
 
-        //TODO: Debug
-        if (Input.GetKeyDown(KeyCode.O)) {
-            weaponManager.CmdFire(Weapon.Slot.Primary);
-        }
+        if (Input.GetButtonDown("Fire1"))
+            weaponManager.Fire(Weapon.Slot.Primary);
+        else if (Input.GetButtonUp("Fire1"))
+            weaponManager.Ceasefire(Weapon.Slot.Primary);
 
-        //TODO: Debug
-        if (Input.GetKeyDown(KeyCode.P)) {
-            weaponManager.CmdFire(Weapon.Slot.Seconday);
-        }
-
-        if (Input.GetButtonDown("Fire1") && isShootingAllowed()) {
-            if (primaryWeapon.fireRate <= 0f)
-                Shoot();    // Single fire
-            else
-                InvokeRepeating("Shoot", 0f, 1f/primaryWeapon.fireRate);    // Autofire
-        } else if (Input.GetButtonUp("Fire1")) {
-            // Stop autofire
-            CancelInvoke("Shoot");
-        }
+        if (Input.GetButtonDown("Fire2"))
+            weaponManager.Fire(Weapon.Slot.Seconday);
+        else if (Input.GetButtonUp("Fire2"))
+            weaponManager.Ceasefire(Weapon.Slot.Seconday);
     }
 
     // Check that we are not cheating the rapid fire but tapping fire
