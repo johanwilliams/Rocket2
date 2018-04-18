@@ -29,8 +29,7 @@ public abstract class Weapon : NetworkBehaviour {
 
     // Checks if shooting is allowd, updates the shot tiem and calls the on weapon shot 
     public virtual void Shoot(Player shooter) {
-        if (!isShootingAllowed(shooter))
-            return;
+        isShootingAllowed(shooter);
 
         lastShotTime = Time.time;        
         OnWeaponShot(shooter);
@@ -57,25 +56,20 @@ public abstract class Weapon : NetworkBehaviour {
     }
 
     // Check if shooting is allowed
-    public virtual bool isShootingAllowed(Player shooter) {
-        return checkTime() && checkEnergy(shooter);
+    public virtual void isShootingAllowed(Player shooter) {
+        checkTime();
+        checkEnergy(shooter);
     }
 
-    private bool checkTime() {
-        if (fireRate == 0f)
-            return true;
-        else 
-            return (Time.time - lastShotTime) >= (1f / fireRate);
-    }
+    private void checkTime() {
+        float timeMargin = 0.02f;
+        if (fireRate != 0f && ((Time.time - lastShotTime + timeMargin) < (1f / fireRate)))
+            throw new ShootException("Firerate of weapon does not permit to shoot yet");
+    }   
 
-    private bool checkEnergy(Player shooter) {
-        Debug.Log(shooter.energy.GetEnergy() + ":" + energyCost);
-        return shooter.energy.GetEnergy() >= energyCost;
-    }
-
-    private void cSSheckEnergy(Player shooter) {
+    private void checkEnergy(Player shooter) {
         if (shooter.energy.GetEnergy() < energyCost)
-            throw new ShootException("Not enough energy to shoot");
+            throw new ShootException("Not enough energy to shoot weapon");
     }
 }
 

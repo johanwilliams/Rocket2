@@ -58,13 +58,13 @@ public class RocketWeapons : NetworkBehaviour {
 
     // Fires a weapon if pre-conditions are met. Initiates a repeting invoce call if the gun has autofire
     public void Fire(Weapon.Slot slot) {
-        if (slot == Weapon.Slot.Primary && primaryWeapon != null && primaryWeapon.isShootingAllowed(player)) {
+        if (slot == Weapon.Slot.Primary && primaryWeapon != null) {
             if (primaryWeapon.fireRate <= 0f)
                 FirePrimary();    // Single fire
             else
                 InvokeRepeating("FirePrimary", 0f, 1f / primaryWeapon.fireRate);    // Autofire
         }
-        else if (slot == Weapon.Slot.Seconday && secondaryWeapon != null && secondaryWeapon.isShootingAllowed(player)) {
+        else if (slot == Weapon.Slot.Seconday && secondaryWeapon != null) {
             if (secondaryWeapon.fireRate <= 0f)
                 FireSecondary();    // Single fire
             else
@@ -74,12 +74,23 @@ public class RocketWeapons : NetworkBehaviour {
 
     // Fire primary weapon
     private void FirePrimary() {
-        primaryWeapon.Shoot(player);
+        try { 
+            primaryWeapon.Shoot(player);
+        } catch(ShootException e) {
+            Debug.Log(e.Message);
+            CancelInvoke("FirePrimary");
+        }
     }
 
     // Fire secondary weapon
     private void FireSecondary() {
-        secondaryWeapon.Shoot(player);
+        try {
+            secondaryWeapon.Shoot(player);
+        }
+        catch (ShootException e) {
+            Debug.Log(e.Message);
+            CancelInvoke("FireSecondary");
+        }
     }
 
     // Returns the transform where weapons are put
