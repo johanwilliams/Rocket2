@@ -22,13 +22,11 @@ public class WeaponInventory : MonoBehaviour {
     }
 
     public Weapon getWeapon(Name weaponName) {
-        Debug.Log("Inventory size: " + inventory.Length);
         WeaponInventoryItem weaponItem = Array.Find(inventory, weapon => weapon.name == weaponName);
-        if (weaponItem != null) {
-            Debug.Log("Found: a weaponItem");
-            return weaponItem.weapon;
+        if (weaponItem == null) {
+            Debug.LogWarning("Weapon '" + weaponName.ToString() + "' could not be found in the weaponinventory");
+            return null;
         }
-        Debug.LogWarning("Weapon '" + weaponName.ToString() + "' could not be found in the weaponinventory");
-        return inventory[0].weapon;
+        return weaponItem.weapon;
     }
 }

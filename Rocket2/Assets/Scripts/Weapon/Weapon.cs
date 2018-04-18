@@ -15,7 +15,7 @@ public abstract class Weapon : NetworkBehaviour {
     public Transform firePoint;
 
     public ParticleSystem mussleFlash;
-    public AudioSource fireSound;
+    private AudioSource fireSound;
 
     public virtual void Shoot(Player shooter) {
         //TODO: Check energy. If not enough through exception
@@ -23,10 +23,10 @@ public abstract class Weapon : NetworkBehaviour {
         shooter.weaponManager.CmdOnWeaponShot(slot);
     }
 
-    private void Start() {
+    protected virtual void Start() {
         fireSound = GetComponent<AudioSource>();
         if (fireSound == null)
-            Debug.LogWarning("No AudioSource component added as a fire sound for weapon " + this.GetType().Name);
+            Debug.LogWarning("No AudioSource component added as a fire sound on weapon " + this.GetType().Name);
     }
 
     // Called on all clients when we need to do a shoot effect

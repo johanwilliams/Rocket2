@@ -13,6 +13,15 @@ public class LaserGun : Weapon {
     private LayerMask mask;
 
     public GameObject laserTrailEffectPrefab;
+    public GameObject hitEffectPrefab;
+
+    protected override void Start() {
+        base.Start();
+        if (laserTrailEffectPrefab == null)
+            Debug.LogWarning("No laser trail prefab found on weapon " + this.GetType().Name);
+        if (hitEffectPrefab == null)
+            Debug.LogWarning("No hit effect prefab found on weapon " + this.GetType().Name);
+    }
 
     public override void Shoot(Player shooter) {                
         // Raycast to detect if we hit something 
@@ -34,6 +43,7 @@ public class LaserGun : Weapon {
     public override void OnShootAndHit(Vector3 hitPosition, Vector3 hitNormal) {
         base.OnShootAndHit(hitPosition, hitNormal);
         RenderTrail(hitPosition);
+        DoHit(hitPosition, hitNormal);
     }
 
     // Renders the laser wepon trail
@@ -46,6 +56,14 @@ public class LaserGun : Weapon {
                 lr.SetPosition(1, hitPosition);
             }
             Destroy(trailClone, 0.04f);
+        }
+    }
+
+    private void DoHit(Vector3 hitPosition, Vector3 hitNormal) {
+        if (hitEffectPrefab != null && hitNormal != Vector3.zero) {
+            //TODO: Object pooling could come in useful here if we do a lot of instantiating
+            GameObject _hitEffect = Instantiate(hitEffectPrefab, hitPosition, Quaternion.LookRotation(hitNormal));
+            Destroy(_hitEffect, 2f);
         }
     }
 }
