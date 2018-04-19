@@ -13,6 +13,7 @@ public class HomingMissile : MonoBehaviour {
     [SerializeField] private float rotateSpeed = 200f;
     [SerializeField] private float searchStartTime = 1f;
     [SerializeField] private float searchRate = 2f;
+    [SerializeField] private float searchRadius = 20f;
 
     private State state;
 
@@ -22,22 +23,45 @@ public class HomingMissile : MonoBehaviour {
 	void Start () {
         rb = GetComponent<Rigidbody2D>();
         state = State.Launched;
-        StartCoroutine(SearchForTarget());
+        StartCoroutine(Searching());
 	}
 
-    IEnumerator SearchForTarget() {
+    private IEnumerator Searching() {
         Debug.Log("Launched");
         yield return new WaitForSeconds(searchStartTime);
         state = State.Searching;
         while(target != null) {
             Debug.Log("Searching");
+            SearchForTarget();
             yield return new WaitForSeconds(1f / searchRate);    
         }
         yield return true;
     }
-	
-	// Update is called once per frame
-	void FixedUpdate () {                
+
+    // Search for nearest rockets to lock onto
+    private void SearchForTarget() {
+
+        float currentTargetDistance = searchRadius;
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, searchRadius);
+
+        foreach(Collider hitCollider in hitColliders) {
+            if (hitCollider.gameObject.GetComponent<Player>() != null) {
+                float distanceToTarget = Vector3.Distance(transform.position, hitCollider.transform.position);
+                if (distanceToTarget < currentTargetDistance) {
+                    state = State.Locked;
+                    target =  hitCollider.transform;    
+                }
+            }
+        }
+    }
+
+    // Draw the search radius of the missile
+    private void OnDrawGizmos() {
+        UnityEditor.Handles.DrawWireDisc(transform.position, Vector3.back, searchRadius);
+    }
+
+    // Update is called once per frame
+    void FixedUpdate () {                
         //Rotate
         if (target != null) {
             Vector2 dirToTarget = (Vector2)target.position - rb.position;
