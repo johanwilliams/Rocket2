@@ -9,7 +9,7 @@ public class HomingMissile : MonoBehaviour {
 
     private Rigidbody2D rb;
 
-    [SerializeField] private float speed = 5f;
+    [SerializeField] private float speed = 10f;
     [SerializeField] private float rotateSpeed = 200f;
     [SerializeField] private float searchStartTime = 1f;
     [SerializeField] private float searchRate = 2f;
@@ -17,7 +17,8 @@ public class HomingMissile : MonoBehaviour {
 
     private State state;
 
-    public Transform target;
+    private Transform target;
+    public ParticleSystem trail;
 
 	// Use this for initialization
 	void Start () {
@@ -28,11 +29,9 @@ public class HomingMissile : MonoBehaviour {
 
     // IEnumerator which searches for targets to lock onto
     private IEnumerator Searching() {
-        Debug.Log("Launched");
         yield return new WaitForSeconds(searchStartTime);
         state = State.Searching;
-        while(target != null) {
-            Debug.Log("Searching");
+        while(target == null) {
             SearchForTarget();
             yield return new WaitForSeconds(1f / searchRate);    
         }
@@ -43,9 +42,10 @@ public class HomingMissile : MonoBehaviour {
     private void SearchForTarget() {
 
         float currentTargetDistance = searchRadius;
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, searchRadius);
+        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, searchRadius);
 
-        foreach(Collider hitCollider in hitColliders) {
+
+        foreach(Collider2D hitCollider in hitColliders) {
             if (hitCollider.gameObject.GetComponent<Player>() != null) {
                 float distanceToTarget = Vector3.Distance(transform.position, hitCollider.transform.position);
                 if (distanceToTarget < currentTargetDistance) {
@@ -80,9 +80,11 @@ public class HomingMissile : MonoBehaviour {
         rb.velocity = transform.up * speed;
 	}
 
-    //TODO: Change to collission detection so we know what we hit (and can damage it)
-    void OnTriggerEnter2D() {
-        //TODO: Put a particle effect here
+    private void OnTriggerEnter2D(Collider2D collision) {
+        //GameManager.instance.CmdDamageGameObject(collision.gameObject, "homingmissile", 50);
+        trail.Stop();
+        trail.transform.parent = null;
+        Destroy(trail.gameObject, 10f);
         Destroy(gameObject);
     }
 }
