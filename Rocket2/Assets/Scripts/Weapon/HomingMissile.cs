@@ -55,9 +55,14 @@ public class HomingMissile : MonoBehaviour {
         }
     }
 
-    // Draw the search radius of the missile
+    // Debug drawing
     private void OnDrawGizmos() {
-        UnityEditor.Handles.DrawWireDisc(transform.position, Vector3.back, searchRadius);
+        if (state == State.Searching) {
+            UnityEditor.Handles.color = Color.yellow;
+            UnityEditor.Handles.DrawWireDisc(transform.position, Vector3.back, searchRadius);
+        }            
+        else if (state == State.Locked)
+            Debug.DrawLine(transform.position, target.position, Color.red);
     }
 
     // Update is called once per frame
