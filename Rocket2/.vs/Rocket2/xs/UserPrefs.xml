@@ -1,7 +1,7 @@
 ﻿<Properties StartupConfiguration="{DDE1CB87-49FC-8CD5-8CD6-8DC4D93B54A5}|">
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Weapon/HomingMissile.cs">
     <Files>
-      <File FileName="Assets/Scripts/Weapon/HomingMissile.cs" Line="60" Column="15" />
+      <File FileName="Assets/Scripts/Weapon/HomingMissile.cs" Line="83" Column="43" />
       <File FileName="Assets/Scripts/Weapon/Weapon.cs" Line="8" Column="5" />
     </Files>
   </MonoDevelop.Ide.Workbench>

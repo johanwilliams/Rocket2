@@ -26,6 +26,7 @@ public class HomingMissile : MonoBehaviour {
         StartCoroutine(Searching());
 	}
 
+    // IEnumerator which searches for targets to lock onto
     private IEnumerator Searching() {
         Debug.Log("Launched");
         yield return new WaitForSeconds(searchStartTime);
