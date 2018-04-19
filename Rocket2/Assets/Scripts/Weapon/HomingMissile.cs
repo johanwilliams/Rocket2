@@ -1,0 +1,36 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+[RequireComponent(typeof(Rigidbody2D))]
+public class HomingMissile : MonoBehaviour {
+
+    private Rigidbody2D rb;
+
+    [SerializeField] private float speed = 5f;
+    [SerializeField] private float rotateSpeed = 200f;
+
+    public Transform target;
+
+	// Use this for initialization
+	void Start () {
+        rb = GetComponent<Rigidbody2D>();
+	}
+	
+	// Update is called once per frame
+	void FixedUpdate () {
+        Vector2 direction = (Vector2) target.position - rb.position;
+        direction.Normalize();
+
+        float rotateAmount = Vector3.Cross(direction, transform.up).z;
+
+        rb.angularVelocity = -rotateAmount * rotateSpeed;
+        rb.velocity = transform.up * speed;
+	}
+
+    //TODO: Change to collission detection so we know what we hit (and can damage it)
+    void OnTriggerEnter2D() {
+        //TODO: Put a particle effect here
+        Destroy(gameObject);
+    }
+}
