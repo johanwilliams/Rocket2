@@ -85,14 +85,14 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1691360039675694}
-  m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 80.77, y: 28.57, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 71.77549, y: 28.876228, z: 0}
   m_LocalScale: {x: 4, y: 4, z: 4}
   m_Children:
   - {fileID: 4158025946883092}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4576872051855562
 Transform:
   m_ObjectHideFlags: 1
@@ -135,7 +135,7 @@ PolygonCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -221,6 +221,11 @@ MonoBehaviour:
   searchRate: 2
   searchRadius: 25
   searchAngle: 220
+  deathEffect: {fileID: 1494831659350480, guid: f2297f1ebf53a5a4a8630ff1c4d8c551,
+    type: 2}
+  mask:
+    serializedVersion: 2
+    m_Bits: 0
   angle: 0
   trail: {fileID: 198439635506522322}
 --- !u!114 &114917938659581462

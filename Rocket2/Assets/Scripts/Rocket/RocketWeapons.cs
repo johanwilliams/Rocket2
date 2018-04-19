@@ -15,9 +15,8 @@ public class RocketWeapons : NetworkBehaviour {
     [SerializeField]
     private WeaponInventory.Name defaultWeapon;
 
-    //TODO: Make private eventually but good for debugging
-    public Weapon primaryWeapon;
-    public Weapon secondaryWeapon;
+    private Weapon primaryWeapon;
+    private Weapon secondaryWeapon;
 
     private void Start() {
         player = GetComponent<Player>();

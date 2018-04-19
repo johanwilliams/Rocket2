@@ -1,9 +1,8 @@
 using System;
 using System.Runtime.Serialization;
 using UnityEngine;
-using UnityEngine.Networking;
 
-public abstract class Weapon : NetworkBehaviour {
+public abstract class Weapon : MonoBehaviour {
 
     public enum Slot { Primary, Seconday };
 

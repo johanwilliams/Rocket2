@@ -16,6 +16,9 @@ public class HomingMissile : MonoBehaviour {
     [SerializeField] private float searchRadius = 20f;
     [SerializeField] private float searchAngle = 180f;
 
+    [SerializeField] private GameObject deathEffect;
+    [SerializeField] private LayerMask mask;
+
     private State state;
     public float angle;
 
@@ -70,14 +73,14 @@ public class HomingMissile : MonoBehaviour {
     }
 
     // Debug drawing
-    private void OnDrawGizmos() {
+    /*private void OnDrawGizmos() {
         if (state == State.Searching) {
             UnityEditor.Handles.color = Color.yellow;
             UnityEditor.Handles.DrawWireDisc(transform.position, Vector3.back, searchRadius);
         }            
         else if (state == State.Locked)
             Debug.DrawLine(transform.position, target.position, Color.red);
-    }
+    }*/
 
     // Update is called once per frame
     void FixedUpdate () {                
@@ -94,7 +97,19 @@ public class HomingMissile : MonoBehaviour {
 	}
 
     private void OnTriggerEnter2D(Collider2D collision) {
+        
+    }
+
+    private void SpawnDeathEffect() {
+        // Spawn a deatch effect
+        GameObject _deatchEffectInst = Instantiate(deathEffect, transform.position, Quaternion.identity);
+        AudioManager.instance.Play("Explosion1");
+        Destroy(_deatchEffectInst, 3f);
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision) {
         //GameManager.instance.CmdDamageGameObject(collision.gameObject, "homingmissile", 50);
+        SpawnDeathEffect();
         trail.Stop();
         trail.transform.parent = null;
         Destroy(trail.gameObject, 10f);

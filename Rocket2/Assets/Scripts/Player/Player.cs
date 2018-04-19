@@ -30,8 +30,6 @@ public class Player : NetworkBehaviour {
 
     [SerializeField]
     private GameObject deathEffect;
-    [SerializeField]
-    private AudioClip deathSound;
 
     [SerializeField]
     private GameObject spawnEffect;
