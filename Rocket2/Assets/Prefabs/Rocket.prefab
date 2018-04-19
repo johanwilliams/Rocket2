@@ -673,7 +673,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponLayerName: Weapon
   weaponSlot: {fileID: 4590360212557206}
-  defaultWeapon: 1
+  defaultWeapon: 2
+  primaryWeapon: {fileID: 0}
+  secondaryWeapon: {fileID: 0}
 --- !u!114 &114877578232260194
 MonoBehaviour:
   m_ObjectHideFlags: 1

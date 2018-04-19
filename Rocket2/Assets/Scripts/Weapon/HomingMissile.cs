@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,8 +14,10 @@ public class HomingMissile : MonoBehaviour {
     [SerializeField] private float searchStartTime = 1f;
     [SerializeField] private float searchRate = 2f;
     [SerializeField] private float searchRadius = 20f;
+    [SerializeField] private float searchAngle = 180f;
 
     private State state;
+    public float angle;
 
     private Transform target;
     public ParticleSystem trail;
@@ -27,11 +29,16 @@ public class HomingMissile : MonoBehaviour {
         StartCoroutine(Searching());
 	}
 
+    private void Update() {
+        if (target != null)
+            angle = AngleToTarget(target);
+    }
+
     // IEnumerator which searches for targets to lock onto
     private IEnumerator Searching() {
         yield return new WaitForSeconds(searchStartTime);
         state = State.Searching;
-        while(target == null) {
+        while(isActiveAndEnabled) {
             SearchForTarget();
             yield return new WaitForSeconds(1f / searchRate);    
         }
@@ -48,12 +55,18 @@ public class HomingMissile : MonoBehaviour {
         foreach(Collider2D hitCollider in hitColliders) {
             if (hitCollider.gameObject.GetComponent<Player>() != null) {
                 float distanceToTarget = Vector3.Distance(transform.position, hitCollider.transform.position);
-                if (distanceToTarget < currentTargetDistance) {
+                float angleToTarget = AngleToTarget(hitCollider.transform) * 2f;
+                if (distanceToTarget < currentTargetDistance && angleToTarget <= searchAngle) {
                     state = State.Locked;
                     target =  hitCollider.transform;    
                 }
             }
         }
+    }
+
+    private float AngleToTarget(Transform _target) {
+        Vector3 targetDir = _target.position - transform.position;
+        return Vector3.Angle(targetDir, transform.up);
     }
 
     // Debug drawing
