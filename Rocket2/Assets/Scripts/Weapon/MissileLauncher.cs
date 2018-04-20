@@ -5,15 +5,13 @@ using UnityEngine.Networking;
 
 public class MissileLauncher : Weapon {
 
-    public GameObject missilePrefab;    
+    public HomingMissile missilePrefab;    
 
     public override void Shoot(Player shooter) {
         base.Shoot(shooter);
 
-        var missile = Instantiate(missilePrefab, firePoint.position, firePoint.rotation);        
-        //missile.GetComponent<Rigidbody2D>().velocity = firePoint.up * speed;
-        NetworkServer.Spawn(missile);
+        HomingMissile missile = Instantiate(missilePrefab, firePoint.position, firePoint.rotation);
+        NetworkServer.Spawn(missile.gameObject);
 
-        //Destroy(missile, 2.0f);
     }
 }

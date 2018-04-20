@@ -215,18 +215,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bb444ac3ef984a4b81cabf4e95b2934, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 30
+  displayname: a homing missle
+  damage: 60
+  speed: 32
+  lifeTime: 10
+  hitEffect: {fileID: 1494831659350480, guid: f2297f1ebf53a5a4a8630ff1c4d8c551, type: 2}
+  hitSound: Explosion1
   rotateSpeed: 350
   searchStartTime: 0.3
   searchRate: 2
   searchRadius: 25
   searchAngle: 220
-  deathEffect: {fileID: 1494831659350480, guid: f2297f1ebf53a5a4a8630ff1c4d8c551,
-    type: 2}
-  mask:
-    serializedVersion: 2
-    m_Bits: 0
-  angle: 0
   trail: {fileID: 198439635506522322}
 --- !u!114 &114917938659581462
 MonoBehaviour:

@@ -3,38 +3,26 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class HomingMissile : MonoBehaviour {
+public class HomingMissile : Projectile {
 
     private enum State { Launched, Searching, Locked };
 
-    private Rigidbody2D rb;
-
-    [SerializeField] private float speed = 10f;
     [SerializeField] private float rotateSpeed = 200f;
     [SerializeField] private float searchStartTime = 1f;
     [SerializeField] private float searchRate = 2f;
     [SerializeField] private float searchRadius = 20f;
     [SerializeField] private float searchAngle = 180f;
-
-    [SerializeField] private GameObject deathEffect;
-    [SerializeField] private LayerMask mask;
+    [SerializeField] private ParticleSystem trail;
 
     private State state;
-    public float angle;
-
+    private float angle;
     private Transform target;
-    public ParticleSystem trail;
 
-	// Use this for initialization
-	void Start () {
-        rb = GetComponent<Rigidbody2D>();
+    // Launches the homing missile and starts the routine to search for targets
+    protected override void Start() {
+        base.Start();
         state = State.Launched;
         StartCoroutine(Searching());
-	}
-
-    private void Update() {
-        if (target != null)
-            angle = AngleToTarget(target);
     }
 
     // IEnumerator which searches for targets to lock onto
@@ -50,16 +38,20 @@ public class HomingMissile : MonoBehaviour {
 
     // Search for nearest rockets to lock onto
     private void SearchForTarget() {
-
         float currentTargetDistance = searchRadius;
+
+        // Search all game objects in a circle around us
         Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, searchRadius);
 
-
+        // For each collider we found
         foreach(Collider2D hitCollider in hitColliders) {
+            // Is the collider a Player we can lock onto?
             if (hitCollider.gameObject.GetComponent<Player>() != null) {
                 float distanceToTarget = Vector3.Distance(transform.position, hitCollider.transform.position);
                 float angleToTarget = AngleToTarget(hitCollider.transform) * 2f;
+                // Is the player closer than current target and within our seachangle?
                 if (distanceToTarget < currentTargetDistance && angleToTarget <= searchAngle) {
+                    // Lock onto the new target
                     state = State.Locked;
                     target =  hitCollider.transform;    
                 }
@@ -67,23 +59,16 @@ public class HomingMissile : MonoBehaviour {
         }
     }
 
+    // Returns the angle from the missile direction (up) to the target
     private float AngleToTarget(Transform _target) {
         Vector3 targetDir = _target.position - transform.position;
         return Vector3.Angle(targetDir, transform.up);
     }
 
-    // Debug drawing
-    /*private void OnDrawGizmos() {
-        if (state == State.Searching) {
-            UnityEditor.Handles.color = Color.yellow;
-            UnityEditor.Handles.DrawWireDisc(transform.position, Vector3.back, searchRadius);
-        }            
-        else if (state == State.Locked)
-            Debug.DrawLine(transform.position, target.position, Color.red);
-    }*/
+    // Update is called once per physics frame
+    protected override void FixedUpdate () {
+        base.FixedUpdate();
 
-    // Update is called once per frame
-    void FixedUpdate () {                
         //Rotate
         if (target != null) {
             Vector2 dirToTarget = (Vector2)target.position - rb.position;
@@ -91,28 +76,13 @@ public class HomingMissile : MonoBehaviour {
             float rotateAmount = Vector3.Cross(dirToTarget, transform.up).z;
             rb.angularVelocity = -rotateAmount * rotateSpeed;
         }
-
-        //Move
-        rb.velocity = transform.up * speed;
 	}
 
-    private void OnTriggerEnter2D(Collider2D collision) {
-        
-    }
-
-    private void SpawnDeathEffect() {
-        // Spawn a deatch effect
-        GameObject _deatchEffectInst = Instantiate(deathEffect, transform.position, Quaternion.identity);
-        AudioManager.instance.Play("Explosion1");
-        Destroy(_deatchEffectInst, 3f);
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision) {
-        //GameManager.instance.CmdDamageGameObject(collision.gameObject, "homingmissile", 50);
-        SpawnDeathEffect();
+    // We hit something
+    protected override void OnHit(GameObject go) {
         trail.Stop();
         trail.transform.parent = null;
         Destroy(trail.gameObject, 10f);
-        Destroy(gameObject);
+        base.OnHit(go);
     }
 }
