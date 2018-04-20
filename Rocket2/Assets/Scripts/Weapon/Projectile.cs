@@ -47,7 +47,9 @@ public abstract class Projectile : MonoBehaviour {
     protected virtual void OnHit(GameObject go) {
         SpawnHitEffect();
         Destroy(gameObject);
-        //TODO: Add damage to what we hit
+        Health health = go.GetComponent<Health>();
+        if (health != null)
+            health.RpcTakeDamage(damage, displayname);
     }
 
     // Spawn a hit effect

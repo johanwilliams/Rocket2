@@ -11,10 +11,7 @@ public class Gun : Weapon {
         base.Shoot(shooter);
 
         var bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
-        bullet.GetComponent<Rigidbody2D>().velocity = firePoint.up * speed;
-
         NetworkServer.Spawn(bullet);
 
-        Destroy(bullet, 2.0f);
     }
 }

@@ -49,7 +49,7 @@ public class RocketController : NetworkBehaviour {
 
         //TODO: For debug only
         if (Input.GetKeyDown(KeyCode.K))
-            rocketWeapons.CmdDamageGameObject(player.gameObject, player.name, 50);
+            player.health.RpcTakeDamage(50, player.name);
 
         if (Input.GetButtonDown("Fire1"))
             rocketWeapons.Fire(Weapon.Slot.Primary);

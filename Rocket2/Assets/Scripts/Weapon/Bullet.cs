@@ -3,15 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class Bullet : NetworkBehaviour {
+public class Bullet : Projectile {
 
-    public GameObject bulletPrefab;    
-
-    private void OnCollisionEnter2D(Collision2D collision) {
-        var hit = collision.gameObject;
-        if (hit.layer != LayerMask.NameToLayer("PlayerLocal")) { 
-            Debug.Log("Bullet hit " + hit.name);
-            Destroy(gameObject);
-        }
-    }   
 }

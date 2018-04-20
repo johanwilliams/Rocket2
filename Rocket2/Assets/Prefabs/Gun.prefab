@@ -72,7 +72,7 @@ GameObject:
   - component: {fileID: 65401119748875636}
   - component: {fileID: 23923341540810476}
   - component: {fileID: 114150477346908488}
-  - component: {fileID: 114959952046698330}
+  - component: {fileID: 114376882950601668}
   m_Layer: 11
   m_Name: Gun
   m_TagString: Untagged
@@ -220,7 +220,7 @@ MonoBehaviour:
     i15: 147
   m_ServerOnly: 0
   m_LocalPlayerAuthority: 1
---- !u!114 &114959952046698330
+--- !u!114 &114376882950601668
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -228,18 +228,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 1770214402291584}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a10209bb97b650d40b155f226cebc462, type: 3}
+  m_Script: {fileID: 11500000, guid: 8d6bda2a76af2b04aa42a8b5658fb4e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   slot: 1
-  damage: 70
+  damage: 10
   range: 0
-  speed: 32
-  fireRate: 0
+  speed: 20
+  fireRate: 2
   energyCost: 0
   firePoint: {fileID: 4509633181159712}
   mussleFlash: {fileID: 198189838152905168}
-  missilePrefab: {fileID: 1691360039675694, guid: 1d2cba7d558564c7ea5b4cd6f1a10b15,
+  bulletPrefab: {fileID: 1062095377250998, guid: 1c58e27d2571f1e48b4adbc64a13f886,
     type: 2}
 --- !u!198 &198189838152905168
 ParticleSystem:

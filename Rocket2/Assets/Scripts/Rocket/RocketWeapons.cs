@@ -176,12 +176,12 @@ public class RocketWeapons : NetworkBehaviour {
     }
 
     // Call the server to notify it a gameobject taken damage (if it has the health component)
-    [Command]
+    /*[Command]
     public void CmdDamageGameObject(GameObject _gameObject, string _sourcePlayerID, int _damage) {
         Health health = _gameObject.GetComponent<Health>();
         if (health != null) {
             health.RpcTakeDamage(_damage, _sourcePlayerID);
         }
-    }
+    }*/
 
 }

@@ -7,11 +7,10 @@ public abstract class Weapon : MonoBehaviour {
     public enum Slot { Primary, Seconday };
 
     public Slot slot;
-    public int damage;
-    public int range;
-    public int speed;   //TODO: Move to a projectile class of the gameobject we are shooting?
+    public string displayName;
+    [SerializeField] protected int speed;   //TODO: Move to a projectile class of the gameobject we are shooting?
     public int fireRate;
-    public int energyCost;
+    [SerializeField] protected int energyCost;
 
     public Transform firePoint;
 
