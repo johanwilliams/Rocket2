@@ -224,14 +224,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slot: 0
-  damage: 10
-  range: 100
+  displayName: 
   speed: 0
   fireRate: 5
   energyCost: 5
   firePoint: {fileID: 4451515638584466}
   mussleFlash: {fileID: 198115962877338546}
-  mask:
+  range: 100
+  damage: 10
+  hitMask:
     serializedVersion: 2
     m_Bits: 1536
   laserTrailEffectPrefab: {fileID: 1634255604561812, guid: 5d8175bdc2c00b747b9b70302e0068c6,

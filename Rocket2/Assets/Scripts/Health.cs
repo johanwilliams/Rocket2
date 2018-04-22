@@ -6,7 +6,7 @@ using UnityEngine.Networking;
 public class Health : NetworkBehaviour {
 
     [SerializeField] private int maxHealth = 100;
-    [SyncVar(hook = "OnHealthChanged")] private int health;
+    [SyncVar] private int health;
     [SerializeField] private bool destroyOnDeath = false;
 
     // Delegate and Action called when health reaches 0 and we die
@@ -59,9 +59,14 @@ public class Health : NetworkBehaviour {
         Debug.Log(transform.name + " took " + damage + " from " + source + " and now has " + health + " HP in health");
     }
 
-    // Update the health if the syncvar health variable gets updated
-    public void OnHealthChanged(int _health) {
-        health = _health;
+    // Update the current health on all clients
+    public void TakeDamage(int damage, string _source) {
+        if (!isServer || health <= 0)
+            return;
+
+        health = Mathf.Clamp(health - damage, 0, maxHealth);
+        source = _source;
+        Debug.Log(transform.name + " took " + damage + " from " + source + " and now has " + health + " HP in health");
     }
 
     // Called if we die and if we should destoy on death

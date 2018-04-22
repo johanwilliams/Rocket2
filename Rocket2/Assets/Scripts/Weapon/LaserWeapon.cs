@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -32,10 +32,7 @@ public class LaserWeapon : Weapon {
 
         // Did we hit something?
         if (hit.collider != null) {
-            // Can we damage what we hit?
-            Health health = hit.collider.gameObject.GetComponent<Health>();
-            if (hit.collider.gameObject.GetComponent<Health>() != null)
-                health.RpcTakeDamage(damage, shooter.name);            
+            shooter.rocketWeapons.CmdTakeDamage(hit.collider.gameObject, damage);
             hitPosition = hit.point;
         }
         shooter.rocketWeapons.CmdOnWeaponShotAndHit(slot, hitPosition, hit.normal);

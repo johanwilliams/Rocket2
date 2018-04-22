@@ -6,14 +6,13 @@ using UnityEngine.Networking;
 [RequireComponent(typeof(AudioSource))]
 public class RocketEngine : NetworkBehaviour {
 
-    [SerializeField]
-    private float rotationSpeed = 200f;
+    [SerializeField] private float rotationSpeed = 180f;
+    [SerializeField] private float rotationSpeedDampen = 0.3f;
     private float rotation = 0f;
 
-    [SerializeField]
-    private float thrusterForce = 1000f;
+    [SerializeField] private float thrusterForce = 40f;
     private float thruster = 0f;
-    public bool isThrustersOn = false;    
+    private bool isThrustersOn = false;    
 
     private float fuelMaxAmout = 100f;
     private float fuelAmout;
@@ -97,15 +96,16 @@ public class RocketEngine : NetworkBehaviour {
     // Rotats the rocket
     private void PerformRotation() {
         if (Mathf.Abs(rotation) > 0f) {
-            rb.MoveRotation(rb.rotation - rotation * Time.fixedDeltaTime);
-        }
+            rb.angularVelocity = -rotation;
+        } else
+            rb.angularVelocity *= rotationSpeedDampen;
     }
 
     // Moves the rocket (applies thruster force and burns/regens fuel)
     private void PerformMovement() {
         // Only apply thruster if positive (i.e. no reverse thruster)
         if (thruster > 0f && fuelAmout > 0.01f) {                                                        
-            rb.AddForce(rb.transform.up * thruster * Time.fixedDeltaTime);                       
+            rb.AddForce(rb.transform.up * thruster);            
             if (!isThrustersOn)
                 CmdSetThruster(true);
         } else {

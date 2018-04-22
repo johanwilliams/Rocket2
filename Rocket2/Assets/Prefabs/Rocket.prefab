@@ -224,7 +224,7 @@ Rigidbody2D:
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDrag: 0.5
-  m_AngularDrag: 0.7
+  m_AngularDrag: 0.5
   m_GravityScale: 0.5
   m_Material: {fileID: 0}
   m_Interpolate: 1
@@ -518,7 +518,6 @@ MonoBehaviour:
   - {fileID: 1818611148009318}
   deathEffect: {fileID: 1494831659350480, guid: f2297f1ebf53a5a4a8630ff1c4d8c551,
     type: 2}
-  deathSound: {fileID: 8300000, guid: 2a3a7212182b7bd459f360fbf58cdd93, type: 3}
   spawnEffect: {fileID: 1568713421377728, guid: 9731f3d5940922240bec13127dafd7fc,
     type: 2}
 --- !u!114 &114585473729303304
@@ -673,9 +672,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponLayerName: Weapon
   weaponSlot: {fileID: 4590360212557206}
-  defaultWeapon: 2
-  primaryWeapon: {fileID: 0}
-  secondaryWeapon: {fileID: 0}
+  defaultWeapon: 1
 --- !u!114 &114877578232260194
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -687,9 +684,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15abcd860486e4228b668d48b68f9f36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationSpeed: 250
-  thrusterForce: 2000
-  isThrustersOn: 0
+  rotationSpeed: 180
+  rotationSpeedDampen: 0.3
+  thrusterForce: 40
   fuelBurnSpeed: 3
   fuelRegenSpeed: 4
   thrusterSlot: {fileID: 4320595864340562}

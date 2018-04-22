@@ -26,6 +26,7 @@ public class RocketWeapons : NetworkBehaviour {
             this.enabled = false;
         }
         EquipWeapon(defaultWeapon);
+        EquipWeapon(WeaponInventory.Name.HomingMissile);
     }
 
     // Enable the weapons when we are enabled (respawns)
@@ -57,7 +58,11 @@ public class RocketWeapons : NetworkBehaviour {
     }
 
     // Fires a weapon if pre-conditions are met. Initiates a repeting invoce call if the gun has autofire
+    [Client]
     public void Fire(Weapon.Slot slot) {
+        if (!isLocalPlayer)
+            return;
+
         if (slot == Weapon.Slot.Primary && primaryWeapon != null) {
             if (primaryWeapon.fireRate <= 0f)
                 FirePrimary();    // Single fire
@@ -172,6 +177,23 @@ public class RocketWeapons : NetworkBehaviour {
         Weapon weapon = getWeapon(slot);
         if (weapon != null) {
             weapon.OnShootAndHit(hitPosition, hitNormal);
+        }
+    }
+
+    // Call the server to notify it that a shot has been fired and a hit has been detected
+    [Command]
+    public void CmdTakeDamage(GameObject go, int damage) {
+        RpcTakeDamage(go, damage);
+    }
+
+    [ClientRpc]
+    private void RpcTakeDamage(GameObject go, int damage) {
+        // Can we damage what we hit?
+        if (go != null) { 
+            Health health = go.GetComponent<Health>();
+            if (health != null) {
+                health.TakeDamage(damage, player.name);
+            }
         }
     }
 
