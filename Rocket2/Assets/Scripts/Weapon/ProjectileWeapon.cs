@@ -1,16 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class ProjectileWeapon : MonoBehaviour {
+public class ProjectileWeapon : Weapon {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public Projectile projectilePrefab;
+
+    public override void Shoot(Player shooter) {
+        base.Shoot(shooter);
+
+        Projectile projectile = Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
+        NetworkServer.Spawn(projectile.gameObject);
+
+    }
 }

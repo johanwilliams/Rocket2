@@ -200,14 +200,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slot: 1
-  damage: 70
-  range: 0
+  displayName: 
   speed: 32
   fireRate: 0
   energyCost: 0
   firePoint: {fileID: 4445654870435870}
   mussleFlash: {fileID: 198641172670531276}
-  missilePrefab: {fileID: 114705334549903930, guid: 1d2cba7d558564c7ea5b4cd6f1a10b15,
+  projectilePrefab: {fileID: 114705334549903930, guid: 1d2cba7d558564c7ea5b4cd6f1a10b15,
     type: 2}
 --- !u!114 &114627562075548474
 MonoBehaviour:

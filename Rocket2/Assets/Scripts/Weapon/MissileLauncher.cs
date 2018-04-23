@@ -1,17 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Networking;
 
-public class MissileLauncher : Weapon {
+public class MissileLauncher : ProjectileWeapon {
 
-    public HomingMissile missilePrefab;    
-
-    public override void Shoot(Player shooter) {
-        base.Shoot(shooter);
-
-        HomingMissile missile = Instantiate(missilePrefab, firePoint.position, firePoint.rotation);
-        NetworkServer.Spawn(missile.gameObject);
-
+    // Simple lasergun that don't need any modifications from the base class
+    protected override void Start() {
+        base.Start();
+        displayName = "a missile launcher";
     }
 }

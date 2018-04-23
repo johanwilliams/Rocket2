@@ -80,9 +80,13 @@ public class HomingMissile : Projectile {
 
     // We hit something
     protected override void OnHit(GameObject go) {
-        trail.Stop();
-        trail.transform.parent = null;
-        Destroy(trail.gameObject, 10f);
-        base.OnHit(go);
+        // Avoid hitting ourself during launch
+        //TODO: Improve by filtering on layers or tags
+        if (state != State.Launched) {
+            trail.Stop();
+            trail.transform.parent = null;
+            Destroy(trail.gameObject, 10f);
+            base.OnHit(go);
+        }
     }
 }
