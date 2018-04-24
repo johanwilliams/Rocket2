@@ -40,11 +40,11 @@ public class RocketWeapons : NetworkBehaviour {
     // Disable the weapons and stop shooting if we are disabled (killed)
     private void OnDisable() {        
         if (primaryWeapon != null) {
-            CancelInvoke("FirePrimary");
+            CancelInvoke("CmdFirePrimary");
             primaryWeapon.gameObject.SetActive(false);
         }            
         if (secondaryWeapon != null) {
-            CancelInvoke("FireSecondary");
+            CancelInvoke("CmdFireSecondary");
             secondaryWeapon.gameObject.SetActive(false);
         }            
     }
@@ -52,9 +52,9 @@ public class RocketWeapons : NetworkBehaviour {
     // Stops any invoke repeating (autofire) of a weapon
     public void Ceasefire(Weapon.Slot slot) {
         if (slot == Weapon.Slot.Primary)
-            CancelInvoke("FirePrimary");
+            CancelInvoke("CmdFirePrimary");
         else if (slot == Weapon.Slot.Seconday)
-            CancelInvoke("FireSecondary");
+            CancelInvoke("CmdFireSecondary");
     }
 
     // Fires a weapon if pre-conditions are met. Initiates a repeting invoce call if the gun has autofire
@@ -65,20 +65,21 @@ public class RocketWeapons : NetworkBehaviour {
 
         if (slot == Weapon.Slot.Primary && primaryWeapon != null) {
             if (primaryWeapon.fireRate <= 0f)
-                FirePrimary();    // Single fire
+                CmdFirePrimary();    // Single fire
             else
-                InvokeRepeating("FirePrimary", 0f, 1f / primaryWeapon.fireRate);    // Autofire
+                InvokeRepeating("CmdFirePrimary", 0f, 1f / primaryWeapon.fireRate);    // Autofire
         }
         else if (slot == Weapon.Slot.Seconday && secondaryWeapon != null) {
             if (secondaryWeapon.fireRate <= 0f)
-                FireSecondary();    // Single fire
+                CmdFireSecondary();    // Single fire
             else
-                InvokeRepeating("FireSecondary", 0f, 1f / secondaryWeapon.fireRate);    // Autofire
+                InvokeRepeating("CmdFireSecondary", 0f, 1f / secondaryWeapon.fireRate);    // Autofire
         }
     }
 
     // Fire primary weapon
-    private void FirePrimary() {
+    [Command]
+    private void CmdFirePrimary() {
         try { 
             primaryWeapon.Shoot(player);
         } catch(ShootException e) {
@@ -88,7 +89,8 @@ public class RocketWeapons : NetworkBehaviour {
     }
 
     // Fire secondary weapon
-    private void FireSecondary() {
+    [Command]
+    private void CmdFireSecondary() {
         try {
             secondaryWeapon.Shoot(player);
         }
@@ -196,14 +198,4 @@ public class RocketWeapons : NetworkBehaviour {
             }
         }
     }
-
-    // Call the server to notify it a gameobject taken damage (if it has the health component)
-    /*[Command]
-    public void CmdDamageGameObject(GameObject _gameObject, string _sourcePlayerID, int _damage) {
-        Health health = _gameObject.GetComponent<Health>();
-        if (health != null) {
-            health.RpcTakeDamage(_damage, _sourcePlayerID);
-        }
-    }*/
-
 }

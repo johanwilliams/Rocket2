@@ -9,7 +9,7 @@ public abstract class Weapon : MonoBehaviour {
     public Slot slot;
     public string displayName;
     [SerializeField] protected int speed;   //TODO: Move to a projectile class of the gameobject we are shooting?
-    public int fireRate;
+    public float fireRate;
     [SerializeField] protected int energyCost;
 
     public Transform firePoint;

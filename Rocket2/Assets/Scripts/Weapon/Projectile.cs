@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -47,14 +46,17 @@ public abstract class Projectile : MonoBehaviour {
     protected virtual void OnHit(GameObject go) {
         SpawnHitEffect();
         Destroy(gameObject);
-        Health health = go.GetComponent<Health>();
-        if (health != null)
-            health.RpcTakeDamage(damage, displayname);
+        if (go != null) { 
+            Health health = go.GetComponent<Health>();
+            if (health != null)
+                health.RpcTakeDamage(damage, displayname);
+        }
     }
 
     // Spawn a hit effect
     //TODO: We could perhaps send in the normal of the hit contact point(s) to be able to rotate the hit effect properly (explosions out from a wall etc)
     protected virtual void SpawnHitEffect() {
+        Debug.Log("Spawn hit effect");
         if (hitEffect != null) {
             GameObject hitEffectInst = Instantiate(hitEffect, transform.position, Quaternion.identity);
             Destroy(hitEffectInst, hitEffectDuration);

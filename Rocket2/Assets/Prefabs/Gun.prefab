@@ -69,9 +69,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4816507839603534}
   - component: {fileID: 33856235022565036}
-  - component: {fileID: 65401119748875636}
   - component: {fileID: 23923341540810476}
-  - component: {fileID: 114150477346908488}
   - component: {fileID: 114376882950601668}
   m_Layer: 11
   m_Name: Gun
@@ -176,50 +174,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1770214402291584}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!65 &65401119748875636
-BoxCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1770214402291584}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &114150477346908488
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1770214402291584}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SceneId:
-    m_Value: 0
-  m_AssetId:
-    i0: 143
-    i1: 105
-    i2: 250
-    i3: 122
-    i4: 195
-    i5: 126
-    i6: 25
-    i7: 20
-    i8: 40
-    i9: 78
-    i10: 213
-    i11: 181
-    i12: 191
-    i13: 51
-    i14: 217
-    i15: 147
-  m_ServerOnly: 0
-  m_LocalPlayerAuthority: 1
 --- !u!114 &114376882950601668
 MonoBehaviour:
   m_ObjectHideFlags: 1
