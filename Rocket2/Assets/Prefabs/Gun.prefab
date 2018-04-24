@@ -232,14 +232,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slot: 1
-  damage: 10
-  range: 0
+  displayName: 
   speed: 20
   fireRate: 2
   energyCost: 0
   firePoint: {fileID: 4509633181159712}
   mussleFlash: {fileID: 198189838152905168}
-  bulletPrefab: {fileID: 1062095377250998, guid: 1c58e27d2571f1e48b4adbc64a13f886,
+  projectilePrefab: {fileID: 114004044680855324, guid: 1c58e27d2571f1e48b4adbc64a13f886,
     type: 2}
 --- !u!198 &198189838152905168
 ParticleSystem:
