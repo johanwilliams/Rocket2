@@ -16,6 +16,8 @@ public class Player : NetworkBehaviour {
     [SyncVar]
     public string username = "Loading";
 
+    private float spawnDelay = 0.2f;
+
     public int kills;
     public int deaths;
 
@@ -155,7 +157,7 @@ public class Player : NetworkBehaviour {
         rocketEngine.Reset();
 
         // Give some time for the tranform to be sent to all clients before reseting the player
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(spawnDelay);
 
         SetupPlayer();
 
