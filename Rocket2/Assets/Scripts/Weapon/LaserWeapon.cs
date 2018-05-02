@@ -29,7 +29,7 @@ public class LaserWeapon : Weapon {
         Debug.DrawLine(firePoint.position, firePoint.position + firePoint.up * range, Color.red);
 
         // Did we hit something?
-        if (hit.collider != null) {
+        if (hit.collider != null && hit.collider.gameObject != null) {
             shooter.rocketWeapons.CmdTakeDamage(hit.collider.gameObject, damage);
             hitPosition = hit.point;
         }

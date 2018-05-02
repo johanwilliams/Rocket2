@@ -1,4 +1,3 @@
-
 public class Bullet : Projectile {
 
 }

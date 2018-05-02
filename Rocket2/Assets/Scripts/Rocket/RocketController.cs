@@ -17,7 +17,7 @@ public class RocketController : NetworkBehaviour {
     void Start () {
         rocketEngine = GetComponent<RocketEngine>();
         rocketWeapons = GetComponent<RocketWeapons>();
-        player = GetComponent<Player>();
+        player = GetComponent<Player>();        
     }
 	
 	// Update is called once per frame
@@ -49,7 +49,7 @@ public class RocketController : NetworkBehaviour {
 
         //TODO: For debug only
         if (Input.GetKeyDown(KeyCode.K))
-            player.health.RpcTakeDamage(50, player.name);
+            player.health.RpcTakeDamage(50, player.name);        
 
         if (Input.GetButtonDown("Fire1"))
             rocketWeapons.Fire(Weapon.Slot.Primary);
@@ -60,5 +60,5 @@ public class RocketController : NetworkBehaviour {
             rocketWeapons.Fire(Weapon.Slot.Seconday);
         else if (Input.GetButtonUp("Fire2"))
             rocketWeapons.Ceasefire(Weapon.Slot.Seconday);
-    }
+    }    
 }

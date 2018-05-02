@@ -17,11 +17,15 @@ public class HomingMissile : Projectile {
     private float angle;
     private Transform target;
 
-    // Launches the homing missile and starts the routine to search for targets
-    protected override void Start() {
-        base.Start();
+    protected override void OnEnable() {
+        base.OnEnable();
         state = State.Launched;
         StartCoroutine(Searching());
+    }
+
+    protected override void OnDisable() {
+        base.OnDisable();
+        StopAllCoroutines();
     }
 
     // IEnumerator which searches for targets to lock onto

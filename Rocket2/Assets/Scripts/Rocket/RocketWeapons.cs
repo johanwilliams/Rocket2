@@ -18,6 +18,12 @@ public class RocketWeapons : NetworkBehaviour {
     private Weapon primaryWeapon;
     private Weapon secondaryWeapon;
 
+    NHNetworkedPool bulletsPool;
+    public float fireRate = 0.1f;
+    float lastShotTime;
+    private bool isFiring = false;
+
+
     private void Start() {
         player = GetComponent<Player>();
         // Use this for serialization
@@ -27,6 +33,10 @@ public class RocketWeapons : NetworkBehaviour {
         }
         EquipWeapon(defaultWeapon);
         EquipWeapon(WeaponInventory.Name.HomingMissile);
+
+        bulletsPool = FindObjectOfType<NHNetworkedPool>();
+        if (bulletsPool == null)
+            Debug.LogError("No missile pool found");
     }
 
     // Enable the weapons when we are enabled (respawns)
@@ -47,6 +57,18 @@ public class RocketWeapons : NetworkBehaviour {
             CancelInvoke("CmdFireSecondary");
             secondaryWeapon.gameObject.SetActive(false);
         }            
+    }
+
+    private void Update() {
+        if (isServer)
+            UpdateFire();
+
+        if (isLocalPlayer) {
+            if (Input.GetKeyDown(KeyCode.P))
+                player.rocketWeapons.CmdFire(true);
+            if (Input.GetKeyUp(KeyCode.P))
+                player.rocketWeapons.CmdFire(false);
+        }
     }
 
     // Stops any invoke repeating (autofire) of a weapon
@@ -197,5 +219,33 @@ public class RocketWeapons : NetworkBehaviour {
                 health.TakeDamage(damage, player.name);
             }
         }
+    }
+
+    [Command]
+    public void CmdSpawnProjectile(Vector3 _position, Quaternion _rotation) {
+        /*    Debug.Log("Shooting the missile launcher!");
+
+            GameObject missile;
+            missilePool.InstantiateFromPool(weaponSlot.position, weaponSlot.rotation, out missile);
+            if (missile == null)
+                Debug.LogError("No missile could be spawned from the pool");
+            else
+                Debug.Log("Shooting " + missile.name);
+                */
+    }
+
+    [Command]
+    public void CmdFire(bool _isFiring) {
+        isFiring = _isFiring;
+    }
+
+    private void UpdateFire() {
+        if (!isFiring || Time.timeSinceLevelLoad - lastShotTime < fireRate) return;
+
+        GameObject bullet;
+        bulletsPool.InstantiateFromPool(transform.position + transform.up * 2, Quaternion.identity, out bullet);
+        bullet.GetComponent<Bullet>().Shoot(transform.up);
+
+        lastShotTime = Time.timeSinceLevelLoad;
     }
 }

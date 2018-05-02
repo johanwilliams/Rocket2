@@ -25,6 +25,7 @@ GameObject:
   - component: {fileID: 23368975535667322}
   - component: {fileID: 114203266231587628}
   - component: {fileID: 114004044680855324}
+  - component: {fileID: 114554994824699270}
   m_Layer: 0
   m_Name: Bullet
   m_TagString: Untagged
@@ -102,7 +103,7 @@ Rigidbody2D:
   m_AngularDrag: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 0}
-  m_Interpolate: 1
+  m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
@@ -134,10 +135,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   displayname: a bullet
   damage: 10
-  speed: 50
-  lifeTime: 2
-  hitEffect: {fileID: 0}
-  hitSound: 
+  speed: 20
+  lifeTime: 5
+  hitEffect: {fileID: 1702143271356562, guid: abb8f6dae94648d4ab5c3e139ea77686, type: 2}
+  hitSound: Hit
 --- !u!114 &114203266231587628
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -170,3 +171,44 @@ MonoBehaviour:
     i15: 134
   m_ServerOnly: 0
   m_LocalPlayerAuthority: 0
+--- !u!114 &114554994824699270
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1062095377250998}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9de747ec6d608d4b984ba2628a309b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interpolationBackTime: 0.1
+  extrapolationTimeLimit: 0.3
+  extrapolationDistanceLimit: 0.3
+  sendPositionThreshold: 0.001
+  sendRotationThreshold: 0.001
+  sendScaleThreshold: 0.001
+  sendVelocityThreshold: 0.001
+  sendAngularVelocityThreshold: 0.001
+  receivedPositionThreshold: 0
+  receivedRotationThreshold: 0
+  positionSnapThreshold: 8
+  rotationSnapThreshold: 60
+  scaleSnapThreshold: 3
+  positionLerpSpeed: 0.2
+  rotationLerpSpeed: 0.2
+  scaleLerpSpeed: 0.2
+  syncPosition: 1
+  syncRotation: 7
+  syncScale: 7
+  syncVelocity: 1
+  syncAngularVelocity: 7
+  isPositionCompressed: 1
+  isRotationCompressed: 1
+  isScaleCompressed: 1
+  isVelocityCompressed: 1
+  isAngularVelocityCompressed: 1
+  whereToUpdateTransform: 1
+  sendRate: 5
+  networkChannel: 1
+  childObjectToSync: {fileID: 0}

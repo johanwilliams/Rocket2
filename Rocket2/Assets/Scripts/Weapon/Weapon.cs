@@ -27,6 +27,7 @@ public abstract class Weapon : MonoBehaviour {
 
     // Checks if shooting is allowd, updates the shot tiem and calls the on weapon shot 
     public virtual void Shoot(Player shooter) {
+        Debug.Log("Shooting a weapon!");
         isShootingAllowed(shooter);
 
         lastShotTime = Time.time;        
