@@ -25,6 +25,10 @@ public class RocketController : NetworkBehaviour {
         if (!isLocalPlayer)
             return;
 
+        if (Input.GetKeyDown(KeyCode.Space)) {
+            rocketWeapons.CmdFire2();
+        }
+
         if (PauseMenu.IsOn) {
             if (Cursor.lockState != CursorLockMode.None && lockCursor)
                 Cursor.lockState = CursorLockMode.None;
@@ -60,5 +64,5 @@ public class RocketController : NetworkBehaviour {
             rocketWeapons.Fire(Weapon.Slot.Seconday);
         else if (Input.GetButtonUp("Fire2"))
             rocketWeapons.Ceasefire(Weapon.Slot.Seconday);
-    }    
+    }
 }

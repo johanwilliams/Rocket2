@@ -1,17 +1,20 @@
 using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections;
+using Smooth;
 
 [RequireComponent(typeof(RocketEngine))]
 [RequireComponent(typeof(Health))]
 [RequireComponent(typeof(Energy))]
 [RequireComponent(typeof(RocketWeapons))]
+[RequireComponent(typeof(SmoothSync))]
 public class Player : NetworkBehaviour {
 
     [HideInInspector] public RocketEngine rocketEngine;
     [HideInInspector] public Health health;
     [HideInInspector] public Energy energy;
     [HideInInspector] public RocketWeapons rocketWeapons;
+    SmoothSync smoothSync;
 
     [SyncVar]
     public string username = "Loading";
@@ -20,7 +23,6 @@ public class Player : NetworkBehaviour {
 
     public int kills;
     public int deaths;
-
 
     // A list of all game object components to disable/enable when the player dies/respawns
     [SerializeField]
@@ -73,6 +75,7 @@ public class Player : NetworkBehaviour {
         rocketEngine = GetComponent<RocketEngine>();
         energy = GetComponent<Energy>();
         rocketWeapons = GetComponent<RocketWeapons>();
+        smoothSync = GetComponent<SmoothSync>();
     }
 
     // DEBUG method only to kill the local player instantly
@@ -117,7 +120,7 @@ public class Player : NetworkBehaviour {
     #region "Die and respawn functionality"
     // Called when a player dies (health <= 0)
     private void Die(string _sourcePlayerID) {
-        Debug.Log(transform.name + " got killed by " + _sourcePlayerID);        
+        Debug.Log(transform.name + " got killed by " + _sourcePlayerID);
 
         UpdateScore(_sourcePlayerID);
         ToggleComponents(false);
@@ -149,6 +152,9 @@ public class Player : NetworkBehaviour {
 
     // Respawns a player
     private IEnumerator Respawn() {
+        // Clear the interpolation buffer
+        smoothSync.clearBuffer();
+
         yield return new WaitForSeconds(GameManager.instance.matchSettings.respawnTime);
         
         Transform _spawnPoint = NetworkManager.singleton.GetStartPosition();

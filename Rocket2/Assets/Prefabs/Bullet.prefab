@@ -26,6 +26,7 @@ GameObject:
   - component: {fileID: 114203266231587628}
   - component: {fileID: 114004044680855324}
   - component: {fileID: 114554994824699270}
+  - component: {fileID: 114007942419709204}
   m_Layer: 0
   m_Name: Bullet
   m_TagString: Untagged
@@ -53,12 +54,12 @@ MeshRenderer:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1062095377250998}
   m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
   m_Materials:
   - {fileID: 2100000, guid: f3b9ac5e2d9f1d04180c721bbd456e06, type: 2}
   m_StaticBatchInfo:
@@ -139,6 +140,27 @@ MonoBehaviour:
   lifeTime: 5
   hitEffect: {fileID: 1702143271356562, guid: abb8f6dae94648d4ab5c3e139ea77686, type: 2}
   hitSound: Hit
+--- !u!114 &114007942419709204
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1062095377250998}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1768714887, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_TransformSyncMode: 2
+  m_SendInterval: 0
+  m_SyncRotationAxis: 3
+  m_RotationSyncCompression: 0
+  m_SyncSpin: 0
+  m_MovementTheshold: 0.001
+  m_VelocityThreshold: 0.0001
+  m_SnapThreshold: 5
+  m_InterpolateRotation: 1
+  m_InterpolateMovement: 1
 --- !u!114 &114203266231587628
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -177,7 +199,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1062095377250998}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e9de747ec6d608d4b984ba2628a309b8, type: 3}
   m_Name: 
@@ -209,6 +231,6 @@ MonoBehaviour:
   isVelocityCompressed: 1
   isAngularVelocityCompressed: 1
   whereToUpdateTransform: 1
-  sendRate: 5
+  sendRate: 30
   networkChannel: 1
   childObjectToSync: {fileID: 0}

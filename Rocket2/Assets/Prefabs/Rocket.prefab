@@ -28,6 +28,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1329843720773134
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4856965111544822}
+  m_Layer: 8
+  m_Name: Test
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1438197646278806
 GameObject:
   m_ObjectHideFlags: 0
@@ -202,14 +217,28 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1954983318120366}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.9609051, y: 35.070568, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4488397291439790}
   - {fileID: 4590360212557206}
   - {fileID: 4320595864340562}
+  - {fileID: 4856965111544822}
   m_Father: {fileID: 0}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4856965111544822
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1329843720773134}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 2.19, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4774772740822186}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &50710931533900146
 Rigidbody2D:
@@ -227,7 +256,7 @@ Rigidbody2D:
   m_AngularDrag: 0.5
   m_GravityScale: 0.5
   m_Material: {fileID: 0}
-  m_Interpolate: 1
+  m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
@@ -673,6 +702,10 @@ MonoBehaviour:
   weaponLayerName: Weapon
   weaponSlot: {fileID: 4590360212557206}
   defaultWeapon: 1
+  fireRate: 0.1
+  bulletPrefab: {fileID: 1062095377250998, guid: 1c58e27d2571f1e48b4adbc64a13f886,
+    type: 2}
+  bulletSpawn: {fileID: 4856965111544822}
 --- !u!114 &114877578232260194
 MonoBehaviour:
   m_ObjectHideFlags: 1

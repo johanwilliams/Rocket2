@@ -1,8 +1,10 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
+using Smooth;
 
 [RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(SmoothSync))]
 public abstract class Projectile : NetworkBehaviour {
 
     [SerializeField] protected string displayname;
@@ -17,10 +19,12 @@ public abstract class Projectile : NetworkBehaviour {
     protected Vector3 direction;
 
     protected Rigidbody2D rb;
+    protected SmoothSync smoothSync;
 
     // Use this for initialization
     protected virtual void Awake () {
-        rb = GetComponent<Rigidbody2D>();        
+        rb = GetComponent<Rigidbody2D>();
+        smoothSync = GetComponent<SmoothSync>();
         if (hitEffect == null)
             Debug.LogWarning("No hit effect has been configured for " + this.GetType().Name);        
 	}
@@ -33,12 +37,15 @@ public abstract class Projectile : NetworkBehaviour {
     protected virtual void OnDisable() {
         if (!isServer) return;
 
+        smoothSync.clearBuffer();
+
         rb.velocity = Vector2.zero;
         StopAllCoroutines();
     }
 
     public virtual void Shoot(Vector3 _direction) {
         direction = _direction;
+        rb.AddForce(direction * speed, ForceMode2D.Impulse);
         StartCoroutine(StartLifeTime());
     }
 
@@ -55,7 +62,7 @@ public abstract class Projectile : NetworkBehaviour {
     protected virtual void FixedUpdate() {
         if (!isServer) return;
         // Keep the speed for the projectile
-        rb.velocity = direction * speed;
+        //rb.velocity = direction * speed;        
     }
 	
     void OnCollisionEnter2D(Collision2D collision) {

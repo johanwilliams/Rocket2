@@ -248,4 +248,27 @@ public class RocketWeapons : NetworkBehaviour {
 
         lastShotTime = Time.timeSinceLevelLoad;
     }
+
+    public GameObject bulletPrefab;
+    public Transform bulletSpawn;
+
+    // This [Command] code is called on the Client �
+    // � but it is run on the Server!
+    [Command]
+    public void CmdFire2() {
+        // Create the Bullet from the Bullet Prefab
+        var bullet = (GameObject)Instantiate(
+            bulletPrefab,
+            bulletSpawn.position,
+            bulletSpawn.rotation);
+
+        // Add velocity to the bullet
+        bullet.GetComponent<Rigidbody2D>().velocity = bullet.transform.up * 6;
+
+        // Spawn the bullet on the Clients
+        NetworkServer.Spawn(bullet);
+
+        // Destroy the bullet after 2 seconds
+        Destroy(bullet, 2.0f);
+    }
 }
