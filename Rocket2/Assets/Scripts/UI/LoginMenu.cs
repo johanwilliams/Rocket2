@@ -22,6 +22,10 @@ public class LoginMenu : MonoBehaviour {
     public Text Login_ErrorText;
     public Text Register_ErrorText;
 
+    //Username/password length requirements
+    public int usernameMinLength = 3;
+    public int passwordMinLength = 5;
+
     //Called at the very start of the game
     void Awake()
     {
@@ -64,6 +68,7 @@ public class LoginMenu : MonoBehaviour {
 //			backGround.gameObject.SetActive(false);
            // loggedInParent.gameObject.SetActive(true);
 			UserAccountManager.instance.LogIn(username,password);
+            Debug.Log("User '" + username + "' logged in");
         } else
         {
             //Something went wrong logging in. Stop showing 'Loading...' and go back to LoginUI
@@ -73,16 +78,19 @@ public class LoginMenu : MonoBehaviour {
             {
                 //The Username was wrong so display relevent error message
                 Login_ErrorText.text = "Error: Username not Found";
+                Debug.Log("Username '" + username + "' not found");
             } else
             {
                 if (response == "PassError")
                 {
                     //The Password was wrong so display relevent error message
                     Login_ErrorText.text = "Error: Password Incorrect";
+                    Debug.Log("User '" + username + "' provided the wrong password");
                 } else
                 {
                     //There was another error. This error message should never appear, but is here just in case.
                     Login_ErrorText.text = "Error: Unknown Error. Please try again later.";
+                    Debug.Log("An unknown error occured while trying to login user '" + username + "'");
                 }
             }
         }
@@ -103,6 +111,7 @@ public class LoginMenu : MonoBehaviour {
             ResetAllUIElements();
             //loadingParent.gameObject.SetActive(false);
 			UserAccountManager.instance.LogIn (username, password);
+            Debug.Log("Successfully registered user '" + username + "'");
         } else
         {
             //Something went wrong logging in. Stop showing 'Loading...' and go back to RegisterUI
@@ -112,10 +121,12 @@ public class LoginMenu : MonoBehaviour {
             {
                 //The username has already been taken. Player needs to choose another. Shows error message.
                 Register_ErrorText.text = "Error: Username Already Taken";
+                Debug.Log("Could not registered user '" + username + "' as the username is already taken");
             } else
             {
                 //There was another error. This error message should never appear, but is here just in case.
                 Login_ErrorText.text = "Error: Unknown Error. Please try again later.";
+                Debug.Log("An unknown error occured while trying to register user '" + username + "'");
             }
         }
     }
@@ -130,22 +141,24 @@ public class LoginMenu : MonoBehaviour {
 		string username = Login_UsernameField.text;
 		string pass = Login_PasswordField.text;
         //Check the lengths of the username and password. (If they are wrong, we might as well show an error now instead of waiting for the request to the server)
-		if (username.Length > 3) {
-			if (pass.Length > 5) {
+		if (username.Length > usernameMinLength) {
+			if (pass.Length > passwordMinLength) {
 				//Username and password seem reasonable. Change UI to 'Loading...'. Start the Coroutine which tries to log the player in.
 				loginParent.gameObject.SetActive (false);
 				loadingParent.gameObject.SetActive (true);
 				StartCoroutine (LoginUser (username, pass));
 			} else {
 				//Password too short so it must be wrong
-				Login_ErrorText.text = "Error: Password format Incorrect (length must be > 5)";
-			}
+				Login_ErrorText.text = "Error: Password format Incorrect (length must be > " + passwordMinLength + ")";
+                Debug.Log("Could not login user '" + username + "' as the password was too short");
+            }
 		} else if (username.Length == 0 && pass.Length == 0)
 			Login_ErrorText.text = "Error : Blank Field, Try again please.";
 		else
         {
             //Username too short so it must be wrong
-			Login_ErrorText.text = "Error: Username format Incorrect (length must be > 3)";
+			Login_ErrorText.text = "Error: Username format Incorrect (length must be > " + usernameMinLength + ")";
+            Debug.Log("Could not login user '" + username + "' as the username was too short");
         }
     }
 
@@ -169,9 +182,9 @@ public class LoginMenu : MonoBehaviour {
         string confirmedPassword = Register_ConfirmPasswordField.text;
 
         //Make sure username and password are long enough
-		if (username.Length > 3)
+		if (username.Length > usernameMinLength)
         {
-			if (password.Length > 5)
+			if (password.Length > passwordMinLength)
             {
                 //Check the two passwords entered match
 				if (password == confirmedPassword)
@@ -185,18 +198,21 @@ public class LoginMenu : MonoBehaviour {
                 {
                     //Passwords don't match, show error
                     Register_ErrorText.text = "Error: Password's don't Match";
+                    Debug.Log("Could not registered user '" + username + "' as the passwords provided does not match");
                 }
             }
             else
             {
                 //Password too short so show error
                 Register_ErrorText.text = "Error: Password too Short";
+                Debug.Log("Could not login user '" + username + "' as the password was too short");
             }
         }
         else
         {
             //Username too short so show error
             Register_ErrorText.text = "Error: Username too Short";
+            Debug.Log("Could not login user '" + username + "' as the username was too short");
         }
     }
     

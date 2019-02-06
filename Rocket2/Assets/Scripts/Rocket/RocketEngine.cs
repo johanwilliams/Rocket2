@@ -97,8 +97,8 @@ public class RocketEngine : NetworkBehaviour {
     private void PerformRotation() {
         if (Mathf.Abs(rotation) > 0f) {
             rb.angularVelocity = -rotation;
-        } else
-            rb.angularVelocity *= rotationSpeedDampen;
+        } //else
+            //rb.angularVelocity *= rotationSpeedDampen;
     }
 
     // Moves the rocket (applies thruster force and burns/regens fuel)
