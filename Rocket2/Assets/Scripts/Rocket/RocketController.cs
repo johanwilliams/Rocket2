@@ -52,8 +52,11 @@ public class RocketController : NetworkBehaviour {
         rocketEngine.ApplyThruster(_inputVer);
 
         //TODO: For debug only
-        if (Input.GetKeyDown(KeyCode.K))
-            player.health.RpcTakeDamage(50, player.name);        
+        if (Input.GetKeyDown(KeyCode.K)) {
+            player.rocketWeapons.CmdTakeDamage(player.gameObject, 50);
+            //player.health.RpcTakeDamage(50, player.name);
+        }
+            
 
         if (Input.GetButtonDown("Fire1"))
             rocketWeapons.Fire(Weapon.Slot.Primary);

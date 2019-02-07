@@ -60,6 +60,7 @@ public class PlayerSetup : NetworkBehaviour {
     // Set the username of the player on the server. Since the username is a syncvar variable all clients will be notified
     [Command]
     void CmdSetUsername(string playerID, string username) {
+        Debug.Log("PlayerSetup.cs: " + playerID);
         Player player = GameManager.GetPlayer(playerID);
         if (player != null) {
             Debug.Log(username + " has joined the game!");

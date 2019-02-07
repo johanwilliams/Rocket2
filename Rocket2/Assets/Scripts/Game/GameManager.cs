@@ -79,6 +79,7 @@ public class GameManager : NetworkBehaviour {
     public void CmdDamagePlayer(string _playerID, string _sourcePlayerID, int _damage) {
 
         // Get the player takning damage
+        Debug.Log("GameManager.cs: " + _playerID);
         Player _player = GetPlayer(_playerID);
         //_player.RpcTakeDamage(_damage, _sourcePlayerID);
         _player.health.RpcTakeDamage(_damage, _sourcePlayerID);
