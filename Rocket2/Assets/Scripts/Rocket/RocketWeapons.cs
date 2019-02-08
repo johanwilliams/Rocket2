@@ -207,7 +207,8 @@ public class RocketWeapons : NetworkBehaviour {
     // Call the server to notify it that a shot has been fired and a hit has been detected
     [Command]
     public void CmdTakeDamage(GameObject go, int damage) {
-        RpcTakeDamage(go, damage);
+        if (go.GetComponent<Health>() != null)
+            RpcTakeDamage(go, damage);
     }
 
     [ClientRpc]
