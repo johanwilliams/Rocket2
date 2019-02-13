@@ -231,7 +231,7 @@ MonoBehaviour:
   firePoint: {fileID: 4451515638584466}
   mussleFlash: {fileID: 198115962877338546}
   range: 100
-  damage: 10
+  damage: 60
   hitMask:
     serializedVersion: 2
     m_Bits: 1536

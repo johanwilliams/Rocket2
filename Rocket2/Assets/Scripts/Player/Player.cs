@@ -132,8 +132,9 @@ public class Player : NetworkBehaviour {
 
     private void UpdateScore(string _sourcePlayerID) {
         // Update kill/death stats
-        Debug.Log("Player.cs: " + _sourcePlayerID);
+        Debug.Log("Updateing score: " + _sourcePlayerID);
         Player sourcePlayer = GameManager.GetPlayer(_sourcePlayerID);
+        //TODO: If we kill outself (sourceid = null) we do not update the server of the score
         if (sourcePlayer != null) {
             GameManager.instance.onPlayerKilledCallback.Invoke(username, sourcePlayer.username);
 
