@@ -30,7 +30,8 @@ public class LaserWeapon : Weapon {
 
         // Did we hit something?
         if (hit.collider != null && hit.collider.gameObject != null) {
-            shooter.rocketWeapons.CmdTakeDamage(hit.collider.gameObject, damage);
+            if (hit.collider.gameObject.GetComponent<Health>() != null)
+                shooter.rocketWeapons.CmdTakeDamage(hit.collider.gameObject, damage);
             hitPosition = hit.point;
         }
         shooter.rocketWeapons.CmdOnWeaponShotAndHit(slot, hitPosition, hit.normal);
