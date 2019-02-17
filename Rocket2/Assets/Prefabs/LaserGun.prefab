@@ -38,6 +38,7 @@ GameObject:
   - component: {fileID: 4500228420752344}
   - component: {fileID: 114124564207251020}
   - component: {fileID: 82149003150091788}
+  - component: {fileID: 114102755153624578}
   m_Layer: 8
   m_Name: LaserGun
   m_TagString: Untagged
@@ -212,6 +213,38 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
+--- !u!114 &114102755153624578
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1676463104437078}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 18
+    i1: 28
+    i2: 251
+    i3: 218
+    i4: 71
+    i5: 167
+    i6: 100
+    i7: 52
+    i8: 152
+    i9: 81
+    i10: 38
+    i11: 143
+    i12: 252
+    i13: 239
+    i14: 166
+    i15: 237
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 1
 --- !u!114 &114124564207251020
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -224,7 +257,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slot: 0
-  displayName: 
+  displayName: laser gun
   speed: 0
   fireRate: 5
   energyCost: 5

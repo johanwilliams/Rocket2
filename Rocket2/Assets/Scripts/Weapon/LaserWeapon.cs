@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Networking;
 
 public class LaserWeapon : Weapon {
 
@@ -23,6 +24,13 @@ public class LaserWeapon : Weapon {
     public override void Shoot(Player shooter) {
         base.Shoot(shooter);
 
+        if (hasAuthority) {
+            Debug.Log(shooter.name + " is shooting WITH authority");
+            CmdTest();
+        } else {
+            Debug.Log(shooter.name + " is trying to shoot WITHOUT authority");
+        }
+
         // Raycast to detect if we hit something 
         RaycastHit2D hit = Physics2D.Raycast(firePoint.position, firePoint.up, range, hitMask);
         Vector3 hitPosition = firePoint.position + firePoint.up * range;
@@ -35,6 +43,11 @@ public class LaserWeapon : Weapon {
             hitPosition = hit.point;
         }
         shooter.rocketWeapons.CmdOnWeaponShotAndHit(slot, hitPosition, hit.normal);
+    }
+
+    [Command]
+    public void CmdTest() {
+        Debug.Log("Server command successfully called from " + displayName);
     }
 
     // Override and do nothing as we want to take control of when we show our shot effects to show them all at one (muzzleflash sound, trail & hit)

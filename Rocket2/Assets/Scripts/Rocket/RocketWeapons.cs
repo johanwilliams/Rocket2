@@ -31,8 +31,12 @@ public class RocketWeapons : NetworkBehaviour {
             Debug.LogError("RocketWeapons: No reference to weaponSlot transform");
             this.enabled = false;
         }
-        EquipWeapon(defaultWeapon);
-        EquipWeapon(WeaponInventory.Name.HomingMissile);
+        if (isLocalPlayer) {
+            Debug.Log("Equipping weapon");
+            EquipWeapon(defaultWeapon);
+        }
+            
+        //EquipWeapon(WeaponInventory.Name.HomingMissile);
 
         bulletsPool = FindObjectOfType<NHNetworkedPool>();
         if (bulletsPool == null)
@@ -127,8 +131,9 @@ public class RocketWeapons : NetworkBehaviour {
         return weaponSlot;
     }
 
-    // Equips a weapon and removes any weapon currently in that slot
+    // Equips a weapon and removes any weapon currently in that slot    
     private void EquipWeapon(WeaponInventory.Name name) {
+        Debug.Log("CmdEquipWeapon");
         Weapon weapon = WeaponInventory.instance.getWeapon(name);
         if (weapon == null) {
             Debug.LogWarning(player.name + " could not equip weapon " + name.ToString() + " as it was not found in the weapon inventory");
@@ -136,10 +141,14 @@ public class RocketWeapons : NetworkBehaviour {
         }
 
         Weapon _weaponIns = Instantiate(weapon, weaponSlot.position, weaponSlot.rotation);
-        _weaponIns.transform.SetParent(weaponSlot);
-
-        if (isLocalPlayer)
-            Util.SetLayerRecursively(_weaponIns.gameObject, LayerMask.NameToLayer(weaponLayerName));
+        //if (isLocalPlayer) {
+            Debug.Log("Player " + player.name + " spawning " + weapon.displayName + " with client authority");
+        //NetworkServer.SpawnWithClientAuthority(_weaponIns.gameObject, player.gameObject);
+        CmdEquipWeapon(_weaponIns.gameObject, player.gameObject);
+        //}
+            
+        _weaponIns.transform.SetParent(weaponSlot);        
+        Util.SetLayerRecursively(_weaponIns.gameObject, LayerMask.NameToLayer(weaponLayerName));
 
         // Equip the weapon to the correct weapon slot
         if (weapon.slot == Weapon.Slot.Primary) {
@@ -156,11 +165,18 @@ public class RocketWeapons : NetworkBehaviour {
         Debug.Log(player.name + " equipped weapon " + name + " in " + weapon.slot + " weapon slot");
     }
 
+    [Command]
+    private void CmdEquipWeapon(GameObject go, GameObject player) {
+        Debug.Log("Player " + player.name + " spawning " + go.name + " with client authority");
+        NetworkServer.SpawnWithClientAuthority(go, player);
+    }
+
     // Unequips a weapon and equips our default weapon (if the unequipped weapon had that slot)
     private void UnequipWeapon(Weapon.Slot slot) {
         Weapon current = getWeapon(slot);
         if (current.slot == WeaponInventory.instance.getWeapon(defaultWeapon).slot)
-            EquipWeapon(defaultWeapon);
+            if (isLocalPlayer)
+                EquipWeapon(defaultWeapon);
         else
             Destroy(current);
     }
