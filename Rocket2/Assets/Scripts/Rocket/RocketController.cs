@@ -67,5 +67,11 @@ public class RocketController : NetworkBehaviour {
             rocketWeapons.Fire(Weapon.Slot.Seconday);
         else if (Input.GetButtonUp("Fire2"))
             rocketWeapons.Ceasefire(Weapon.Slot.Seconday);
+
+
+        if (Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.Alpha1))
+            Debug.Log("Shift 1");
+        else if (Input.GetKeyDown(KeyCode.Alpha1))
+            rocketWeapons.ToggleWeapon(WeaponInventory.Name.Lasergun);
     }
 }

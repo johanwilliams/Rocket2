@@ -31,10 +31,9 @@ public class RocketWeapons : NetworkBehaviour {
             Debug.LogError("RocketWeapons: No reference to weaponSlot transform");
             this.enabled = false;
         }
-        if (isLocalPlayer) {
-            Debug.Log("Equipping weapon");
-            EquipWeapon(defaultWeapon);
-        }
+        //if (isLocalPlayer) {
+          //  EquipWeapon(defaultWeapon);
+        //}
             
         //EquipWeapon(WeaponInventory.Name.HomingMissile);
 
@@ -131,56 +130,68 @@ public class RocketWeapons : NetworkBehaviour {
         return weaponSlot;
     }
 
+    // For debug use: Toggles weapons being equipped/unequipped
+    public void ToggleWeapon(WeaponInventory.Name weaponName) {
+        Debug.Log("Toggle " + weaponName);
+        Weapon weapon = WeaponInventory.instance.getWeapon(weaponName);
+        if (weapon != null) {
+            if (weapon.slot == Weapon.Slot.Primary && primaryWeapon == null)
+                EquipWeapon(weaponName);
+            else
+                UnequipWeapon(Weapon.Slot.Primary);
+
+        }
+    }
+
     // Equips a weapon and removes any weapon currently in that slot    
-    private void EquipWeapon(WeaponInventory.Name name) {
-        Debug.Log("CmdEquipWeapon");
-        Weapon weapon = WeaponInventory.instance.getWeapon(name);
+    private void EquipWeapon(WeaponInventory.Name weaponName) {
+        Weapon weapon = WeaponInventory.instance.getWeapon(weaponName);
         if (weapon == null) {
-            Debug.LogWarning(player.name + " could not equip weapon " + name.ToString() + " as it was not found in the weapon inventory");
+            Debug.LogWarning(player.name + " could not equip weapon " + weaponName.ToString() + " as it was not found in the weapon inventory");
             return;
         }
 
         Weapon _weaponIns = Instantiate(weapon, weaponSlot.position, weaponSlot.rotation);
-        //if (isLocalPlayer) {
-            Debug.Log("Player " + player.name + " spawning " + weapon.displayName + " with client authority");
-        //NetworkServer.SpawnWithClientAuthority(_weaponIns.gameObject, player.gameObject);
-        CmdEquipWeapon(_weaponIns.gameObject, player.gameObject);
-        //}
+        CmdEquipWeapon(_weaponIns.gameObject);
             
         _weaponIns.transform.SetParent(weaponSlot);        
         Util.SetLayerRecursively(_weaponIns.gameObject, LayerMask.NameToLayer(weaponLayerName));
 
         // Equip the weapon to the correct weapon slot
-        if (weapon.slot == Weapon.Slot.Primary) {
-            if (primaryWeapon != null)
-                Destroy(primaryWeapon);
+        UnequipWeapon(weapon.slot);
+        if (weapon.slot == Weapon.Slot.Primary)
             primaryWeapon = _weaponIns;
-        }
-        else if (weapon.slot == Weapon.Slot.Seconday) {
-            if (secondaryWeapon != null)
-                Destroy(secondaryWeapon);
+        else if (weapon.slot == Weapon.Slot.Seconday)
             secondaryWeapon = _weaponIns;
-        }
 
-        Debug.Log(player.name + " equipped weapon " + name + " in " + weapon.slot + " weapon slot");
+        Debug.Log(player.name + " equipped weapon " + weaponName + " in " + weapon.slot + " weapon slot");
     }
 
     [Command]
-    private void CmdEquipWeapon(GameObject go, GameObject player) {
+    private void CmdEquipWeapon(GameObject go) {
         Debug.Log("Player " + player.name + " spawning " + go.name + " with client authority");
-        NetworkServer.SpawnWithClientAuthority(go, player);
+        NetworkServer.SpawnWithClientAuthority(go, player.gameObject);
     }
 
     // Unequips a weapon and equips our default weapon (if the unequipped weapon had that slot)
     private void UnequipWeapon(Weapon.Slot slot) {
         Weapon current = getWeapon(slot);
-        if (current.slot == WeaponInventory.instance.getWeapon(defaultWeapon).slot)
-            if (isLocalPlayer)
-                EquipWeapon(defaultWeapon);
-        else
-            Destroy(current);
+        if (current != null) { 
+            Debug.Log("Unequipping " + current.name);
+            /*if (current.slot == WeaponInventory.instance.getWeapon(defaultWeapon).slot)
+                if (isLocalPlayer)
+                    EquipWeapon(defaultWeapon);
+            else*/
+            CmdUnequipWeapon(current.gameObject);
+        }
     }
-   
+
+    [Command]
+    private void CmdUnequipWeapon(GameObject go) {
+        Debug.Log("Player " + player.name + " destroying " + go.name + " with client authority");
+        NetworkServer.Destroy(go);
+    }
+
     // returns the weapon in the specified weapon slot
     private Weapon getWeapon(Weapon.Slot slot) {
         if (slot == Weapon.Slot.Primary)
