@@ -136,60 +136,68 @@ public class RocketWeapons : NetworkBehaviour {
         Weapon weapon = WeaponInventory.instance.getWeapon(weaponName);
         if (weapon != null) {
             if (weapon.slot == Weapon.Slot.Primary && primaryWeapon == null)
-                EquipWeapon(weaponName);
+                CmdEquipWeapon(weaponName);
             else
-                UnequipWeapon(Weapon.Slot.Primary);
+                CmdUnequipWeapon(Weapon.Slot.Primary);
 
         }
-    }
+    }    
 
-    // Equips a weapon and removes any weapon currently in that slot    
-    private void EquipWeapon(WeaponInventory.Name weaponName) {
+    // Equips specified weapon and spawns it using the network server with client authority. This to have the player control the weapon (and let the
+    // weapon have authority to call the server directly). Also makes an rpc call to all clients so they can setup the wepon properly (layer names, parent transform etc).
+    [Command]
+    private void CmdEquipWeapon(WeaponInventory.Name weaponName) {
         Weapon weapon = WeaponInventory.instance.getWeapon(weaponName);
         if (weapon == null) {
             Debug.LogWarning(player.name + " could not equip weapon " + weaponName.ToString() + " as it was not found in the weapon inventory");
             return;
         }
 
-        Weapon _weaponIns = Instantiate(weapon, weaponSlot.position, weaponSlot.rotation);
-        CmdEquipWeapon(_weaponIns.gameObject);
-            
-        _weaponIns.transform.SetParent(weaponSlot);        
-        Util.SetLayerRecursively(_weaponIns.gameObject, LayerMask.NameToLayer(weaponLayerName));
+        CmdUnequipWeapon(weapon.slot);
 
-        // Equip the weapon to the correct weapon slot
-        UnequipWeapon(weapon.slot);
-        if (weapon.slot == Weapon.Slot.Primary)
-            primaryWeapon = _weaponIns;
-        else if (weapon.slot == Weapon.Slot.Seconday)
-            secondaryWeapon = _weaponIns;
+        Weapon _weaponIns = Instantiate(weapon, weaponSlot.position, weaponSlot.rotation);        
+        NetworkServer.SpawnWithClientAuthority(_weaponIns.gameObject, player.gameObject);
+        EquipWeapon(_weaponIns.gameObject);
 
-        Debug.Log(player.name + " equipped weapon " + weaponName + " in " + weapon.slot + " weapon slot");
+        RpcEquipWeapon(_weaponIns.gameObject);        
+        Debug.Log("Player " + player.name + " spawning " + _weaponIns.name + " with client authority");
     }
 
-    [Command]
-    private void CmdEquipWeapon(GameObject go) {
-        Debug.Log("Player " + player.name + " spawning " + go.name + " with client authority");
-        NetworkServer.SpawnWithClientAuthority(go, player.gameObject);
+    // Sets up the weapon on all clients (layer names, parent transform etc)
+    [ClientRpc]
+    void RpcEquipWeapon(GameObject weapon) {
+        EquipWeapon(weapon);
     }
 
-    // Unequips a weapon and equips our default weapon (if the unequipped weapon had that slot)
-    private void UnequipWeapon(Weapon.Slot slot) {
-        Weapon current = getWeapon(slot);
-        if (current != null) { 
-            Debug.Log("Unequipping " + current.name);
-            /*if (current.slot == WeaponInventory.instance.getWeapon(defaultWeapon).slot)
-                if (isLocalPlayer)
-                    EquipWeapon(defaultWeapon);
-            else*/
-            CmdUnequipWeapon(current.gameObject);
+    // Sets the rocket weapon slot as parent transform to the weapon. Also sets the weapon layer to all game objects of the weapon and assigns the weapon to the correct weapon slot
+    private void EquipWeapon(GameObject weapon) {
+        weapon.transform.SetParent(weaponSlot.transform);
+        Util.SetLayerRecursively(weapon, LayerMask.NameToLayer(weaponLayerName));
+        setWeaponSlot(weapon.GetComponent<Weapon>());
+    }
+
+    // Sets the weapon to the correct weapon slot
+    private void setWeaponSlot(Weapon weapon) {
+        switch (weapon.slot) {
+            case Weapon.Slot.Primary:
+                primaryWeapon = weapon;
+                break;
+            case Weapon.Slot.Seconday:
+                secondaryWeapon = weapon;
+                break;
+            default:
+                Debug.LogWarning("Invalid weaponslot " + weapon.slot + " for weapon " + weapon.displayName);
+                break;
         }
+
     }
 
+    // Destroys the gameobject in the specified slot
     [Command]
-    private void CmdUnequipWeapon(GameObject go) {
-        Debug.Log("Player " + player.name + " destroying " + go.name + " with client authority");
-        NetworkServer.Destroy(go);
+    private void CmdUnequipWeapon(Weapon.Slot slot) {
+        Weapon current = getWeapon(slot);
+        if (current != null)
+            NetworkServer.Destroy(current.gameObject);
     }
 
     // returns the weapon in the specified weapon slot
