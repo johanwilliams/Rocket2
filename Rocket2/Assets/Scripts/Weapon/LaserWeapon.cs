@@ -35,12 +35,12 @@ public class LaserWeapon : Weapon {
 
         // Did we hit something?
         if (hit.collider != null && hit.collider.gameObject != null) {
-            Health victim = hit.collider.gameObject.GetComponent<Health>();
-            if (victim != null)
-                CmdTakeDamage(shooter.gameObject, hit.collider.gameObject);
             hitPosition = hit.point;
+
+            // Damage the gameobject we hit if it has a Health component
+            if (hit.collider.gameObject.GetComponent<Health>() != null)
+                CmdTakeDamage(shooter.gameObject, hit.collider.gameObject);            
         }
-        //shooter.rocketWeapons.CmdOnWeaponShotAndHit(slot, hitPosition, hit.normal);
         CmdDoShotAndHitEffect(hitPosition, hit.normal);
 
     }
@@ -85,19 +85,7 @@ public class LaserWeapon : Weapon {
     // Call the server to notify it that a shot has been fired and a hit has been detected
     [Command]
     public void CmdTakeDamage(GameObject shooter, GameObject victim) {
-        if (victim.GetComponent<Health>() != null)
-            RpcTakeDamage(shooter, victim);
-    }
-
-    [ClientRpc]
-    private void RpcTakeDamage(GameObject shooter, GameObject victim) {
-        // Can we damage what we hit?
-        if (victim != null) {
-            Health health = victim.GetComponent<Health>();
-            if (health != null) {
-                health.TakeDamage(damage, shooter.GetComponent<Player>().name);
-            }
-        }
+        victim.GetComponent<Health>().TakeDamage(damage, shooter.GetComponent<Player>().name);
     }
 
 }

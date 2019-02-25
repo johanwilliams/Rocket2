@@ -53,8 +53,7 @@ public class RocketController : NetworkBehaviour {
 
         //TODO: For debug only
         if (Input.GetKeyDown(KeyCode.K)) {
-            //player.rocketWeapons.CmdTakeDamage(player.gameObject, 50);
-            //player.health.RpcTakeDamage(50, player.name);
+            GameManager.instance.CmdDamagePlayer(player.name, player.name, 50);
         }
             
 

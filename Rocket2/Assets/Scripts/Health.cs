@@ -49,17 +49,6 @@ public class Health : NetworkBehaviour {
     }
 
     // Update the current health on all clients
-    [ClientRpc]
-    public void RpcTakeDamage(int damage, string _source) {
-        if (health <= 0)
-            return;
-        
-        health = Mathf.Clamp(health - damage, 0, maxHealth);
-        source = _source;
-        Debug.Log(transform.name + " took " + damage + " from " + source + " and now has " + health + " HP in health");
-    }
-
-    // Update the current health on all clients
     public void TakeDamage(int damage, string _source) {
         if (!isServer || health <= 0)
             return;

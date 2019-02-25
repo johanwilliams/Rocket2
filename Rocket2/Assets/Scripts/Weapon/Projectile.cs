@@ -74,11 +74,15 @@ public abstract class Projectile : NetworkBehaviour {
         SpawnHitEffect();
         //Destroy(gameObject);
         SendMessage("SetObjectInactive", SendMessageOptions.DontRequireReceiver);
-        if (go != null) { 
-            Health health = go.GetComponent<Health>();
-            if (health != null)
-                health.RpcTakeDamage(damage, displayname);
+        if (go != null && go.GetComponent<Health>() != null) {
+            CmdTakeDamage(go, displayname);
         }
+    }
+
+    // Call the server to notify it that a shot has been fired and a hit has been detected
+    [Command]
+    private void CmdTakeDamage(GameObject victim, string displayname) {
+        victim.GetComponent<Health>().TakeDamage(damage, displayname);
     }
 
     // Spawn a hit effect

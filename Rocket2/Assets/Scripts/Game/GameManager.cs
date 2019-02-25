@@ -83,7 +83,7 @@ public class GameManager : NetworkBehaviour {
         Debug.Log("GameManager.cs: " + _playerID);
         Player _player = GetPlayer(_playerID);
         //_player.RpcTakeDamage(_damage, _sourcePlayerID);
-        _player.health.RpcTakeDamage(_damage, _sourcePlayerID);
+        _player.health.TakeDamage(_damage, _sourcePlayerID);
     }
 
     [Command]
@@ -91,7 +91,7 @@ public class GameManager : NetworkBehaviour {
 
         Health health = _gameObject.GetComponent<Health>();
         if (health != null) {
-            health.RpcTakeDamage(_damage, _sourcePlayerID);
+            health.TakeDamage(_damage, _sourcePlayerID);
         }
     }
 
