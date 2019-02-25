@@ -7,7 +7,6 @@ using UnityEngine.Networking;
 public class RocketEngine : NetworkBehaviour {
 
     [SerializeField] private float rotationSpeed = 180f;
-    [SerializeField] private float rotationSpeedDampen = 0.3f;
     private float rotation = 0f;
 
     [SerializeField] private float thrusterForce = 40f;
@@ -97,8 +96,7 @@ public class RocketEngine : NetworkBehaviour {
     private void PerformRotation() {
         if (Mathf.Abs(rotation) > 0f) {
             rb.angularVelocity = -rotation;
-        } //else
-            //rb.angularVelocity *= rotationSpeedDampen;
+        } 
     }
 
     // Moves the rocket (applies thruster force and burns/regens fuel)

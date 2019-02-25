@@ -74,6 +74,7 @@ public class GameManager : NetworkBehaviour {
 
     #endregion
 
+    //TODO: Are these used now when we have broken out Health as a separate component?
     // Command (server side method) which takes care of a player taking damage from another player
     [Command]
     public void CmdDamagePlayer(string _playerID, string _sourcePlayerID, int _damage) {

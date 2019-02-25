@@ -171,6 +171,7 @@ public class RocketWeapons : NetworkBehaviour {
 
     // Sets the rocket weapon slot as parent transform to the weapon. Also sets the weapon layer to all game objects of the weapon and assigns the weapon to the correct weapon slot
     private void EquipWeapon(GameObject weapon) {
+        weapon.transform.SetPositionAndRotation(weaponSlot.position, weaponSlot.rotation);
         weapon.transform.SetParent(weaponSlot.transform);
         Util.SetLayerRecursively(weapon, LayerMask.NameToLayer(weaponLayerName));
         setWeaponSlot(weapon.GetComponent<Weapon>());
