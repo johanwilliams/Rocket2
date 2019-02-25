@@ -68,7 +68,7 @@ public class Player : NetworkBehaviour {
 
     public override void PreStartClient() {
         health = GetComponent<Health>();
-        health.OnDeath += Die;
+        health.OnDeath += CmdDie;
     }
 
     private void Start() {
@@ -119,7 +119,13 @@ public class Player : NetworkBehaviour {
 
     #region "Die and respawn functionality"
     // Called when a player dies (health <= 0)
-    private void Die(string _sourcePlayerID) {
+    [Command]
+    private void CmdDie(string _sourcePlayerID) {
+        RpcDie(_sourcePlayerID);
+    }
+
+    [ClientRpc]
+    private void RpcDie(string _sourcePlayerID) {
         Debug.Log(transform.name + " got killed by " + _sourcePlayerID);
 
         UpdateScore(_sourcePlayerID);

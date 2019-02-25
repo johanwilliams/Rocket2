@@ -21,7 +21,7 @@ public class Health : NetworkBehaviour {
 
         // Subscibe to our own action if we are to destroy this gameobject on death
         if (destroyOnDeath)
-            OnDeath += Die;
+            OnDeath += CmdDie;
     }
 
     // Calles the OnDeath action if health reacehs 0 (and we are not already dead)
@@ -59,8 +59,9 @@ public class Health : NetworkBehaviour {
     }
 
     // Called if we die and if we should destoy on death
-    private void Die(string source) {
+    [Command]
+    private void CmdDie(string source) {
         Debug.Log(gameObject.name + " was killed by " + source);
-        Destroy(gameObject);
+        NetworkServer.Destroy(gameObject);
     }
 }
