@@ -11,7 +11,7 @@ public class RocketEngine : NetworkBehaviour {
 
     [SerializeField] private float thrusterForce = 40f;
     private float thruster = 0f;
-    private bool isThrustersOn = false;    
+    private bool isThrustersOn = false;    //TODO: SyncVar?
 
     private float fuelMaxAmout = 100f;
     private float fuelAmout;

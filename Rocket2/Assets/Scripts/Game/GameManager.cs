@@ -74,27 +74,7 @@ public class GameManager : NetworkBehaviour {
 
     #endregion
 
-    //TODO: Are these used now when we have broken out Health as a separate component?
-    // Command (server side method) which takes care of a player taking damage from another player
-    [Command]
-    public void CmdDamagePlayer(string _playerID, string _sourcePlayerID, int _damage) {
-
-        // Get the player takning damage
-        Debug.Log("GameManager.cs: " + _playerID);
-        Player _player = GetPlayer(_playerID);
-        //_player.RpcTakeDamage(_damage, _sourcePlayerID);
-        _player.health.TakeDamage(_damage, _sourcePlayerID);
-    }
-
-    [Command]
-    public void CmdDamageGameObject(GameObject _gameObject, string _sourcePlayerID, int _damage) {
-
-        Health health = _gameObject.GetComponent<Health>();
-        if (health != null) {
-            health.TakeDamage(_damage, _sourcePlayerID);
-        }
-    }
-
+    
     public int getLatency() {
         return NetworkManager.singleton.client.GetRTT();
     } 

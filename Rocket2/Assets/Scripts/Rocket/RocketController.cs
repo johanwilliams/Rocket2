@@ -51,12 +51,6 @@ public class RocketController : NetworkBehaviour {
         // Send the vertical/thruster input to the rocket engine
         rocketEngine.ApplyThruster(_inputVer);
 
-        //TODO: For debug only
-        if (Input.GetKeyDown(KeyCode.K)) {
-            GameManager.instance.CmdDamagePlayer(player.name, player.name, 50);
-        }
-            
-
         if (Input.GetButtonDown("Fire1"))
             rocketWeapons.Fire(Weapon.Slot.Primary);
         else if (Input.GetButtonUp("Fire1"))
@@ -68,8 +62,10 @@ public class RocketController : NetworkBehaviour {
             rocketWeapons.Ceasefire(Weapon.Slot.Seconday);
 
 
-        if (Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.Alpha1))
-            Debug.Log("Shift 1");
+        if (Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.Alpha1)) {
+            foreach(Player player in GameManager.GetPlayers())
+                player.rocketWeapons.ToggleWeapon(WeaponInventory.Name.Lasergun);
+        }            
         else if (Input.GetKeyDown(KeyCode.Alpha1))
             rocketWeapons.ToggleWeapon(WeaponInventory.Name.Lasergun);
     }
