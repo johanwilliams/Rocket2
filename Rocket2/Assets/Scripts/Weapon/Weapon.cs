@@ -28,31 +28,34 @@ public abstract class Weapon : NetworkBehaviour {
 
     // Checks if shooting is allowd, updates the shot tiem and calls the on weapon shot 
     public virtual void Shoot(Player shooter) {
-        Debug.Log("Shooting a weapon!");
+        Debug.Log(shooter.name + " fires a weapon!");
         isShootingAllowed(shooter);
 
-        lastShotTime = Time.time;        
-        OnWeaponShot(shooter);
+        lastShotTime = Time.time;
         shooter.energy.ConsumeEnergy(energyCost);
+
+        CmdDoShotEffect();        
     }    
 
-    // Calls the shooter game manager (so it can update the server of the shot)
-    protected virtual void OnWeaponShot(Player shooter) {
-        shooter.rocketWeapons.CmdOnWeaponShot(slot);
+    // Calls the server to notify all clients of the shot
+    [Command]
+    protected virtual void CmdDoShotEffect() {
+        RpcDoShotEffect();
+    }
+
+    // Rpc call to render the shot effect
+    [ClientRpc]
+    protected virtual void RpcDoShotEffect() {
+        DoShotEffect();
     }
 
     // Play the muzzle flash and play the fire sound
-    public virtual void DoShotEffects() {
+    protected virtual void DoShotEffect() {
         if (mussleFlash != null)
             mussleFlash.Play();
 
         if (fireSound != null)
             fireSound.Play();
-    }
-
-    public virtual void OnShootAndHit(Vector3 hitPosition, Vector3 hitNormal) {
-        DoShotEffects();
-        //Implement the hit effect in overriding classes
     }
 
     // Check if shooting is allowed

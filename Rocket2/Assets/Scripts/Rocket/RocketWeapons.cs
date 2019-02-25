@@ -210,54 +210,6 @@ public class RocketWeapons : NetworkBehaviour {
         return null;
     }
 
-    // Call the server to notify it that a shot has been fired
-    [Command]
-    public void CmdOnWeaponShot(Weapon.Slot slot) {
-        RpcOnWeaponShot(slot);
-    }
-
-    // Calls all client to notify them that a shot has been fired
-    [ClientRpc]
-    private void RpcOnWeaponShot(Weapon.Slot slot) {
-        Weapon weapon = getWeapon(slot);
-        if (weapon != null) {
-            weapon.DoShotEffects();
-        }
-    }
-
-    // Call the server to notify it that a shot has been fired and a hit has been detected
-    [Command]
-    public void CmdOnWeaponShotAndHit(Weapon.Slot slot, Vector3 hitPosition, Vector3 hitNormal) {
-        RpcOnWeaponShotAndHit(slot, hitPosition, hitNormal);
-    }
-
-    // Call all clients to notify it that a shot has been fired and a hit has been detected
-    [ClientRpc]
-    private void RpcOnWeaponShotAndHit(Weapon.Slot slot, Vector3 hitPosition, Vector3 hitNormal) {
-        Weapon weapon = getWeapon(slot);
-        if (weapon != null) {
-            weapon.OnShootAndHit(hitPosition, hitNormal);
-        }
-    }
-
-    // Call the server to notify it that a shot has been fired and a hit has been detected
-    [Command]
-    public void CmdTakeDamage(GameObject go, int damage) {
-        if (go.GetComponent<Health>() != null)
-            RpcTakeDamage(go, damage);
-    }
-
-    [ClientRpc]
-    private void RpcTakeDamage(GameObject go, int damage) {
-        // Can we damage what we hit?
-        if (go != null) { 
-            Health health = go.GetComponent<Health>();
-            if (health != null) {
-                health.TakeDamage(damage, player.name);
-            }
-        }
-    }
-
     [Command]
     public void CmdSpawnProjectile(Vector3 _position, Quaternion _rotation) {
         /*    Debug.Log("Shooting the missile launcher!");

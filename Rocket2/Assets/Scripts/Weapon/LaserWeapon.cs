@@ -22,14 +22,11 @@ public class LaserWeapon : Weapon {
     }
 
     public override void Shoot(Player shooter) {
-        base.Shoot(shooter);
+        Debug.Log(shooter.name + " fires a laser weapon!");
+        isShootingAllowed(shooter);
 
-        if (hasAuthority) {
-            Debug.Log(shooter.name + " is shooting WITH authority");
-            CmdTest();
-        } else {
-            Debug.Log(shooter.name + " is trying to shoot WITHOUT authority");
-        }
+        lastShotTime = Time.time;
+        shooter.energy.ConsumeEnergy(energyCost);
 
         // Raycast to detect if we hit something 
         RaycastHit2D hit = Physics2D.Raycast(firePoint.position, firePoint.up, range, hitMask);
@@ -38,25 +35,28 @@ public class LaserWeapon : Weapon {
 
         // Did we hit something?
         if (hit.collider != null && hit.collider.gameObject != null) {
-            if (hit.collider.gameObject.GetComponent<Health>() != null)
-                shooter.rocketWeapons.CmdTakeDamage(hit.collider.gameObject, damage);
+            Health victim = hit.collider.gameObject.GetComponent<Health>();
+            if (victim != null)
+                CmdTakeDamage(shooter.gameObject, hit.collider.gameObject);
             hitPosition = hit.point;
         }
-        shooter.rocketWeapons.CmdOnWeaponShotAndHit(slot, hitPosition, hit.normal);
+        //shooter.rocketWeapons.CmdOnWeaponShotAndHit(slot, hitPosition, hit.normal);
+        CmdDoShotAndHitEffect(hitPosition, hit.normal);
+
     }
 
     [Command]
-    public void CmdTest() {
-        Debug.Log("Server command successfully called from " + displayName);
+    public void CmdDoShotAndHitEffect(Vector3 hitPosition, Vector3 hitNormal) {
+        RpcDoShotAndHitEffect(hitPosition, hitNormal);
     }
 
-    // Override and do nothing as we want to take control of when we show our shot effects to show them all at one (muzzleflash sound, trail & hit)
-    protected override void OnWeaponShot(Player shooter) {
-        return;
+    [ClientRpc]
+    public void RpcDoShotAndHitEffect(Vector3 hitPosition, Vector3 hitNormal) {
+        DoShotAndHitEffect(hitPosition, hitNormal);
     }
 
-    public override void OnShootAndHit(Vector3 hitPosition, Vector3 hitNormal) {
-        base.OnShootAndHit(hitPosition, hitNormal);
+    public void DoShotAndHitEffect(Vector3 hitPosition, Vector3 hitNormal) {
+        base.DoShotEffect();
         RenderTrail(hitPosition);
         DoHit(hitPosition, hitNormal);
     }
@@ -80,4 +80,24 @@ public class LaserWeapon : Weapon {
             GameObject _hitEffect = Instantiate(hitEffectPrefab, hitPosition, Quaternion.LookRotation(hitNormal));
             Destroy(_hitEffect, hitDestroyTime);
         }
-    }}
+    }
+
+    // Call the server to notify it that a shot has been fired and a hit has been detected
+    [Command]
+    public void CmdTakeDamage(GameObject shooter, GameObject victim) {
+        if (victim.GetComponent<Health>() != null)
+            RpcTakeDamage(shooter, victim);
+    }
+
+    [ClientRpc]
+    private void RpcTakeDamage(GameObject shooter, GameObject victim) {
+        // Can we damage what we hit?
+        if (victim != null) {
+            Health health = victim.GetComponent<Health>();
+            if (health != null) {
+                health.TakeDamage(damage, shooter.GetComponent<Player>().name);
+            }
+        }
+    }
+
+}
