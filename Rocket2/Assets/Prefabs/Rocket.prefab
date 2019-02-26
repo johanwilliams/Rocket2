@@ -268,7 +268,7 @@ PolygonCollider2D:
   m_GameObject: {fileID: 1954983318120366}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 14002d97b49bd4546b6ddff8cc0ec600, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
@@ -549,7 +549,7 @@ MonoBehaviour:
     type: 2}
   spawnEffect: {fileID: 1568713421377728, guid: 9731f3d5940922240bec13127dafd7fc,
     type: 2}
-  impulseDamage: 0.5
+  impulseDamage: 0.2
 --- !u!114 &114585473729303304
 MonoBehaviour:
   m_ObjectHideFlags: 1
