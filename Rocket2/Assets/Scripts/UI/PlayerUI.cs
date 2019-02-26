@@ -6,12 +6,19 @@ public class PlayerUI : MonoBehaviour {
 
     [SerializeField]
     private RectTransform healthFill;
+    private float health;
 
     [SerializeField]
     private RectTransform fuelFill;
+    private float fuel;
 
     [SerializeField]
     private RectTransform energyFill;
+    private float energy;
+
+    [SerializeField]
+    [Range(0.01f, 1f)]
+    private float fillSmoothness = 0.05f;
 
     private Player player;
 
@@ -63,15 +70,18 @@ public class PlayerUI : MonoBehaviour {
     }
 
     private void UpdateFuel() {
-        FillRect(fuelFill, player.rocketEngine.GetFuelPct());
-    }
+        fuel = Mathf.Lerp(fuel, player.rocketEngine.GetFuelPct(), fillSmoothness);
+        FillRect(fuelFill, fuel);
+    }    
 
     private void UpdateEnergy() {
-        FillRect(energyFill, player.energy.GetEnergyPct());
+        energy = Mathf.Lerp(energy, player.energy.GetEnergyPct(), fillSmoothness);
+        FillRect(energyFill, energy);
     }
 
     private void UpdateHealth() {
-        FillRect(healthFill, player.health.GetHealthPct());
+        health = Mathf.Lerp(health, player.health.GetHealthPct(), fillSmoothness);
+        FillRect(healthFill, health);
     }
 
     void FillRect(RectTransform rect, float _amount) {

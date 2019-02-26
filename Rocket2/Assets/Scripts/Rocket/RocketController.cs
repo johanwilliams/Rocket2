@@ -51,6 +51,10 @@ public class RocketController : NetworkBehaviour {
         // Send the vertical/thruster input to the rocket engine
         rocketEngine.ApplyThruster(_inputVer);
 
+        if (Input.GetKeyDown(KeyCode.K)) {
+            player.CmdTakeDamage(50, player.name);
+        }
+
         if (Input.GetButtonDown("Fire1"))
             rocketWeapons.Fire(Weapon.Slot.Primary);
         else if (Input.GetButtonUp("Fire1"))
