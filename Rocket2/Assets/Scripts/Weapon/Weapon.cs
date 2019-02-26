@@ -12,6 +12,7 @@ public abstract class Weapon : NetworkBehaviour {
     [SerializeField] protected int speed;   //TODO: Move to a projectile class of the gameobject we are shooting?
     public float fireRate;
     [SerializeField] protected int energyCost;
+    [SerializeField] protected float recoil;
 
     public Transform firePoint;
 
@@ -29,11 +30,8 @@ public abstract class Weapon : NetworkBehaviour {
     // Checks if shooting is allowd, updates the shot tiem and calls the on weapon shot 
     public virtual void Shoot(Player shooter) {
         Debug.Log(shooter.name + " fires a weapon!");
-        isShootingAllowed(shooter);
 
-        lastShotTime = Time.time;
-        shooter.energy.ConsumeEnergy(energyCost);
-
+        UpdateShooter(shooter);                
         CmdDoShotEffect();        
     }    
 
@@ -59,9 +57,18 @@ public abstract class Weapon : NetworkBehaviour {
     }
 
     // Check if shooting is allowed
-    public virtual void isShootingAllowed(Player shooter) {
+    protected virtual void UpdateShooter(Player shooter) {
+        // Check if we can shoot (fireRate and energy).
         checkTime();
         checkEnergy(shooter);
+
+        // We can (otherwise exception is thrown) so update last shot time and energy
+        lastShotTime = Time.time;
+        shooter.energy.ConsumeEnergy(energyCost);
+
+        // Add recoil to the shooter
+        if (recoil > 0f)
+            shooter.AddForce(-transform.up * recoil);
     }
 
     private void checkTime() {

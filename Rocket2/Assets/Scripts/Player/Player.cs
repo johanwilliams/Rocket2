@@ -7,6 +7,7 @@ using Smooth;
 [RequireComponent(typeof(Health))]
 [RequireComponent(typeof(Energy))]
 [RequireComponent(typeof(RocketWeapons))]
+[RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(SmoothSync))]
 public class Player : NetworkBehaviour {
 
@@ -15,6 +16,7 @@ public class Player : NetworkBehaviour {
     [HideInInspector] public Energy energy;
     [HideInInspector] public RocketWeapons rocketWeapons;
     SmoothSync smoothSync;
+    Rigidbody2D rb;
 
     [SyncVar]
     public string username = "Loading";
@@ -80,6 +82,7 @@ public class Player : NetworkBehaviour {
         energy = GetComponent<Energy>();
         rocketWeapons = GetComponent<RocketWeapons>();
         smoothSync = GetComponent<SmoothSync>();
+        rb = GetComponent<Rigidbody2D>();
     }
 
     // DEBUG method only to kill the local player instantly
@@ -200,5 +203,10 @@ public class Player : NetworkBehaviour {
     [Command]
     public void CmdTakeDamage(int damage, string name) {
         health.TakeDamage(damage, name);
+    }
+
+    // Adds a force to the player/rocket for example a recoil when firing a gun
+    public void AddForce(Vector2 force) {
+        rb.AddForce(force, ForceMode2D.Impulse);
     }
 }

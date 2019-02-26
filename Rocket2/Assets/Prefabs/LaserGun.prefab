@@ -346,6 +346,7 @@ MonoBehaviour:
   speed: 0
   fireRate: 5
   energyCost: 5
+  recoil: 2
   firePoint: {fileID: 4451515638584466}
   mussleFlash: {fileID: 198115962877338546}
   range: 100

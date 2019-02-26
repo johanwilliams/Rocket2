@@ -23,10 +23,7 @@ public class LaserWeapon : Weapon {
 
     public override void Shoot(Player shooter) {
         Debug.Log(shooter.name + " fires a laser weapon!");
-        isShootingAllowed(shooter);
-
-        lastShotTime = Time.time;
-        shooter.energy.ConsumeEnergy(energyCost);
+        UpdateShooter(shooter);
 
         // Raycast to detect if we hit something 
         RaycastHit2D hit = Physics2D.Raycast(firePoint.position, firePoint.up, range, hitMask);

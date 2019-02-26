@@ -549,7 +549,7 @@ MonoBehaviour:
     type: 2}
   spawnEffect: {fileID: 1568713421377728, guid: 9731f3d5940922240bec13127dafd7fc,
     type: 2}
-  impulseDamage: 0.3
+  impulseDamage: 0.5
 --- !u!114 &114585473729303304
 MonoBehaviour:
   m_ObjectHideFlags: 1

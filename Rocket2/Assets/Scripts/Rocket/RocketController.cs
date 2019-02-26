@@ -55,6 +55,10 @@ public class RocketController : NetworkBehaviour {
             player.CmdTakeDamage(50, player.name);
         }
 
+        if (Input.GetKeyDown(KeyCode.F)) {
+            player.AddForce(-player.transform.up * 10f);
+        }
+
         if (Input.GetButtonDown("Fire1"))
             rocketWeapons.Fire(Weapon.Slot.Primary);
         else if (Input.GetButtonUp("Fire1"))
