@@ -55,7 +55,7 @@ public class Health : NetworkBehaviour {
 
         health = Mathf.Clamp(health - damage, 0, maxHealth);
         source = _source;
-        Debug.Log(transform.name + " took " + damage + " from " + source + " and now has " + health + " HP in health");
+        Debug.Log(transform.name + " took " + damage + " damage from " + source + " and now has " + health + " HP in health");
     }
 
     // Called if we die and if we should destoy on death

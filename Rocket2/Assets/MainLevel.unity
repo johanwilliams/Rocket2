@@ -539,6 +539,16 @@ Prefab:
     - target: {fileID: 114020833817384170, guid: b58f8387c81d1db4095397fbcfb01ffe,
         type: 2}
       propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114256336116190024, guid: b58f8387c81d1db4095397fbcfb01ffe,
+        type: 2}
+      propertyPath: m_CustomConfig
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114256336116190024, guid: b58f8387c81d1db4095397fbcfb01ffe,
+        type: 2}
+      propertyPath: m_UseSimulator
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -629,7 +639,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 30
+  orthographic size: 40
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2

@@ -38,6 +38,10 @@ public class Player : NetworkBehaviour {
     [SerializeField]
     private GameObject spawnEffect;
 
+    [SerializeField]
+    [Range(0, 1f)]
+    private float impulseDamage = 0.5f;
+
     private bool firstSetup = true;     
 
     // The player setup method which initiate all variables, components etc at spawn
@@ -178,4 +182,23 @@ public class Player : NetworkBehaviour {
         Debug.Log("Player " + transform.name + " respawned at spawnpoint " + _spawnPoint.transform.name);
     }
     #endregion
+
+    private void OnCollisionEnter2D(Collision2D collision) {
+        int damage = (int) (GetImpulse(collision) * impulseDamage);
+        if (damage > 0)
+            CmdTakeDamage(damage, name);
+    }
+
+    // Returns the impulse from a collision from all collision points
+    private float GetImpulse(Collision2D collision) {
+        float impulse = 0f;
+        foreach (ContactPoint2D cp in collision.contacts) 
+            impulse += cp.normalImpulse;
+        return impulse;
+    }
+
+    [Command]
+    public void CmdTakeDamage(int damage, string name) {
+        health.TakeDamage(damage, name);
+    }
 }

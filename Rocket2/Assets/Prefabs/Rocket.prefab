@@ -549,6 +549,7 @@ MonoBehaviour:
     type: 2}
   spawnEffect: {fileID: 1568713421377728, guid: 9731f3d5940922240bec13127dafd7fc,
     type: 2}
+  impulseDamage: 0.3
 --- !u!114 &114585473729303304
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -718,7 +719,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotationSpeed: 180
-  rotationSpeedDampen: 0.3
   thrusterForce: 40
   fuelBurnSpeed: 3
   fuelRegenSpeed: 4
