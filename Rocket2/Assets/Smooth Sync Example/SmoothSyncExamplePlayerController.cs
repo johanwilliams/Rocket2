@@ -39,6 +39,12 @@ public class SmoothSyncExamplePlayerController : NetworkBehaviour
         rb = GetComponent<Rigidbody>();
         rb2D = GetComponent<Rigidbody2D>();
         smoothSync = GetComponent<SmoothSync>();
+
+        if (smoothSync)
+        { 
+            // Set up a validation method to check incoming States to see if cheating may be happening. 
+            smoothSync.validateStateMethod = validateStateOfPlayer;
+        }
     }
 
     /// <summary>
@@ -53,7 +59,39 @@ public class SmoothSyncExamplePlayerController : NetworkBehaviour
     /// </summary>
 	void Update ()
     {
+        // If you need to move a synced object and don't want the position to be interpolated on non-owners,
+        // you can Teleport. This is useful for things like respawning.
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            if (hasAuthority)
+            {
+                transform.position = transform.position + Vector3.right * 18;
+                smoothSync.teleportOwnedObjectFromOwner();
+            }
+            else if (NetworkServer.active)
+            {
+                smoothSync.teleportAnyObjectFromServer(transform.position + Vector3.right * 18, transform.rotation, transform.localScale);
+            }
+        }
+
         if (!hasAuthority) return;
+
+        // If you need to send a State update, call forceStateSendNextFrame() and the next fixed update's State will be sent.
+        // Useful for collisions and fast changes in direction so you can be as accurate as possible in between your send rate.
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            smoothSync.forceStateSendNextFixedUpdate();
+        }
+
+        // If you need to change ownership of a SmoothSync object you can check Smooth Authority Changes on Smooth Sync
+        // It will send an extra byte from server to clients but it will be smooth and automatic.
+        // Otherwise, you'll want to do NetworkIdentity.AssignClientAuthority(conn) and these Cmds and Rpcs 
+        // on a separate object that's always owned by the server so that there's no ownership changes of 
+        // the object while you are trying to send these Cmds and Rpcs. 
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            //CmdClearBuffer();
+        }
 
         #region Movement Controls
 
@@ -99,7 +137,7 @@ public class SmoothSyncExamplePlayerController : NetworkBehaviour
             {
                 childObjectToControl.transform.position = childObjectToControl.transform.position + new Vector3(1, 0, 0) * speed;
             }
-        }
+        } 
 
         if (rb)
         {
@@ -158,11 +196,11 @@ public class SmoothSyncExamplePlayerController : NetworkBehaviour
             // Move the parent transform
             if (Input.GetKey(KeyCode.DownArrow))
             {
-                transform.position = transform.position + new Vector3(0, -1.5f, -1) * speed;
+                transform.position = transform.position + new Vector3(0, 0, -1) * speed;
             }
             if (Input.GetKey(KeyCode.UpArrow))
             {
-                transform.position = transform.position + new Vector3(0, 1.5f, 1) * speed;
+                transform.position = transform.position + new Vector3(0, 0, 1) * speed;
             }
             if (Input.GetKey(KeyCode.LeftArrow))
             {
@@ -175,94 +213,54 @@ public class SmoothSyncExamplePlayerController : NetworkBehaviour
         }
 
         #endregion
-
-        // If you need to move a synced object and don't want the position to be interpolated on non-owners
-        // you can use the teleport() method. This is useful for things like respawning.
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            Vector3 position = transform.position + Vector3.right * 5;
-            Quaternion rotation = transform.rotation;
-            teleport(position, rotation);
-        }
-
-        // If you need to send a state update, call forceStateSendNextFrame() and the next frame's state will be sent.
-        // Useful for collisions and fast changes in direction so you can be as accurate as possible in between your send rate.
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            smoothSync.forceStateSendNextFrame();
-        }
-
-        // If you need to change ownership of a SmoothSync object, clear the buffer on all instances.
-        // You'll probably want to do NetworkIdentity.AssignClientAuthority(conn) and these Cmds and Rpcs 
-        // on a separate object that's always owned by the server so that there's no ownership changes of 
-        // an object while you are trying to send these Cmds and Rpcs. 
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            CmdClearBuffer();
-        }
     }
 
     /// <summary>
-    /// An example of how to teleport the player so that position will not be interpolated on non-owners.
-    /// </summary>
+    /// Custom validation method. 
     /// <remarks>
-    /// Teleporting requires a command to be sent from the owner to the host.
-    /// The SmoothSync teleport method is be called immediately on the owner before sending the command.
+    /// Allows you to check variables to see if they are within allowed values. For example, position.
+    /// This is for the server to check client owned objects to look for cheating like your players 
+    /// modifying values beyond the game's intended limits. 
     /// </remarks>
-    /// <param name="pos">The position to teleport to.</param>
-    /// <param name="rot">The rotation to teleport to.</param>
-    public void teleport(Vector3 pos, Quaternion rot)
-    {
-        if (!hasAuthority) return;
-        int timestamp = NetworkTransport.GetNetworkTimestamp();
-        // Teleport owned object
-        smoothSync.teleport(timestamp, pos, rot);
-        // Tell host to tell non-owners to teleport
-        CmdTeleport(timestamp, pos, rot);
-    }
-
-    /// <summary>
-    /// Echoes a teleport command from the host to all clients.
     /// </summary>
-    /// <param name="networkTimestamp">The NetworkTransport.GetNetworkTimestamp() on the owner when the teleport message was sent.</param>
-    /// <param name="pos">The position to teleport to.</param>
-    /// <param name="rot">The rotation to teleport to.</param>
-    [Command]
-    public void CmdTeleport(int networkTimestamp, Vector3 pos, Quaternion rot)
+    public static bool validateStateOfPlayer(State latestReceivedState, State latestValidatedState)
     {
-        RpcTeleport(networkTimestamp, pos, rot);
+        // Here I do a simple distance check using State.receivedOnServerTimestamp. This variable is updated
+        // by Smooth Sync whenever a State is validated. If the object has gone more than 9000 units 
+        // in less than a half of a second then I ignore the message. You might want to kick 
+        // players here, add them to a ban list, or collect your own data to see if it keeps 
+        // happening. 
+        if (Vector3.Distance(latestReceivedState.position, latestValidatedState.position) > 9000.0f &&
+            (latestReceivedState.ownerTimestamp - latestValidatedState.receivedOnServerTimestamp < .5f))
+        {
+            // Return false and refuse to accept the State. The State will not be added locally
+            // on the server or sent out to other clients.
+            return false;
+        }
+        else
+        {
+            // Return true to accept the State. The State will be added locally on the server and sent out 
+            // to other clients.
+            return true;
+        }
     }
 
-    /// <summary>
-    /// Receive teleport command on clients and call Smoothsync.teleport()
-    /// </summary>
-    /// <param name="networkTimestamp">The NetworkTransport.GetNetworkTimestamp() on the owner when the teleport message was sent.</param>
-    /// <param name="pos">The position to teleport to.</param>
-    /// <param name="rot">The rotation to teleport to.</param>
-    [ClientRpc]
-    public void RpcTeleport(int networkTimestamp, Vector3 pos, Quaternion rot)
-    {
-        // Don't teleport on owners because they already did.
-        if (hasAuthority) return; 
-
-        smoothSync.teleport(networkTimestamp, pos, rot);
-    }
-
-    /// <summary>
-    /// Echoes a clear buffer command from the host to all clients.
-    /// </summary>
-    [Command]
-    public void CmdClearBuffer()
-    {
-        RpcClearBuffer();
-    }
-
-    /// <summary>
-    /// Receive clear buffer command on clients and call smoothSync.ClearBuffer()
-    /// </summary>
-    [ClientRpc]
-    public void RpcClearBuffer()
-    {
-        smoothSync.clearBuffer();
-    }
+    /// This Cmd and Rpc are just here as a guide. You'll probably want to have it determined by an object that's 
+    /// always owned by the server. Probably your GameController or something similar that the server controls. 
+    ///// <summary>
+    ///// Echoes a clear buffer command from the host to all clients.
+    ///// </summary>
+    //[Command]
+    //public void CmdClearBuffer()
+    //{
+    //    RpcClearBuffer();
+    //}
+    ///// <summary>
+    ///// Receive clear buffer command on clients and call smoothSync.ClearBuffer().
+    ///// </summary>
+    //[ClientRpc]
+    //public void RpcClearBuffer()
+    //{
+    //    smoothSync.clearBuffer();
+    //}
 }

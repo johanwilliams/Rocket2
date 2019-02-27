@@ -13,7 +13,7 @@ namespace Smooth
         /// <summary>
         /// The network timestamp of the owner when the state was sent.
         /// </summary>
-        public int ownerTimestamp;
+        public float ownerTimestamp;
         /// <summary>
         /// The position of the owned object when the state was sent.
         /// </summary>
@@ -34,6 +34,27 @@ namespace Smooth
         /// The angularVelocity of the owned object when the state was sent.
         /// </summary>
         public Vector3 angularVelocity;
+        /// <summary>
+        /// If this State is tagged as a teleport State, it should be moved immediately to instead of lerped to.
+        /// </summary>
+        public bool teleport;
+        /// <summary>
+        /// If this State is tagged as a positional rest State, it should stop extrapolating position on non-owners.
+        /// </summary>
+        public bool atPositionalRest;
+        /// <summary>
+        /// If this State is tagged as a rotational rest State, it should stop extrapolating rotation on non-owners.
+        /// </summary>
+        public bool atRotationalRest;
+
+        /// <summary>
+        /// The time on the server when the State is validated. Only used by server for latestVerifiedState.
+        /// </summary>
+        public float receivedOnServerTimestamp;
+        /// <summary>
+        /// Used in Deserialize() so we don't have to make a new Vector3 every time.
+        /// </summary>
+        public Vector3 reusableRotationVector;
 
         /// <summary>
         /// The server will set this to true if it is received so we know to relay the information back out to other clients.
@@ -64,49 +85,15 @@ namespace Smooth
         /// <summary>
         /// Copy an existing State.
         /// </summary>
-        public State(State state)
-        { 
+        public State copyFromState(State state)
+        {
             ownerTimestamp = state.ownerTimestamp;
             position = state.position;
             rotation = state.rotation;
             scale = state.scale;
             velocity = state.velocity;
             angularVelocity = state.angularVelocity;
-        }
-
-        /// <summary>
-        /// Create a State from a SmoothSync script.
-        /// </summary>
-        /// <remarks>
-        /// This is called on owners when creating the States to be passed over the network.
-        /// </remarks>
-        /// <param name="smoothSyncScript"></param>
-        public State(SmoothSync smoothSyncScript)
-        {
-#if UNITY_WEBGL
-            ownerTimestamp = (int)(Time.time * 1000.0f);
-#else
-            ownerTimestamp = NetworkTransport.GetNetworkTimestamp();
-#endif
-            position = smoothSyncScript.getPosition();
-            rotation = smoothSyncScript.getRotation();
-            scale = smoothSyncScript.getScale();
-
-            if (smoothSyncScript.hasRigdibody)
-            {
-                velocity = smoothSyncScript.rb.velocity;
-                angularVelocity = smoothSyncScript.rb.angularVelocity;
-            }
-            else if (smoothSyncScript.hasRigidbody2D)
-            {
-                velocity = smoothSyncScript.rb2D.velocity;
-                angularVelocity = new Vector3(0, 0, smoothSyncScript.rb2D.angularVelocity);
-            }
-            else
-            {
-                velocity = Vector3.zero;
-                angularVelocity = Vector3.zero;
-            }
+            return this;
         }
 
         /// <summary>
@@ -116,19 +103,58 @@ namespace Smooth
         /// <param name="end">End State</param>
         /// <param name="t">Time</param>
         /// <returns></returns>
-        public static State Lerp(State start, State end, float t)
+        public static State Lerp(State targetTempState, State start, State end, float t)
         {
-            State state = new State();
+            targetTempState.position = Vector3.Lerp(start.position, end.position, t);
+            targetTempState.rotation = Quaternion.Lerp(start.rotation, end.rotation, t);
+            targetTempState.scale = Vector3.Lerp(start.scale, end.scale, t);
+            targetTempState.velocity = Vector3.Lerp(start.velocity, end.velocity, t);
+            targetTempState.angularVelocity = Vector3.Lerp(start.angularVelocity, end.angularVelocity, t);
 
-            state.position = Vector3.Lerp(start.position, end.position, t);            
-            state.rotation = Quaternion.Lerp(start.rotation, end.rotation, t);
-            state.scale = Vector3.Lerp(start.scale, end.scale, t);
-            state.velocity = Vector3.Lerp(start.velocity, end.velocity, t);
-            state.angularVelocity = Vector3.Lerp(start.angularVelocity, end.angularVelocity, t);
-            
-            state.ownerTimestamp = (int)Mathf.Lerp(start.ownerTimestamp, end.ownerTimestamp, t);
+            targetTempState.ownerTimestamp = Mathf.Lerp(start.ownerTimestamp, end.ownerTimestamp, t);
 
-            return state;
+            return targetTempState;
+        }
+
+        public void resetTheVariables()
+        {
+            ownerTimestamp = 0;
+            position = Vector3.zero;
+            rotation = Quaternion.identity;
+            scale = Vector3.zero;
+            velocity = Vector3.zero;
+            angularVelocity = Vector3.zero;
+            atPositionalRest = false;
+            atRotationalRest = false;
+            teleport = false;
+        }
+
+        public void copyFromSmoothSync(SmoothSync smoothSyncScript)
+        {
+            ownerTimestamp = Time.realtimeSinceStartup;
+            position = smoothSyncScript.getPosition();
+            rotation = smoothSyncScript.getRotation();
+            scale = smoothSyncScript.getScale();
+
+            if (smoothSyncScript.hasRigidbody)
+            {
+                velocity = smoothSyncScript.rb.velocity;
+                angularVelocity = smoothSyncScript.rb.angularVelocity * Mathf.Rad2Deg;
+            }
+            else if (smoothSyncScript.hasRigidbody2D)
+            {
+                velocity = smoothSyncScript.rb2D.velocity;
+                angularVelocity.x = 0;
+                angularVelocity.y = 0;
+                angularVelocity.z = smoothSyncScript.rb2D.angularVelocity;
+            }
+            else
+            {
+                velocity = Vector3.zero;
+                angularVelocity = Vector3.zero;
+            }
+            //atPositionalRest = smoothSyncScript.sendAtPositionalRestMessage;
+            //atRotationalRest = smoothSyncScript.sendAtRotationalRestMessage;
         }
     }
 
@@ -155,13 +181,13 @@ namespace Smooth
         public NetworkState() { }
 
         /// <summary>
-        /// Create a NetworkState from a SmoothSync object.
+        /// Copy the SmoothSync object to a NetworkState.
         /// </summary>
         /// <param name="smoothSyncScript">The SmoothSync object</param>
-        public NetworkState(SmoothSync smoothSyncScript)
+        public void copyFromSmoothSync(SmoothSync smoothSyncScript)
         {
             this.smoothSync = smoothSyncScript;
-            state = new State(smoothSyncScript);
+            state.copyFromSmoothSync(smoothSyncScript);
         }
         /// <summary>
         /// Serialize the message over the network.
@@ -172,7 +198,7 @@ namespace Smooth
         /// <param name="writer">The NetworkWriter to write to.</param>
         override public void Serialize(NetworkWriter writer)
         {
-            bool sendPosition, sendRotation, sendScale, sendVelocity, sendAngularVelocity;
+            bool sendPosition, sendRotation, sendScale, sendVelocity, sendAngularVelocity, sendAtPositionalRestTag, sendAtRotationalRestTag;
 
             // If is a server trying to relay client information back out to other clients.
             if (NetworkServer.active && !smoothSync.hasAuthority)
@@ -182,6 +208,9 @@ namespace Smooth
                 sendScale = state.serverShouldRelayScale;
                 sendVelocity = state.serverShouldRelayVelocity;
                 sendAngularVelocity = state.serverShouldRelayAngularVelocity;
+                sendAtPositionalRestTag = state.atPositionalRest;
+                sendAtRotationalRestTag = state.atRotationalRest;
+                
             }
             else // If is a server or client trying to send owned object information across the network.
             {
@@ -190,6 +219,8 @@ namespace Smooth
                 sendScale = smoothSync.sendScale;
                 sendVelocity = smoothSync.sendVelocity;
                 sendAngularVelocity = smoothSync.sendAngularVelocity;
+                sendAtPositionalRestTag = smoothSync.sendAtPositionalRestMessage;
+                sendAtRotationalRestTag = smoothSync.sendAtRotationalRestMessage;
             }
             // Only set last sync States on clients here because the server needs to send multiple Serializes.
             if (!NetworkServer.active)
@@ -202,10 +233,10 @@ namespace Smooth
             }
 
             writer.Write(encodeSyncInformation(sendPosition, sendRotation, sendScale,
-                sendVelocity, sendAngularVelocity));
-            writer.Write(smoothSync.netId);
+                sendVelocity, sendAngularVelocity, sendAtPositionalRestTag, sendAtRotationalRestTag));
+            writer.Write(smoothSync.netID);
             writer.WritePackedUInt32((uint)smoothSync.syncIndex);
-            writer.WritePackedUInt32((uint)state.ownerTimestamp);
+            writer.Write(state.ownerTimestamp);
 
             // Write position.
             if (sendPosition)
@@ -247,17 +278,18 @@ namespace Smooth
                 Vector3 rot = state.rotation.eulerAngles;
                 if (smoothSync.isRotationCompressed)
                 {
+                    // Convert to radians for more accurate Half numbers
                     if (smoothSync.isSyncingXRotation)
                     {
-                        writer.Write(HalfHelper.Compress(rot.x));
+                        writer.Write(HalfHelper.Compress(rot.x * Mathf.Deg2Rad));
                     }
                     if (smoothSync.isSyncingYRotation)
                     {
-                        writer.Write(HalfHelper.Compress(rot.y));
+                        writer.Write(HalfHelper.Compress(rot.y * Mathf.Deg2Rad));
                     }
                     if (smoothSync.isSyncingZRotation)
                     {
-                        writer.Write(HalfHelper.Compress(rot.z));
+                        writer.Write(HalfHelper.Compress(rot.z * Mathf.Deg2Rad));
                     }
                 }
                 else
@@ -349,17 +381,18 @@ namespace Smooth
             {
                 if (smoothSync.isAngularVelocityCompressed)
                 {
+                    // Convert to radians for more accurate Half numbers
                     if (smoothSync.isSyncingXAngularVelocity)
                     {
-                        writer.Write(HalfHelper.Compress(state.angularVelocity.x));
+                        writer.Write(HalfHelper.Compress(state.angularVelocity.x * Mathf.Deg2Rad));
                     }
                     if (smoothSync.isSyncingYAngularVelocity)
                     {
-                        writer.Write(HalfHelper.Compress(state.angularVelocity.y));
+                        writer.Write(HalfHelper.Compress(state.angularVelocity.y * Mathf.Deg2Rad));
                     }
                     if (smoothSync.isSyncingZAngularVelocity)
                     {
-                        writer.Write(HalfHelper.Compress(state.angularVelocity.z));
+                        writer.Write(HalfHelper.Compress(state.angularVelocity.z * Mathf.Deg2Rad));
                     }
                 }
                 else
@@ -377,6 +410,11 @@ namespace Smooth
                         writer.Write(state.angularVelocity.z);
                     }
                 }
+            }
+            // Only the server sends out owner information.
+            if (smoothSync.isSmoothingAuthorityChanges && NetworkServer.active)
+            {
+                writer.Write((byte)smoothSync.ownerChangeIndicator);
             }
         }
 
@@ -396,10 +434,12 @@ namespace Smooth
             bool syncScale = shouldSyncScale(syncInfoByte);
             bool syncVelocity = shouldSyncVelocity(syncInfoByte);
             bool syncAngularVelocity = shouldSyncAngularVelocity(syncInfoByte);
+            state.atPositionalRest = shouldBeAtPositionalRest(syncInfoByte);
+            state.atRotationalRest = shouldBeAtRotationalRest(syncInfoByte);
 
             NetworkInstanceId netID = reader.ReadNetworkId();
             int syncIndex = (int)reader.ReadPackedUInt32();
-            state.ownerTimestamp = (int)reader.ReadPackedUInt32();
+            state.ownerTimestamp = reader.ReadSingle();
 
             // Find the GameObject
             GameObject ob = null;
@@ -421,6 +461,12 @@ namespace Smooth
             // It doesn't matter which SmoothSync is returned since they all have the same list.
             smoothSync = ob.GetComponent<SmoothSync>();
 
+            if (!smoothSync)
+            {
+                Debug.LogWarning("Could not find target for network state message.");
+                return;
+            }
+
             // If we want the server to relay non-owned object information out to other clients, set these variables so we know what we need to send.
             if (NetworkServer.active && !smoothSync.hasAuthority)
             {
@@ -440,11 +486,7 @@ namespace Smooth
                 }
             }
 
-            if (!smoothSync)
-            {
-                Debug.LogWarning("Could not find target for network state message.");
-                return;
-            }
+            if (smoothSync.receivedStatesCounter < smoothSync.sendRate) smoothSync.receivedStatesCounter++;
 
             // Read position.
             if (syncPosition)
@@ -491,41 +533,45 @@ namespace Smooth
                     state.position = smoothSync.getPosition();
                 }
             }
+
             // Read rotation.
             if (syncRotation)
             {
-                Vector3 rot = new Vector3();
+                state.reusableRotationVector = Vector3.zero;
                 if (smoothSync.isRotationCompressed)
                 {
                     if (smoothSync.isSyncingXRotation)
                     {
-                        rot.x = HalfHelper.Decompress(reader.ReadUInt16());
+                        state.reusableRotationVector.x = HalfHelper.Decompress(reader.ReadUInt16());
+                        state.reusableRotationVector.x *= Mathf.Rad2Deg;
                     }
                     if (smoothSync.isSyncingYRotation)
                     {
-                        rot.y = HalfHelper.Decompress(reader.ReadUInt16());
+                        state.reusableRotationVector.y = HalfHelper.Decompress(reader.ReadUInt16());
+                        state.reusableRotationVector.y *= Mathf.Rad2Deg;
                     }
                     if (smoothSync.isSyncingZRotation)
                     {
-                        rot.z = HalfHelper.Decompress(reader.ReadUInt16());
+                        state.reusableRotationVector.z = HalfHelper.Decompress(reader.ReadUInt16());
+                        state.reusableRotationVector.z *= Mathf.Rad2Deg;
                     }
-                    state.rotation = Quaternion.Euler(rot);
+                    state.rotation = Quaternion.Euler(state.reusableRotationVector);
                 }
                 else
                 {
                     if (smoothSync.isSyncingXRotation)
                     {
-                        rot.x = reader.ReadSingle();
+                        state.reusableRotationVector.x = reader.ReadSingle();
                     }
                     if (smoothSync.isSyncingYRotation)
                     {
-                        rot.y = reader.ReadSingle();
+                        state.reusableRotationVector.y = reader.ReadSingle();
                     }
                     if (smoothSync.isSyncingZRotation)
                     {
-                        rot.z = reader.ReadSingle();
+                        state.reusableRotationVector.z = reader.ReadSingle();
                     }
-                    state.rotation = Quaternion.Euler(rot);
+                    state.rotation = Quaternion.Euler(state.reusableRotationVector);
                 }
             }
             else
@@ -617,28 +663,35 @@ namespace Smooth
                         state.velocity.z = reader.ReadSingle();
                     }
                 }
+                smoothSync.latestReceivedVelocity = state.velocity;
             }
             else
             {
-                state.velocity = Vector3.zero;
+                // If we didn't receive an updated velocity, use the latest received velocity.
+                state.velocity = smoothSync.latestReceivedVelocity;
             }
             // Read anguluar velocity.
             if (syncAngularVelocity)
             {
                 if (smoothSync.isAngularVelocityCompressed)
                 {
+                    state.reusableRotationVector = Vector3.zero;
                     if (smoothSync.isSyncingXAngularVelocity)
                     {
-                        state.angularVelocity.x = HalfHelper.Decompress(reader.ReadUInt16());
+                        state.reusableRotationVector.x = HalfHelper.Decompress(reader.ReadUInt16());
+                        state.reusableRotationVector.x *= Mathf.Rad2Deg;
                     }
                     if (smoothSync.isSyncingYAngularVelocity)
                     {
-                        state.angularVelocity.y = HalfHelper.Decompress(reader.ReadUInt16());
+                        state.reusableRotationVector.y = HalfHelper.Decompress(reader.ReadUInt16());
+                        state.reusableRotationVector.y *= Mathf.Rad2Deg;
                     }
                     if (smoothSync.isSyncingZAngularVelocity)
                     {
-                        state.angularVelocity.z = HalfHelper.Decompress(reader.ReadUInt16());
+                        state.reusableRotationVector.z = HalfHelper.Decompress(reader.ReadUInt16());
+                        state.reusableRotationVector.z *= Mathf.Rad2Deg;
                     }
+                    state.angularVelocity = state.reusableRotationVector;
                 }
                 else
                 {
@@ -655,10 +708,18 @@ namespace Smooth
                         state.angularVelocity.z = reader.ReadSingle();
                     }
                 }
+                smoothSync.latestReceivedAngularVelocity = state.angularVelocity;
             }
             else
             {
-                state.angularVelocity = Vector3.zero;
+                // If we didn't receive an updated angular velocity, use the latest received angular velocity.
+                state.angularVelocity = smoothSync.latestReceivedAngularVelocity;
+            }
+
+            // Update new owner information sent from the Server.
+            if (smoothSync.isSmoothingAuthorityChanges && !NetworkServer.active)
+            {
+                smoothSync.ownerChangeIndicator = (int)reader.ReadByte();
             }
         }
         /// <summary>
@@ -682,9 +743,17 @@ namespace Smooth
         /// </summary>
         byte angularVelocityMask = 16; // 0001_0000
         /// <summary>
+        /// Hardcoded information to determine whether the object is at rest and should stop extrapolating.
+        /// </summary>
+        byte atPositionalRestMask = 64; // 0100_0000
+        /// <summary>
+        /// Hardcoded information to determine whether the object is at rest and should stop extrapolating.
+        /// </summary>
+        byte atRotationalRestMask = 128; // 1000_0000
+        /// <summary>
         /// Encode sync info based on what we want to send.
         /// </summary>
-        byte encodeSyncInformation(bool sendPosition, bool sendRotation, bool sendScale, bool sendVelocity, bool sendAngularVelocity)
+        byte encodeSyncInformation(bool sendPosition, bool sendRotation, bool sendScale, bool sendVelocity, bool sendAngularVelocity, bool atPositionalRest, bool atRotationalRest)
         {
             byte encoded = 0;
 
@@ -707,6 +776,14 @@ namespace Smooth
             if (sendAngularVelocity)
             {
                 encoded = (byte)(encoded | angularVelocityMask);
+            }
+            if (atPositionalRest)
+            {
+                encoded = (byte)(encoded | atPositionalRestMask);
+            }
+            if (atRotationalRest)
+            {
+                encoded = (byte)(encoded | atRotationalRestMask);
             }
             return encoded;
         }
@@ -772,6 +849,34 @@ namespace Smooth
         bool shouldSyncAngularVelocity(byte syncInformation)
         {
             if ((syncInformation & angularVelocityMask) == angularVelocityMask)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        /// <summary>
+        /// Decode sync info to see if we should be at positional rest. (Stop extrapolating)
+        /// </summary>
+        bool shouldBeAtPositionalRest(byte syncInformation)
+        {
+            if ((syncInformation & atPositionalRestMask) == atPositionalRestMask)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        /// <summary>
+        /// Decode sync info to see if we should be at rotational rest. (Stop extrapolating)
+        /// </summary>
+        bool shouldBeAtRotationalRest(byte syncInformation)
+        {
+            if ((syncInformation & atRotationalRestMask) == atRotationalRestMask)
             {
                 return true;
             }
