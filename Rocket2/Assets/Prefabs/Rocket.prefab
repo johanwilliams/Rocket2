@@ -11,6 +11,24 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 1954983318120366}
   m_IsPrefabParent: 1
+--- !u!1 &1138801016154564
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4107920608112700}
+  - component: {fileID: 33952826305333842}
+  - component: {fileID: 135916005875897376}
+  - component: {fileID: 23979776276732390}
+  m_Layer: 12
+  m_Name: MiniMap
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1277587435613106
 GameObject:
   m_ObjectHideFlags: 1
@@ -170,6 +188,19 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!4 &4107920608112700
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1138801016154564}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 10, y: 10, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4774772740822186}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4320595864340562
 Transform:
   m_ObjectHideFlags: 1
@@ -224,6 +255,7 @@ Transform:
   - {fileID: 4590360212557206}
   - {fileID: 4320595864340562}
   - {fileID: 4856965111544822}
+  - {fileID: 4107920608112700}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -240,6 +272,47 @@ Transform:
   m_Father: {fileID: 4774772740822186}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &23979776276732390
+MeshRenderer:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1138801016154564}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_Materials:
+  - {fileID: 2100000, guid: 8bd2e5bbfd679a24e9748d7f81d9ea1e, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+--- !u!33 &33952826305333842
+MeshFilter:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1138801016154564}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!50 &50710931533900146
 Rigidbody2D:
   serializedVersion: 4
@@ -466,7 +539,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   interpolationBackTime: 0.1
+  extrapolationMode: 1
+  useExtrapolationTimeLimit: 1
   extrapolationTimeLimit: 0.3
+  useExtrapolationDistanceLimit: 0
   extrapolationDistanceLimit: 0.3
   sendPositionThreshold: 0.001
   sendRotationThreshold: 0.001
@@ -475,12 +551,14 @@ MonoBehaviour:
   sendAngularVelocityThreshold: 0.001
   receivedPositionThreshold: 0
   receivedRotationThreshold: 0
-  positionSnapThreshold: 8
-  rotationSnapThreshold: 60
-  scaleSnapThreshold: 3
+  snapPositionThreshold: 0
+  snapRotationThreshold: 0
+  snapScaleThreshold: 0
   positionLerpSpeed: 0.2
   rotationLerpSpeed: 0.2
   scaleLerpSpeed: 0.2
+  timeCorrectionSpeed: 0.1
+  snapTimeThreshold: 3
   syncPosition: 1
   syncRotation: 6
   syncScale: 7
@@ -491,10 +569,15 @@ MonoBehaviour:
   isScaleCompressed: 1
   isVelocityCompressed: 1
   isAngularVelocityCompressed: 1
-  whereToUpdateTransform: 1
+  isSmoothingAuthorityChanges: 0
+  whenToUpdateTransform: 0
   sendRate: 30
   networkChannel: 1
   childObjectToSync: {fileID: 0}
+  setVelocityInsteadOfPositionOnNonOwners: 0
+  maxPositionDifferenceForVelocitySyncing: 10
+  ownerChangeIndicator: 1
+  receivedStatesCounter: 0
 --- !u!114 &114446540403325090
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -725,6 +808,18 @@ MonoBehaviour:
   thrusterSlot: {fileID: 4320595864340562}
   rocketFlamePrefab: {fileID: 1626603654462600, guid: abfd1320dd555a245bd4e446f4d4a0d4,
     type: 2}
+--- !u!135 &135916005875897376
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1138801016154564}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!212 &212932792116549320
 SpriteRenderer:
   m_ObjectHideFlags: 1
