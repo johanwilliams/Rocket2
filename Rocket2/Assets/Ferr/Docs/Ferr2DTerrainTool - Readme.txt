@@ -42,6 +42,11 @@ Ctrl +L:     toggle segment lock mode
 
 VERSION LOG
 
+v2.0.2 2018-4
++Bug fixes
+ -Fixed physics materials occasionally getting mis-assigned
+ -Gizmos were showing up in incorrect locations on Infinite Terrain Chunks
+
 v2.0.1 2018-3
 +Bug fixes
  -Fixed an infinite loop if body was set to zero

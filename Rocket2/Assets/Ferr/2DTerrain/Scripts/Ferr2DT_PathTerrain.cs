@@ -1116,6 +1116,7 @@ public partial class Ferr2DT_PathTerrain : MonoBehaviour, Ferr2D_IPath, IBlendPa
 		List<U> _mapItems;
 
 		public List<T> Pool { get { return _pool; } }
+		public List<U> Map  { get { return _mapItems; } }
 
 		public ComponentPool(GameObject aFrom, List<U> aMapTo, bool aConsolidate) {
 			T[] components = aFrom.GetComponents<T>();
@@ -1165,7 +1166,7 @@ public partial class Ferr2DT_PathTerrain : MonoBehaviour, Ferr2D_IPath, IBlendPa
 			segs[i].Add(segs[i][0]);
 			edge.points = segs[i].ToArray();
 			segs[i].RemoveAt(segs[i].Count-1);
-			edge.sharedMaterial = materials[i];
+			edge.sharedMaterial = pool.Map[i];
 		}
 		Set2DColliderSettings(pool.Pool);
 	}
@@ -1176,7 +1177,7 @@ public partial class Ferr2DT_PathTerrain : MonoBehaviour, Ferr2D_IPath, IBlendPa
 		ComponentPool<PolygonCollider2D, PhysicsMaterial2D> pool = new ComponentPool<PolygonCollider2D, PhysicsMaterial2D>(gameObject, materials, true);
 		for (int i = 0; i < pool.Pool.Count; i++) {
 			pool.Pool[i].pathCount = 0;
-			pool.Pool[i].sharedMaterial = materials[i];;
+			pool.Pool[i].sharedMaterial = pool.Map[i];
 		}
 
 		for (int i = 0; i < segs.Count; i++) {
@@ -1216,7 +1217,7 @@ public partial class Ferr2DT_PathTerrain : MonoBehaviour, Ferr2D_IPath, IBlendPa
 			}
 			colMesh.ExtrudeZ(depth, false);
 
-			collider.sharedMaterial = materials[s];
+			collider.sharedMaterial = pool.Map[s];
 			collider.isTrigger = isTrigger;
 
 			// compile the mesh!

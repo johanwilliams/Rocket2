@@ -18,8 +18,6 @@ namespace Ferr.Example {
 		}
 
 		private void OnDrawGizmos() {
-			Gizmos.matrix = transform.localToWorldMatrix;
-
 			Gizmos.color = Color.green;
 			Gizmos.DrawWireSphere(RightHook, 1);
 			Gizmos.color = Color.blue;
