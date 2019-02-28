@@ -74,7 +74,7 @@ public class Player : NetworkBehaviour {
 
     public override void PreStartClient() {
         health = GetComponent<Health>();
-        health.OnDeath += CmdDie;
+        health.OnDeath += Die;
     }
 
     private void Start() {
@@ -125,9 +125,17 @@ public class Player : NetworkBehaviour {
     }
 
     #region "Die and respawn functionality"
+
+    private void Die(string _sourcePlayerID) {
+        if (isServer)
+            RpcDie(_sourcePlayerID);
+        else 
+            CmdDie(_sourcePlayerID);
+    }
     // Called when a player dies (health <= 0)
     [Command]
     private void CmdDie(string _sourcePlayerID) {
+        Debug.Log("CmdDie(" + _sourcePlayerID + ")");
         RpcDie(_sourcePlayerID);
     }
 
@@ -168,13 +176,14 @@ public class Player : NetworkBehaviour {
     // Respawns a player
     private IEnumerator Respawn() {
         // Clear the interpolation buffer
-        smoothSync.clearBuffer();
+        //smoothSync.clearBuffer();
 
         yield return new WaitForSeconds(GameManager.instance.matchSettings.respawnTime);
         
         Transform _spawnPoint = NetworkManager.singleton.GetStartPosition();
         transform.position = _spawnPoint.position;
         transform.rotation = _spawnPoint.rotation;
+        smoothSync.teleportAnyObjectFromServer(transform.position, transform.rotation, transform.localScale);
         rocketEngine.Reset();
 
         // Give some time for the tranform to be sent to all clients before reseting the player
