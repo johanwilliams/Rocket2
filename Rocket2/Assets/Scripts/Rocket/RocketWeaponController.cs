@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 [RequireComponent(typeof(Player))]
-public class RocketWeapons : NetworkBehaviour {
+public class RocketWeaponController : NetworkBehaviour {
 
     [SerializeField]
     private string weaponLayerName = "Weapon";
@@ -68,9 +68,9 @@ public class RocketWeapons : NetworkBehaviour {
 
         if (isLocalPlayer) {
             if (Input.GetKeyDown(KeyCode.P))
-                player.rocketWeapons.CmdFire(true);
+                player.weaponController.CmdFire(true);
             if (Input.GetKeyUp(KeyCode.P))
-                player.rocketWeapons.CmdFire(false);
+                player.weaponController.CmdFire(false);
         }
     }
 

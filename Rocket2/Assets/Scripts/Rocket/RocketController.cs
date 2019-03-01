@@ -2,13 +2,13 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 [RequireComponent(typeof(RocketEngine))]
-[RequireComponent(typeof(RocketWeapons))]
+[RequireComponent(typeof(RocketWeaponController))]
 [RequireComponent(typeof(Player))]
 public class RocketController : NetworkBehaviour {
 
     // Component caching
     private RocketEngine rocketEngine;
-    private RocketWeapons rocketWeapons;
+    private RocketWeaponController rocketWeapons;
     private Player player;
 
     public bool lockCursor;
@@ -16,7 +16,7 @@ public class RocketController : NetworkBehaviour {
     // Use this for initialization
     void Start () {
         rocketEngine = GetComponent<RocketEngine>();
-        rocketWeapons = GetComponent<RocketWeapons>();
+        rocketWeapons = GetComponent<RocketWeaponController>();
         player = GetComponent<Player>();        
     }
 	
@@ -72,7 +72,7 @@ public class RocketController : NetworkBehaviour {
 
         if (Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.Alpha1)) {
             foreach(Player player in GameManager.GetPlayers())
-                player.rocketWeapons.ToggleWeapon(WeaponInventory.Name.Lasergun);
+                player.weaponController.ToggleWeapon(WeaponInventory.Name.Lasergun);
         }            
         else if (Input.GetKeyDown(KeyCode.Alpha1))
             rocketWeapons.ToggleWeapon(WeaponInventory.Name.Lasergun);

@@ -6,7 +6,7 @@ using Smooth;
 [RequireComponent(typeof(RocketEngine))]
 [RequireComponent(typeof(Health))]
 [RequireComponent(typeof(Energy))]
-[RequireComponent(typeof(RocketWeapons))]
+[RequireComponent(typeof(RocketWeaponController))]
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(SmoothSync))]
 public class Player : NetworkBehaviour {
@@ -14,7 +14,7 @@ public class Player : NetworkBehaviour {
     [HideInInspector] public RocketEngine rocketEngine;
     [HideInInspector] public Health health;
     [HideInInspector] public Energy energy;
-    [HideInInspector] public RocketWeapons rocketWeapons;
+    [HideInInspector] public RocketWeaponController weaponController;
     SmoothSync smoothSync;
     Rigidbody2D rb;
 
@@ -80,7 +80,7 @@ public class Player : NetworkBehaviour {
     private void Start() {
         rocketEngine = GetComponent<RocketEngine>();
         energy = GetComponent<Energy>();
-        rocketWeapons = GetComponent<RocketWeapons>();
+        weaponController = GetComponent<RocketWeaponController>();
         smoothSync = GetComponent<SmoothSync>();
         rb = GetComponent<Rigidbody2D>();
     }
