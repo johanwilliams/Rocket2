@@ -24,11 +24,7 @@ public class RocketController : NetworkBehaviour {
 	void Update () {
         if (!isLocalPlayer)
             return;
-
-        if (Input.GetKeyDown(KeyCode.Space)) {
-            rocketWeapons.CmdFire2();
-        }
-
+            
         if (PauseMenu.IsOn) {
             if (Cursor.lockState != CursorLockMode.None && lockCursor)
                 Cursor.lockState = CursorLockMode.None;
@@ -71,8 +67,8 @@ public class RocketController : NetworkBehaviour {
 
 
         if (Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.Alpha1)) {
-            foreach(Player player in GameManager.GetPlayers())
-                player.weaponController.ToggleWeapon(WeaponInventory.Name.Lasergun);
+            foreach(Player p in GameManager.GetPlayers())
+                p.weaponController.ToggleWeapon(WeaponInventory.Name.Lasergun);
         }            
         else if (Input.GetKeyDown(KeyCode.Alpha1))
             rocketWeapons.ToggleWeapon(WeaponInventory.Name.Lasergun);

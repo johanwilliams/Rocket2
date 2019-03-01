@@ -5,23 +5,21 @@ using UnityEngine.Networking;
 public class RocketWeaponController : NetworkBehaviour {
 
     [SerializeField]
-    private string weaponLayerName = "Weapon";
+    private readonly string weaponLayerName = "Weapon";
 
     private Player player;
 
+    //TODO: We probably need more weaponslots in the future to be able to mount weapons
     [SerializeField]
     private Transform weaponSlot;
 
     [SerializeField]
-    private WeaponInventory.Name defaultWeapon;
+    private readonly WeaponInventory.Name defaultWeapon;
 
     private Weapon primaryWeapon;
     private Weapon secondaryWeapon;
 
     NHNetworkedPool bulletsPool;
-    public float fireRate = 0.1f;
-    float lastShotTime;
-    private bool isFiring = false;
 
 
     private void Start() {
@@ -31,11 +29,10 @@ public class RocketWeaponController : NetworkBehaviour {
             Debug.LogError("RocketWeapons: No reference to weaponSlot transform");
             this.enabled = false;
         }
-        //if (isLocalPlayer) {
-          //  EquipWeapon(defaultWeapon);
-        //}
-            
-        //EquipWeapon(WeaponInventory.Name.HomingMissile);
+        if (isLocalPlayer) {
+          CmdEquipWeapon(defaultWeapon);
+          //CmdEquipWeapon(WeaponInventory.Name.HomingMissile);
+        }
 
         bulletsPool = FindObjectOfType<NHNetworkedPool>();
         if (bulletsPool == null)
@@ -63,7 +60,7 @@ public class RocketWeaponController : NetworkBehaviour {
     }
 
     private void Update() {
-        if (isServer)
+        /*if (isServer)
             UpdateFire();
 
         if (isLocalPlayer) {
@@ -71,16 +68,15 @@ public class RocketWeaponController : NetworkBehaviour {
                 player.weaponController.CmdFire(true);
             if (Input.GetKeyUp(KeyCode.P))
                 player.weaponController.CmdFire(false);
-        }
+        }*/
     }
 
-    // Stops any invoke repeating (autofire) of a weapon
-    public void Ceasefire(Weapon.Slot slot) {
-        if (slot == Weapon.Slot.Primary)
-            CancelInvoke("CmdFirePrimary");
-        else if (slot == Weapon.Slot.Seconday)
-            CancelInvoke("CmdFireSecondary");
+    // Returns the transform where weapons are put. Called from weapons etc
+    public Transform GetWeaponSlot() {
+        return weaponSlot;
     }
+
+    #region "Weapon fireing"
 
     // Fires a weapon if pre-conditions are met. Initiates a repeting invoce call if the gun has autofire
     [Client]
@@ -93,13 +89,21 @@ public class RocketWeaponController : NetworkBehaviour {
                 CmdFirePrimary();    // Single fire
             else
                 InvokeRepeating("CmdFirePrimary", 0f, 1f / primaryWeapon.fireRate);    // Autofire
-        }
-        else if (slot == Weapon.Slot.Seconday && secondaryWeapon != null) {
+        } else if (slot == Weapon.Slot.Seconday && secondaryWeapon != null) {
             if (secondaryWeapon.fireRate <= 0f)
                 CmdFireSecondary();    // Single fire
             else
                 InvokeRepeating("CmdFireSecondary", 0f, 1f / secondaryWeapon.fireRate);    // Autofire
         }
+    }
+
+    // Stops any invoke repeating (autofire) of a weapon
+    [Client]
+    public void Ceasefire(Weapon.Slot slot) {
+        if (slot == Weapon.Slot.Primary)
+            CancelInvoke("CmdFirePrimary");
+        else if (slot == Weapon.Slot.Seconday)
+            CancelInvoke("CmdFireSecondary");
     }
 
     // Fire primary weapon
@@ -125,10 +129,9 @@ public class RocketWeaponController : NetworkBehaviour {
         }
     }
 
-    // Returns the transform where weapons are put
-    public Transform GetWeaponSlot() {
-        return weaponSlot;
-    }
+    #endregion
+
+    #region "Weapon equipping/unequipping"
 
     // For debug use: Toggles weapons being equipped/unequipped
     public void ToggleWeapon(WeaponInventory.Name weaponName) {
@@ -174,11 +177,11 @@ public class RocketWeaponController : NetworkBehaviour {
         weapon.transform.SetPositionAndRotation(weaponSlot.position, weaponSlot.rotation);
         weapon.transform.SetParent(weaponSlot.transform);
         Util.SetLayerRecursively(weapon, LayerMask.NameToLayer(weaponLayerName));
-        setWeaponSlot(weapon.GetComponent<Weapon>());
+        SetWeaponSlot(weapon.GetComponent<Weapon>());
     }
 
     // Sets the weapon to the correct weapon slot
-    private void setWeaponSlot(Weapon weapon) {
+    private void SetWeaponSlot(Weapon weapon) {
         switch (weapon.slot) {
             case Weapon.Slot.Primary:
                 primaryWeapon = weapon;
@@ -196,13 +199,13 @@ public class RocketWeaponController : NetworkBehaviour {
     // Destroys the gameobject in the specified slot
     [Command]
     private void CmdUnequipWeapon(Weapon.Slot slot) {
-        Weapon current = getWeapon(slot);
+        Weapon current = GetWeapon(slot);
         if (current != null)
             NetworkServer.Destroy(current.gameObject);
     }
 
     // returns the weapon in the specified weapon slot
-    private Weapon getWeapon(Weapon.Slot slot) {
+    private Weapon GetWeapon(Weapon.Slot slot) {
         if (slot == Weapon.Slot.Primary)
             return primaryWeapon;
         else if (slot == Weapon.Slot.Seconday)
@@ -210,9 +213,20 @@ public class RocketWeaponController : NetworkBehaviour {
         return null;
     }
 
+    #endregion
+
+    /*
+     * 
+     * Old stuff: Not used now but could be interesting to look at then implementing the missile/bullets etc..
+     *     
+     * 
+     //float lastShotTime;
+     //private bool isFiring = false;
+     //public float fireRate = 0.1f;
+
     [Command]
     public void CmdSpawnProjectile(Vector3 _position, Quaternion _rotation) {
-        /*    Debug.Log("Shooting the missile launcher!");
+            Debug.Log("Shooting the missile launcher!");
 
             GameObject missile;
             missilePool.InstantiateFromPool(weaponSlot.position, weaponSlot.rotation, out missile);
@@ -220,7 +234,7 @@ public class RocketWeaponController : NetworkBehaviour {
                 Debug.LogError("No missile could be spawned from the pool");
             else
                 Debug.Log("Shooting " + missile.name);
-                */
+
     }
 
     [Command]
@@ -259,5 +273,5 @@ public class RocketWeaponController : NetworkBehaviour {
 
         // Destroy the bullet after 2 seconds
         Destroy(bullet, 2.0f);
-    }
+    }*/
 }

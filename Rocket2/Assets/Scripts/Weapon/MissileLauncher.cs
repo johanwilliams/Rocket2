@@ -16,7 +16,7 @@ public class MissileLauncher : ProjectileWeapon {
     public override void Shoot(Player shooter) {
         base.Shoot(shooter);
 
-        shooter.weaponController.CmdSpawnProjectile(firePoint.position, firePoint.rotation);
+        //shooter.weaponController.CmdSpawnProjectile(firePoint.position, firePoint.rotation);
 
         //Projectile projectile = Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
         //NetworkServer.Spawn(projectile.gameObject);
